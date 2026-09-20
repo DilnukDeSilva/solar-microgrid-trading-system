@@ -1,8 +1,5 @@
 # Smart Solar Microgrid Trading System: Planning Document
 
-Planning only (allowed at AI Level 2). Every member writes their own code, comments and commits.
-Disclose in your report that AI was used for planning, and be ready to explain how this plan became your final design.
-
 ## 1. Architecture (FAT service)
 
 ```

@@ -1,0 +1,47 @@
+@SmartSolar.Api_HostAddress = http://localhost:5080
+
+### Health (anonymous)
+GET {{SmartSolar.Api_HostAddress}}/health
+
+### Login as Backoffice
+POST {{SmartSolar.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "Admin@123"
+}
+
+### Login as GridOperator
+POST {{SmartSolar.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "operator1",
+  "password": "Oper@123"
+}
+
+### Login as Active prosumer (NIC)
+POST {{SmartSolar.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "nic": "200012345678",
+  "password": "Solar@123"
+}
+
+### Login as Pending prosumer (expect 409 ACCOUNT_NOT_ACTIVE)
+POST {{SmartSolar.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "nic": "199912345678",
+  "password": "Solar@123"
+}
+
+### Users list without token (expect 401)
+GET {{SmartSolar.Api_HostAddress}}/api/users
+
+### Users list (paste a Backoffice token after login)
+GET {{SmartSolar.Api_HostAddress}}/api/users
+Authorization: Bearer {{token}}

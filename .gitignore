@@ -16,9 +16,11 @@ obj/
 *.suo
 publish/
 *.log
+logs/
 TestResults/
 
 # Secrets: NEVER commit these
+appsettings.Development.json
 appsettings.Production.json
 appsettings.Local.json
 secrets.json

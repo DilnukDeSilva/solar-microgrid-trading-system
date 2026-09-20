@@ -4,6 +4,7 @@ Change this file only through a Git pull request that all four members approve. 
 
 ## Conventions
 - Base URL: `http://<host-ip>:<port>/api` (emulator: `10.0.2.2`).
+- Health probe is **not** under `/api`: `GET http://<host-ip>:<port>/health`. The same JSON is also at `GET /api/health`.
 - JSON `camelCase`. Dates are ISO-8601 UTC strings (`2026-09-25T10:00:00Z`). The clients convert to local time for display.
 - Auth: `Authorization: Bearer <jwt>`. The JWT claims are `sub` (user id), `role`, `nic` (prosumers only).
 - Roles: `Backoffice`, `GridOperator`, `Prosumer`.
@@ -34,7 +35,7 @@ Change this file only through a Git pull request that all four members approve. 
 
 | Method + path | Role | Owner |
 |---|---|---|
-| `GET /health` | anon | M1 |
+| `GET /health` and `GET /api/health` (same `{status, serverTime}` body; prefer `/health` for LAN/IIS smoke tests) | anon | M1 |
 | `POST /auth/login` `{username|nic, password}` → `{token, expiresAt, user}` | anon | M1 |
 | `GET /users`, `GET /users/{id}`, `POST /users`, `PUT /users/{id}`, `POST /users/{id}/deactivate` (staff accounts) | Backoffice | M1 |
 | `GET /prosumers?status&q`, `GET /prosumers/{nic}`, `POST /prosumers`, `PUT /prosumers/{nic}`, `POST /prosumers/{nic}/deactivate`, `POST /prosumers/{nic}/reactivate` (Backoffice only) | Backoffice/GridOperator | M2 |
@@ -71,6 +72,6 @@ Notes:
 | Only `Approved` reservations produce a QR; token is single-use | approve, verify, complete | M4 |
 
 ## Seed data everyone can rely on (M1 provides on Day 2)
-- Users: `admin / Admin@123` (Backoffice), `operator1 / Oper@123` (GridOperator), prosumers with NICs `200012345678` (Active) and `199912345678` (Pending).
+- Users: `admin / Admin@123` (Backoffice), `operator1 / Oper@123` (GridOperator), Active prosumer `nimal` or NIC `200012345678 / Solar@123`, Pending prosumer `saman` or NIC `199912345678 / Solar@123` (login is rejected with `ACCOUNT_NOT_ACTIVE`).
 - 3 stations around Colombo/Malabe with 4 slots each on the next 5 days.
 - A handful of reservations in each status, including one in the past.
