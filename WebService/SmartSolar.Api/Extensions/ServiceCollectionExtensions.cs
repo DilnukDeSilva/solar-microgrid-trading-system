@@ -48,6 +48,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddSingleton<IActiveAccountGuard, ActiveAccountGuard>();
 
         services.AddControllers()
             .AddJsonOptions(options =>
@@ -104,6 +105,16 @@ public static class ServiceCollectionExtensions
 
                 options.Events = new JwtBearerEvents
                 {
+                    // Re-check Users.status so a deactivated account cannot keep using an old JWT.
+                    OnTokenValidated = async context =>
+                    {
+                        var userId = context.Principal?.FindFirst("sub")?.Value;
+                        var guard = context.HttpContext.RequestServices.GetRequiredService<IActiveAccountGuard>();
+                        if (!await guard.IsActiveAsync(userId, context.HttpContext.RequestAborted))
+                        {
+                            context.Fail("Account is not active.");
+                        }
+                    },
                     OnChallenge = async context =>
                     {
                         context.HandleResponse();
