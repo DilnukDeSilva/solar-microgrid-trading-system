@@ -1,0 +1,43 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Assignment brief (not part of the submission code)
+EAD_SE4040_Assignment_2026.pdf
+
+# .NET / Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+publish/
+*.log
+TestResults/
+
+# Secrets: NEVER commit these
+appsettings.Production.json
+appsettings.Local.json
+secrets.json
+.env
+*.pfx
+local.properties
+google-services.json
+keystore.jks
+*.keystore
+
+# Android
+*.iml
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# Node (if the web UI uses npm tooling)
+node_modules/
