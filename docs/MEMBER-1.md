@@ -41,5 +41,16 @@ Hand the web skeleton + API client to M2 by **end of Day 4**.
 ## Viva prep: be able to explain
 How JWT works and where the secret lives, how the app pool and hosting bundle run your API, why NIC and username indexes are unique, what FAT service means, why clients never touch MongoDB, how passwords are stored.
 
+## Status
+- [x] Milestone 0 API (except IIS on Windows)
+- [x] Staff Users API: create, list, update, deactivate (Backoffice only)
+- [x] MVC + Bootstrap 5 skeleton: layout, login, session JWT, `ApiClient`, 403, logout
+- [x] Role redirects: Backoffice → admin dashboard, GridOperator → operations home
+- [x] User management pages: list, create, edit, deactivate
+
+Still open (not Mac coding):
+- [ ] Commit and push Users API + web app on `feature/m1-service-auth-iis`
 - [ ] IIS on the Windows lab PC (Hosting Bundle, No Managed Code, firewall) — follow `docs/DEPLOYMENT.md`
+- [ ] Milestone 2: integrate on the IIS box, LAN test with a real phone, smoke-test checklist
+- [ ] Milestone 2: lead the report’s architecture, DB design and deployment sections
 

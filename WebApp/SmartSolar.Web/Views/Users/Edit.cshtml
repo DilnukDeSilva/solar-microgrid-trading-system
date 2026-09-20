@@ -1,0 +1,11 @@
+@model StaffUserForm
+@{
+    ViewData["Title"] = "Edit staff account";
+}
+
+<h1 class="h3 mb-3">Edit @Model.Username</h1>
+<partial name="_Form" model="Model" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

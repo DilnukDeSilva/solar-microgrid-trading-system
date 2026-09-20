@@ -14,7 +14,7 @@ Change this file only through a Git pull request that all four members approve. 
   - reservation status: `Pending` | `Approved` | `Cancelled` | `Completed`
 - Error body for every non-2xx: `{ "code": "RULE_12H", "message": "Updates need 12 hours notice" }`
   - Status codes: 400 validation, 401 no/invalid token, 403 wrong role, 404 missing, 409 business-rule conflict.
-  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`.
+  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `USERNAME_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`.
 - Every response is data only, with no HTML. All rules are enforced server-side; clients only display the error `message`.
 
 ## Data shapes
