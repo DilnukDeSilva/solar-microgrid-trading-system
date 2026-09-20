@@ -20,8 +20,8 @@ public interface IUserService
     // Creates a Backoffice or GridOperator account.
     Task<UserDto> CreateStaffAsync(CreateStaffRequestDto request, CancellationToken cancellationToken = default);
 
-    // Updates a staff account. Password is optional.
-    Task<UserDto> UpdateStaffAsync(string id, UpdateStaffRequestDto request, CancellationToken cancellationToken = default);
+    // Updates a staff account. Password is optional. Callers pass actorId to block changing their own role.
+    Task<UserDto> UpdateStaffAsync(string id, UpdateStaffRequestDto request, string? actorId, CancellationToken cancellationToken = default);
 
     // Sets a staff account to Deactivated. Callers pass the current user id to block self-deactivation.
     Task<UserDto> DeactivateStaffAsync(string id, string? actorId, CancellationToken cancellationToken = default);

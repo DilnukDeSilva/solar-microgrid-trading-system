@@ -64,7 +64,8 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserDto>> Update(string id, [FromBody] UpdateStaffRequestDto request, CancellationToken cancellationToken)
     {
-        return Ok(await _users.UpdateStaffAsync(id, request, cancellationToken));
+        var actorId = User.FindFirst("sub")?.Value;
+        return Ok(await _users.UpdateStaffAsync(id, request, actorId, cancellationToken));
     }
 
     // Deactivates a staff account so they can no longer log in.

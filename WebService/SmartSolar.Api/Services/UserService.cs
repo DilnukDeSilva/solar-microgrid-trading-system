@@ -84,17 +84,25 @@ public class UserService : IUserService
     }
 
     // Updates contact fields and optionally role or password.
-    public async Task<UserDto> UpdateStaffAsync(string id, UpdateStaffRequestDto request, CancellationToken cancellationToken = default)
+    public async Task<UserDto> UpdateStaffAsync(string id, UpdateStaffRequestDto request, string? actorId, CancellationToken cancellationToken = default)
     {
         var user = await LoadStaffAsync(id, cancellationToken);
         ValidateStaffRole(request.Role);
         RequireText(request.FullName, "Full name is required.");
         RequireEmailFormat(request.Email);
 
+        var nextRole = request.Role.Trim();
+        if (!string.IsNullOrWhiteSpace(actorId)
+            && string.Equals(actorId, user.Id, StringComparison.Ordinal)
+            && !string.Equals(user.Role, nextRole, StringComparison.Ordinal))
+        {
+            throw new ApiException(StatusCodes.Status400BadRequest, ErrorCodes.ValidationError, "You cannot change your own role.");
+        }
+
         user.FullName = request.FullName.Trim();
         user.Email = request.Email?.Trim() ?? string.Empty;
         user.Phone = request.Phone?.Trim() ?? string.Empty;
-        user.Role = request.Role.Trim();
+        user.Role = nextRole;
 
         if (!string.IsNullOrWhiteSpace(request.Password))
         {
