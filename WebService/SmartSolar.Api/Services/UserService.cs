@@ -15,6 +15,8 @@ namespace SmartSolar.Api.Services;
 
 public class UserService : IUserService
 {
+    public const int MinPasswordLength = 8;
+
     private readonly IUserRepository _users;
     private readonly IPasswordService _passwords;
 
@@ -44,6 +46,7 @@ public class UserService : IUserService
         ValidateStaffRole(request.Role);
         RequireText(request.Username, "Username is required.");
         RequireText(request.Password, "Password is required.");
+        RequirePasswordLength(request.Password);
         RequireText(request.FullName, "Full name is required.");
 
         var username = request.Username.Trim();
@@ -92,6 +95,7 @@ public class UserService : IUserService
 
         if (!string.IsNullOrWhiteSpace(request.Password))
         {
+            RequirePasswordLength(request.Password);
             user.PasswordHash = _passwords.Hash(user, request.Password);
         }
 
@@ -149,6 +153,18 @@ public class UserService : IUserService
         if (string.IsNullOrWhiteSpace(value))
         {
             throw new ApiException(StatusCodes.Status400BadRequest, ErrorCodes.ValidationError, message);
+        }
+    }
+
+    // Rejects passwords shorter than the service minimum. The web form is not trusted.
+    private static void RequirePasswordLength(string password)
+    {
+        if (password.Length < MinPasswordLength)
+        {
+            throw new ApiException(
+                StatusCodes.Status400BadRequest,
+                ErrorCodes.ValidationError,
+                $"Password must be at least {MinPasswordLength} characters.");
         }
     }
 }
