@@ -60,7 +60,8 @@ Goal: by end of Day 2 the other three members can log in against a server they r
 "ASP.NET Core Web API controllers", "MongoDB C# driver quick start", "ASP.NET Core JWT bearer authentication", "role-based authorization ASP.NET Core", "host ASP.NET Core on Windows with IIS", "ASP.NET Core Module troubleshooting".
 
 ## Before you tell the group you're done
-- [ ] Every `.cs` file has the header block and inline method comments
-- [ ] No secrets in Git history
-- [ ] 401/403/200 verified for each role
-- [ ] Reachable from a second device on the LAN
+- [x] Every `.cs` file has the header block and inline method comments
+- [x] No secrets in Git history (`appsettings.Development.json` and `appsettings.Production.json` gitignored; IIS uses env vars)
+- [x] 401/403/200 verified for each role
+- [x] Reachable from a second device on the LAN (`0.0.0.0:5080` — see `docs/DEPLOYMENT.md`)
+- [ ] IIS on the Windows lab PC (Hosting Bundle, No Managed Code, firewall) — follow `docs/DEPLOYMENT.md`
