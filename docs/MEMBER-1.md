@@ -40,3 +40,6 @@ Hand the web skeleton + API client to M2 by **end of Day 4**.
 
 ## Viva prep: be able to explain
 How JWT works and where the secret lives, how the app pool and hosting bundle run your API, why NIC and username indexes are unique, what FAT service means, why clients never touch MongoDB, how passwords are stored.
+
+- [ ] IIS on the Windows lab PC (Hosting Bundle, No Managed Code, firewall) — follow `docs/DEPLOYMENT.md`
+
