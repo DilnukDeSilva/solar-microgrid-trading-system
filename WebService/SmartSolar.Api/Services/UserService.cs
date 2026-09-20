@@ -5,6 +5,7 @@
  * Created: 20/09/2026
  */
 
+using System.ComponentModel.DataAnnotations;
 using MongoDB.Driver;
 using SmartSolar.Api.Common;
 using SmartSolar.Api.DTOs;
@@ -48,6 +49,7 @@ public class UserService : IUserService
         RequireText(request.Password, "Password is required.");
         RequirePasswordLength(request.Password);
         RequireText(request.FullName, "Full name is required.");
+        RequireEmailFormat(request.Email);
 
         var username = request.Username.Trim();
         var existing = await _users.FindByUsernameOrNicAsync(username, cancellationToken);
@@ -87,6 +89,7 @@ public class UserService : IUserService
         var user = await LoadStaffAsync(id, cancellationToken);
         ValidateStaffRole(request.Role);
         RequireText(request.FullName, "Full name is required.");
+        RequireEmailFormat(request.Email);
 
         user.FullName = request.FullName.Trim();
         user.Email = request.Email?.Trim() ?? string.Empty;
@@ -153,6 +156,21 @@ public class UserService : IUserService
         if (string.IsNullOrWhiteSpace(value))
         {
             throw new ApiException(StatusCodes.Status400BadRequest, ErrorCodes.ValidationError, message);
+        }
+    }
+
+    // Rejects a non-blank value that is not an email address. Blank is allowed.
+    private static void RequireEmailFormat(string? email)
+    {
+        var trimmed = email?.Trim() ?? string.Empty;
+        if (trimmed.Length == 0)
+        {
+            return;
+        }
+
+        if (!new EmailAddressAttribute().IsValid(trimmed))
+        {
+            throw new ApiException(StatusCodes.Status400BadRequest, ErrorCodes.ValidationError, "Email is not a valid address.");
         }
     }
 
