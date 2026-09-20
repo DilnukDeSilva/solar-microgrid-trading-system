@@ -12,13 +12,13 @@
         <label asp-for="Username" class="form-label"></label>
         @if (Model.IsEdit)
         {
-            <input asp-for="Username" class="form-control" readonly />
+            <p class="form-control-plaintext mb-0">@Model.Username</p>
         }
         else
         {
             <input asp-for="Username" class="form-control" autocomplete="username" />
+            <span asp-validation-for="Username" class="text-danger"></span>
         }
-        <span asp-validation-for="Username" class="text-danger"></span>
     </div>
 
     <div class="mb-3">

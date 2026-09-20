@@ -91,13 +91,15 @@ public class UsersController : Controller
         }
     }
 
-    // Posts updates to PUT /api/users/{id}.
+    // Posts updates to PUT /api/users/{id}. Username is taken from the route id, not the form.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(string id, StaffUserForm form, CancellationToken cancellationToken)
     {
         form.IsEdit = true;
         form.Id = id;
+        form.Username = id;
+        ModelState.Remove(nameof(StaffUserForm.Username));
         if (!ModelState.IsValid)
         {
             return View(form);
