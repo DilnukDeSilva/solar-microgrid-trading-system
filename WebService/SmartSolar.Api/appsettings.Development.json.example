@@ -1,0 +1,18 @@
+{
+  "MongoDb": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "SmartSolar"
+  },
+  "Jwt": {
+    "Issuer": "SmartSolar.Api",
+    "Audience": "SmartSolar.Clients",
+    "ExpiryMinutes": 480,
+    "Key": "REPLACE_WITH_A_LONG_RANDOM_SECRET_AT_LEAST_32_CHARS"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}
