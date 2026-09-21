@@ -49,10 +49,6 @@ How JWT works and where the secret lives, how configuration reaches the API in p
 - [x] User management pages: list, create, edit, deactivate
 
 Still open:
-- [x] Commit and push Users API + web app on `feature/m1-service-auth-iis`
-- [ ] Open the pull request into `dev`, then tell the group to pull (M2 needs this first for IIS)
-- [x] Update `API-CONTRACT.md` with the staff rules (`USERNAME_EXISTS`, password minimum 8)
-- [x] Final pass: header block and method comments on every `.cs` file (66 files, 109 methods checked, none missing)
 - [ ] Support M2 on IIS setup (remote), then review the deployment doc
 
 Moved to Member 2 (needs a Windows PC): IIS deployment of the API and web app, LAN test with a real phone, smoke-test checklist.
