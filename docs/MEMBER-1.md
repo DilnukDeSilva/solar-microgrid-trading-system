@@ -1,4 +1,4 @@
-# Member 1: Service Foundation, Database, Auth, IIS/LAN, Web Login & Users
+# Member 1: Service Foundation, Database, Auth, Web Login & Users
 
 **You start first. Every other member is blocked on your Milestone 0.** Finish it in about 2 days and tell the group chat.
 
@@ -13,7 +13,7 @@
 4. MongoDB connection via configuration (no hard-coded strings) and the **four collections** with model classes matching the contract. Create indexes: unique NIC, unique username.
 5. Seed script or seeder that loads the seed data listed in the contract.
 6. Auth: `POST /auth/login`, JWT issuing and validation, password hashing, role-based authorization policies the others can reuse (`[Authorize(Roles=...)]`).
-7. `GET /health` reachable from another device on the LAN, after **publishing to IIS** (install .NET Hosting Bundle, app pool "No Managed Code", firewall inbound rule, static IP). Write the exact steps in `docs/DEPLOYMENT.md` as you go. That is your reproducible deployment mark.
+7. `GET /health` works locally and on the LAN from your Mac (Kestrel bound to all interfaces). **IIS publishing needs Windows, so it moved to Member 2** (see `MEMBER-2.md`, "IIS deployment"). You supply the working code, config example files and `docs/DEPLOYMENT.md`, and support M2 remotely.
 8. Announce the base URL and test credentials to the group.
 
 ## Milestone 1: your features (Day 3–6)
@@ -25,8 +25,8 @@
 Hand the web skeleton + API client to M2 by **end of Day 4**.
 
 ## Milestone 2 (Day 7+)
-- Help integrate everything on the IIS box, run a full LAN test with a real phone, and support the smoke test checklist.
-- Lead the report's architecture, DB design and deployment sections.
+- Support M2 during the IIS deployment (remote help, config questions, fixing API-side startup errors). M2 runs the IIS steps, since it needs a Windows PC.
+- Lead the report's architecture and DB design sections. M2 leads the deployment section, and you review it.
 
 ## Depends on / blocks
 - Depends on: nothing.
@@ -39,7 +39,20 @@ Hand the web skeleton + API client to M2 by **end of Day 4**.
 - A wrong-role call returns 403 with the contract error body.
 
 ## Viva prep: be able to explain
-How JWT works and where the secret lives, how the app pool and hosting bundle run your API, why NIC and username indexes are unique, what FAT service means, why clients never touch MongoDB, how passwords are stored.
+How JWT works and where the secret lives, how configuration reaches the API in production (environment variables, not source), why NIC and username indexes are unique, what FAT service means, why clients never touch MongoDB, how passwords are stored.
 
-- [ ] IIS on the Windows lab PC (Hosting Bundle, No Managed Code, firewall) — follow `docs/DEPLOYMENT.md`
+## Status
+- [x] Milestone 0 API (IIS hosting handed to Member 2, Windows only)
+- [x] Staff Users API: create, list, update, deactivate (Backoffice only)
+- [x] MVC + Bootstrap 5 skeleton: layout, login, session JWT, `ApiClient`, 403, logout
+- [x] Role redirects: Backoffice → admin dashboard, GridOperator → operations home
+- [x] User management pages: list, create, edit, deactivate
 
+Still open:
+- [x] Commit and push Users API + web app on `feature/m1-service-auth-iis`
+- [ ] Open the pull request into `dev`, then tell the group to pull (M2 needs this first for IIS)
+- [x] Update `API-CONTRACT.md` with the staff rules (`USERNAME_EXISTS`, password minimum 8)
+- [x] Final pass: header block and method comments on every `.cs` file (66 files, 109 methods checked, none missing)
+- [ ] Support M2 on IIS setup (remote), then review the deployment doc
+
+Moved to Member 2 (needs a Windows PC): IIS deployment of the API and web app, LAN test with a real phone, smoke-test checklist.

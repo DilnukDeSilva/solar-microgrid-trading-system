@@ -15,5 +15,6 @@ public static class ErrorCodes
     public const string NotFound = "NOT_FOUND";
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
     public const string AccountNotActive = "ACCOUNT_NOT_ACTIVE";
+    public const string UsernameExists = "USERNAME_EXISTS";
     public const string InternalError = "INTERNAL_ERROR";
 }

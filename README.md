@@ -11,6 +11,19 @@ Client-server system: C# Web API on IIS + MongoDB, an ASP.NET Core web app, and 
 
 Start with `docs/PLAN.md`, `docs/API-CONTRACT.md` and your `docs/MEMBER-<n>.md`.
 
+## Run locally (Member 1)
+
+JWT key is not in Git. Copy `WebService/SmartSolar.Api/appsettings.Development.json.example` to `appsettings.Development.json` (or `dotnet user-secrets`) then:
+
+```bash
+dotnet run --project "WebService/SmartSolar.Api/SmartSolar.Api.csproj" --launch-profile lan
+dotnet run --project "WebApp/SmartSolar.Web/SmartSolar.Web.csproj"
+```
+
+API: `http://localhost:5080/swagger` · Web: `http://localhost:5081` · Health: `http://localhost:5080/health`
+
+Seed: `admin / Admin@123` (Backoffice), `operator1 / Oper@123` (GridOperator).
+
 ## Git workflow
 - `main`: protected, submission-ready only. `dev`: integration branch.
 - Each member works on their own branch and merges to `dev` by pull request.

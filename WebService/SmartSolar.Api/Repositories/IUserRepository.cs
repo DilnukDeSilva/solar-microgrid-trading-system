@@ -22,4 +22,13 @@ public interface IUserRepository
 
     // Returns every user document.
     Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    // Returns Backoffice and GridOperator accounts for the staff Users API.
+    Task<IReadOnlyList<User>> GetStaffAsync(CancellationToken cancellationToken = default);
+
+    // Inserts a new user document.
+    Task InsertAsync(User user, CancellationToken cancellationToken = default);
+
+    // Replaces an existing user document by id.
+    Task ReplaceAsync(User user, CancellationToken cancellationToken = default);
 }
