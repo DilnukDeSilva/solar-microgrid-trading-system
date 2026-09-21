@@ -83,6 +83,12 @@ public static class ServiceCollectionExtensions
             throw new InvalidOperationException("Jwt:Key must be at least 32 characters. Set Jwt__Key, user-secrets, or appsettings.Development.json.");
         }
 
+        if (string.Equals(jwt.Key, JwtSettings.PlaceholderKey, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "Jwt:Key is still the example placeholder. Set a random secret of at least 32 characters via Jwt__Key, user-secrets, or appsettings.Production.json.");
+        }
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {

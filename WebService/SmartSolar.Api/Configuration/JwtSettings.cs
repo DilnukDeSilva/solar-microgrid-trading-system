@@ -11,6 +11,9 @@ public class JwtSettings
 {
     public const string SectionName = "Jwt";
 
+    // Value in the committed *.example files. AddSmartSolarJwt refuses to use it as a real key.
+    public const string PlaceholderKey = "REPLACE_WITH_A_LONG_RANDOM_SECRET_AT_LEAST_32_CHARS";
+
     public string Issuer { get; set; } = string.Empty;
 
     public string Audience { get; set; } = string.Empty;
