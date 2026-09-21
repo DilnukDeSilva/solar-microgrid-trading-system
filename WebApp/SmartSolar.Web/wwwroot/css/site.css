@@ -1,0 +1,17 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  background: #f7f8fa;
+}
+
+.navbar-brand {
+  letter-spacing: 0.02em;
+}

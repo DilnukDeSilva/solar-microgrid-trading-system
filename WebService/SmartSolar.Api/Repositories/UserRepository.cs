@@ -6,6 +6,7 @@
  */
 
 using MongoDB.Driver;
+using SmartSolar.Api.Common;
 using SmartSolar.Api.Data;
 using SmartSolar.Api.Models;
 
@@ -47,5 +48,24 @@ public class UserRepository : IUserRepository
     public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Users.Find(FilterDefinition<User>.Empty).ToListAsync(cancellationToken);
+    }
+
+    // Returns staff accounts only (Backoffice and GridOperator).
+    public async Task<IReadOnlyList<User>> GetStaffAsync(CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<User>.Filter.In(user => user.Role, new[] { RoleNames.Backoffice, RoleNames.GridOperator });
+        return await _context.Users.Find(filter).ToListAsync(cancellationToken);
+    }
+
+    // Inserts a new user document.
+    public Task InsertAsync(User user, CancellationToken cancellationToken = default)
+    {
+        return _context.Users.InsertOneAsync(user, cancellationToken: cancellationToken);
+    }
+
+    // Replaces an existing user document by id.
+    public Task ReplaceAsync(User user, CancellationToken cancellationToken = default)
+    {
+        return _context.Users.ReplaceOneAsync(existing => existing.Id == user.Id, user, cancellationToken: cancellationToken);
     }
 }

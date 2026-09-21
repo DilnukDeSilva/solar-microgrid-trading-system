@@ -70,6 +70,16 @@ If the IP changes after a router reboot, run `ipconfig getifaddr en0` and update
 
 To pin a static address on macOS: **System Settings → Wi-Fi → Details → TCP/IP → Configure IPv4: Manually**. Keep the same subnet and router the DHCP lease used.
 
+### MVC web app (Member 1 skeleton)
+
+The web client is `WebApp/SmartSolar.Web`. It stores the JWT in session and calls `http://localhost:5080/api/`. No MongoDB connection from the web project.
+
+```bash
+dotnet run --project "WebApp/SmartSolar.Web/SmartSolar.Web.csproj"
+```
+
+Open `http://localhost:5081`. Seed logins: `admin / Admin@123` (Backoffice dashboard + Users), `operator1 / Oper@123` (Operations home). Member 2 reuses `ApiClient` and the shared layout.
+
 ---
 
 ## Windows IIS host (marks / submission)

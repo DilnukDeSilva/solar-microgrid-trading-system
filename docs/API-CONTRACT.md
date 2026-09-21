@@ -14,7 +14,7 @@ Change this file only through a Git pull request that all four members approve. 
   - reservation status: `Pending` | `Approved` | `Cancelled` | `Completed`
 - Error body for every non-2xx: `{ "code": "RULE_12H", "message": "Updates need 12 hours notice" }`
   - Status codes: 400 validation, 401 no/invalid token, 403 wrong role, 404 missing, 409 business-rule conflict.
-  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`.
+  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `USERNAME_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`.
 - Every response is data only, with no HTML. All rules are enforced server-side; clients only display the error `message`.
 
 ## Data shapes
@@ -67,6 +67,12 @@ Notes:
 | Slot must be available (no double booking) | create, update | M2 |
 | Station deactivation blocked with Pending/Approved future reservations | station deactivate | M2 |
 | Deactivated prosumer reactivated by Backoffice only | reactivate | M2 |
+| Staff username must be unique → `USERNAME_EXISTS` (409) | create staff | M1 |
+| Staff role must be `Backoffice` or `GridOperator`; prosumers are not created here | create/update staff | M1 |
+| Password at least 8 characters; email must be valid when supplied → `VALIDATION_ERROR` | create/update staff | M1 |
+| A staff user cannot deactivate their own account or change their own role → `VALIDATION_ERROR` | deactivate, update staff | M1 |
+| A deactivated or missing account's token is rejected with 401 on every request, not only at login | JWT validation | M1 |
+| Login to a non-`Active` account → 409 `ACCOUNT_NOT_ACTIVE` | login | M1 |
 | Only `Active` prosumers may reserve | create | M2 |
 | New mobile accounts start `Pending` | register | M3 |
 | Only `Approved` reservations produce a QR; token is single-use | approve, verify, complete | M4 |

@@ -54,8 +54,8 @@ Each member writes the API endpoints for their own features, so everyone can def
 
 | Member | Owns | Marks it earns |
 |---|---|---|
-| **1: Service & Users** | Solution skeleton, Mongo connection and DB design and seed, JWT auth, Users API, **IIS deployment + LAN**, web login + role-based access + user management pages | Service Architecture (group), DB Design (group), Web login/roles/users |
-| **2: Web Operations** | Web pages + API for Prosumers, Microgrid Nodes (GPS, capacity, slots, deactivation rule), Reservations (7-day/12-hour rules), web UI polish and Home page | Node Mgmt, Slot Booking |
+| **1: Service & Users** | Solution skeleton, Mongo connection and DB design and seed, JWT auth, Users API, web login + role-based access + user management pages | Service Architecture (group), DB Design (group), Web login/roles/users |
+| **2: Deployment & Web Operations** | **IIS deployment + LAN (needs Windows)**, web pages + API for Prosumers, Microgrid Nodes (GPS, capacity, slots, deactivation rule), Reservations (7-day/12-hour rules), web UI polish and Home page | Node Mgmt, Slot Booking |
 | **3: Mobile Account & Booking** | Android project, **SQLite** layer, register/login/role home, edit/deactivate profile, create/update/cancel booking + summary screen, web "pending activation" view | Mobile Auth, Reservation workflow |
 | **4: Mobile Views, Map & Operator** | Dashboard (pending count, approved-future count), current/pending/history, search filters, **Google Maps** nearby nodes, **QR generation + scanning**, operator finalise flow | Booking views, Operator & Maps |
 
