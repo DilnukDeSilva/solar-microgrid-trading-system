@@ -35,6 +35,9 @@ public class Reservation
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime CreatedAt { get; set; }
 
+    [BsonIgnoreIfNull]
+    public string? CreatedBy { get; set; }
+
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime UpdatedAt { get; set; }
 
@@ -44,4 +47,21 @@ public class Reservation
 
     [BsonIgnoreIfNull]
     public string? CompletedBy { get; set; }
+
+    [BsonIgnoreIfNull]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+    public DateTime? ApprovedAt { get; set; }
+
+    [BsonIgnoreIfNull]
+    public string? ApprovedBy { get; set; }
+
+    [BsonIgnoreIfNull]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+    public DateTime? CancelledAt { get; set; }
+
+    [BsonIgnoreIfNull]
+    public string? CancelledBy { get; set; }
+
+    [BsonIgnoreIfNull]
+    public string? CancelReason { get; set; }
 }

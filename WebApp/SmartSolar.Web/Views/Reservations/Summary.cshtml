@@ -1,0 +1,56 @@
+@model ReservationSummaryViewModel
+@{
+    var r = Model.Reservation;
+    var (heading, colour) = Model.Done switch
+    {
+        "created" => ("Booking created", "success"),
+        "updated" => ("Booking updated", "primary"),
+        "cancelled" => ("Booking cancelled", "secondary"),
+        "approved" => ("Booking approved", "success"),
+        _ => ("Booking details", "dark")
+    };
+    ViewData["Title"] = heading;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-@colour">
+            <div class="card-header text-bg-@colour">
+                <h1 class="h4 mb-0">@heading</h1>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Reference</dt>
+                    <dd class="col-sm-8 font-monospace">@r.Id</dd>
+
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8"><partial name="_ReservationStatusBadge" model="r.Status" /></dd>
+
+                    <dt class="col-sm-4">Prosumer NIC</dt>
+                    <dd class="col-sm-8">@r.ProsumerNic</dd>
+
+                    <dt class="col-sm-4">Station</dt>
+                    <dd class="col-sm-8">@r.StationName</dd>
+
+                    <dt class="col-sm-4">Slot time</dt>
+                    <dd class="col-sm-8">@r.ScheduledAt.ToSriLankaText()</dd>
+
+                    <dt class="col-sm-4">Last updated</dt>
+                    <dd class="col-sm-8">@r.UpdatedAt.ToSriLankaText()</dd>
+
+                    @if (!string.IsNullOrEmpty(r.QrToken))
+                    {
+                        <dt class="col-sm-4">QR token</dt>
+                        <dd class="col-sm-8">
+                            <code class="text-break">@r.QrToken</code>
+                            <div class="form-text">The prosumer shows this as a QR code in the mobile app at the station.</div>
+                        </dd>
+                    }
+                </dl>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a class="btn btn-primary" asp-action="Create">Book another slot</a>
+            </div>
+        </div>
+    </div>
+</div>
