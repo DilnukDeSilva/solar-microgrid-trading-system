@@ -1,0 +1,119 @@
+/*
+ * File: ReservationsController.cs
+ * Description: Reservation endpoints for web and mobile. Only reads the request and calls ReservationService.
+ * Author: Janukshan S (IT22635266)
+ */
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SmartSolar.Api.Common;
+using SmartSolar.Api.DTOs;
+using SmartSolar.Api.Services;
+
+namespace SmartSolar.Api.Controllers;
+
+[ApiController]
+[Route("api/reservations")]
+[Authorize(Roles = RoleNames.Prosumer + "," + RoleNames.Backoffice + "," + RoleNames.GridOperator)]
+[Produces("application/json")]
+public class ReservationsController : ControllerBase
+{
+    private readonly IReservationService _reservations;
+
+    // Injects the service that holds the reservation rules.
+    public ReservationsController(IReservationService reservations)
+    {
+        _reservations = reservations;
+    }
+
+    // Lists the stations that are taking bookings, for the booking pickers.
+    [HttpGet("bookable-stations")]
+    [ProducesResponseType(typeof(IReadOnlyList<BookingStationDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<BookingStationDto>>> GetBookableStations(CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.GetBookableStationsAsync(cancellationToken));
+    }
+
+    // Lists free slots of a station inside the 7-day window. `date` is a Sri Lanka date (yyyy-MM-dd).
+    [HttpGet("available-slots")]
+    [ProducesResponseType(typeof(IReadOnlyList<AvailableSlotDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IReadOnlyList<AvailableSlotDto>>> GetAvailableSlots(
+        [FromQuery] string stationId,
+        [FromQuery] DateOnly? date,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.GetAvailableSlotsAsync(stationId, date, cancellationToken));
+    }
+
+    // Creates a booking. Staff send prosumerNic to book on behalf of a prosumer.
+    [HttpPost]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ReservationDto>> Create([FromBody] CreateReservationRequestDto request, CancellationToken cancellationToken)
+    {
+        var created = await _reservations.CreateAsync(request, CurrentActor(), cancellationToken);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+    }
+
+    // Returns one booking. Prosumers get 403 for someone else's booking.
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ReservationDto>> GetById(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.GetByIdAsync(id, CurrentActor(), cancellationToken));
+    }
+
+    // Moves a booking to another slot. An approved booking goes back to Pending.
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ReservationDto>> Update(string id, [FromBody] UpdateReservationRequestDto request, CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.UpdateAsync(id, request, CurrentActor(), cancellationToken));
+    }
+
+    // Cancels a booking. The body with a reason is optional.
+    [HttpPost("{id}/cancel")]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ReservationDto>> Cancel(
+        string id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] CancelReservationRequestDto? request,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.CancelAsync(id, request, CurrentActor(), cancellationToken));
+    }
+
+    // Approves a pending booking and returns it with its QR token. Staff only.
+    [HttpPost("{id}/approve")]
+    [Authorize(Roles = RoleNames.Backoffice + "," + RoleNames.GridOperator)]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ReservationDto>> Approve(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.ApproveAsync(id, CurrentActor(), cancellationToken));
+    }
+
+    // Builds the current user from the JWT claims.
+    private ReservationActor CurrentActor()
+    {
+        return new ReservationActor(
+            User.FindFirst("sub")?.Value ?? string.Empty,
+            User.FindFirst("role")?.Value ?? string.Empty,
+            User.FindFirst("nic")?.Value);
+    }
+}

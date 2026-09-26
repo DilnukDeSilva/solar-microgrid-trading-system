@@ -14,7 +14,7 @@ Change this file only through a Git pull request that all four members approve. 
   - reservation status: `Pending` | `Approved` | `Cancelled` | `Completed`
 - Error body for every non-2xx: `{ "code": "RULE_12H", "message": "Updates need 12 hours notice" }`
   - Status codes: 400 validation, 401 no/invalid token, 403 wrong role, 404 missing, 409 business-rule conflict.
-  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `USERNAME_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`.
+  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `USERNAME_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`, `INVALID_STATE` (action not allowed for the reservation's current status).
 - Every response is data only, with no HTML. All rules are enforced server-side; clients only display the error `message`.
 
 ## Data shapes
@@ -41,13 +41,14 @@ Change this file only through a Git pull request that all four members approve. 
 | `GET /prosumers?status&q`, `GET /prosumers/{nic}`, `POST /prosumers`, `PUT /prosumers/{nic}`, `POST /prosumers/{nic}/deactivate`, `POST /prosumers/{nic}/reactivate` (Backoffice only) | Backoffice/GridOperator | M2 |
 | `GET /stations`, `GET /stations/{id}`, `POST /stations`, `PUT /stations/{id}`, `POST /stations/{id}/deactivate` | Backoffice (read: all) | M2 |
 | `GET /stations/{id}/slots`, `POST /stations/{id}/slots`, `PUT /slots/{id}`, `DELETE /slots/{id}` | Backoffice/GridOperator | M2 |
-| `POST /reservations`, `PUT /reservations/{id}`, `POST /reservations/{id}/cancel`, `GET /reservations/{id}` | Prosumer (own) / Operator | M2 |
+| `POST /reservations` `{stationId, slotId, prosumerNic?}` (nic for staff only), `PUT /reservations/{id}` `{slotId, stationId?}`, `POST /reservations/{id}/cancel` `{reason?}`, `GET /reservations/{id}` | Prosumer (own) / Backoffice / GridOperator | M3 |
 | `POST /auth/register` (prosumer, creates `Pending`) | anon | M3 |
 | `GET /me`, `PUT /me`, `POST /me/request-deactivation` | Prosumer | M3 |
 | `GET /prosumers/pending`, `POST /prosumers/{nic}/activate` | Backoffice | M3 |
 | `GET /reservations?status&from&to&q&nic` (list, history, filters) | Prosumer (own) / staff (all) | M4 |
 | `GET /reservations/pending` | Operator | M4 |
-| `POST /reservations/{id}/approve` → sets `qrToken` | Operator/Backoffice | M4 |
+| `POST /reservations/{id}/approve` → sets `qrToken` | Operator/Backoffice | M3 |
+| `GET /reservations/bookable-stations` → `[{id, name}]` (Active stations), `GET /reservations/available-slots?stationId&date` → `[{id, stationId, startTime, endTime}]` (free slots inside the 7-day window; `date` is a Sri Lanka date `yyyy-MM-dd`) | any auth | M3 |
 | `POST /reservations/verify-qr` `{qrToken}` → reservation details | Operator | M4 |
 | `POST /reservations/{id}/complete` | Operator | M4 |
 | `GET /dashboard/me` → `{pendingCount, approvedFutureCount, nextReservation}` | Prosumer | M4 |
@@ -62,9 +63,11 @@ Notes:
 
 | Rule | Where | Owner |
 |---|---|---|
-| Reservation `scheduledAt` ≤ now + 7 days and in the future | create | M2 |
-| Update/cancel only if `scheduledAt` − now ≥ 12 h | update, cancel | M2 |
-| Slot must be available (no double booking) | create, update | M2 |
+| Reservation `scheduledAt` ≤ now + 7 days and in the future → `RULE_7DAYS` | create, update (new slot) | M3 |
+| Update/cancel only if `scheduledAt` − now ≥ 12 h → `RULE_12H` | update, cancel | M3 |
+| Slot must be available (no double booking) → `SLOT_TAKEN` | create, update | M3 |
+| Only `Pending`/`Approved` can be updated or cancelled; only future `Pending` can be approved → `INVALID_STATE` | update, cancel, approve | M3 |
+| Updating an `Approved` reservation sets it back to `Pending` and clears `qrToken` | update | M3 |
 | Station deactivation blocked with Pending/Approved future reservations | station deactivate | M2 |
 | Deactivated prosumer reactivated by Backoffice only | reactivate | M2 |
 | Staff username must be unique → `USERNAME_EXISTS` (409) | create staff | M1 |
@@ -73,7 +76,7 @@ Notes:
 | A staff user cannot deactivate their own account or change their own role → `VALIDATION_ERROR` | deactivate, update staff | M1 |
 | A deactivated or missing account's token is rejected with 401 on every request, not only at login | JWT validation | M1 |
 | Login to a non-`Active` account → 409 `ACCOUNT_NOT_ACTIVE` | login | M1 |
-| Only `Active` prosumers may reserve | create | M2 |
+| Only `Active` prosumers may reserve | create | M3 |
 | New mobile accounts start `Pending` | register | M3 |
 | Only `Approved` reservations produce a QR; token is single-use | approve, verify, complete | M4 |
 

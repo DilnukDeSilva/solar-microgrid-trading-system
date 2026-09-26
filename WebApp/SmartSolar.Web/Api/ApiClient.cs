@@ -12,7 +12,7 @@ using SmartSolar.Web.Services;
 
 namespace SmartSolar.Web.Api;
 
-public class ApiClient
+public partial class ApiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {

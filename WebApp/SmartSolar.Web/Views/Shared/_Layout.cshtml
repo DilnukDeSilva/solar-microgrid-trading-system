@@ -35,6 +35,12 @@
                                 <a class="nav-link" asp-controller="Operations" asp-action="Index">Operations</a>
                             </li>
                         }
+                        @if (User.IsInRole(RoleNames.Backoffice) || User.IsInRole(RoleNames.GridOperator))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Reservations" asp-action="Create">Book a slot</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)

@@ -1,64 +1,51 @@
-# Member 2: IIS/LAN Deployment, Web Operations: Prosumers, Microgrid Nodes, Slots, Reservations
+# Member 2: Microgrid Nodes, Slots & Maps (+ IIS hosting)
 
-## Marks you own
-- Individual: Microgrid Node Management (5), Slot Booking Management (5), share of Web app features (18), Web ↔ API (2)
-- Group: UI/UX web interfaces + Home page (Bootstrap 5), **Hosting the Web API on IIS (part of Service Architecture, 4 marks)**, reproducible deployment (Documentation & Deployment)
+Branch: `feature/m2-nodes-maps-iis` · Module owner for solar grid hubs (stations), their battery slots and schedules, the nearby-stations map, and the IIS deployment.
 
-## Blocked until
-- M1's Milestone 0 (login, DB, base URL). Until then, work from the contract with mock JSON and design the pages.
-- M1's web skeleton + API client (about Day 4). Before it lands, build the API side, which does not need it.
+## Marks you lead
+- **Individual:** Microgrid node management (5), **Show nearby stations on the map (5)**, **Google Maps API integration (3)**, SQLite (shared), Web↔API (2), Mobile↔API (2).
+- **Group:** **Hosting the Web API on IIS (4)**, reproducible deployment (Documentation), use case diagram.
 
-## Milestone 0: IIS deployment (moved from Member 1; do this first)
-Member 1 develops on a Mac, and IIS runs only on Windows, so you own the hosting. **Do this as soon as M1's pull request is merged into `dev`, ideally within half a day.** M3 and M4 need a reachable server, and the group is blocked on it.
+## Scope
 
-You need a Windows PC or laptop (yours, a lab machine, or a VM). Follow `docs/DEPLOYMENT.md`, which M1 wrote from the Mac side, and fix it wherever the real Windows run differs.
+### IIS + LAN (first, done by **Sun 27, 12:00**)
+Follow `docs/DEPLOYMENT.md` on a Windows PC: .NET **10** Hosting Bundle, publish, IIS site with the app pool set to *No Managed Code*, config through `appsettings.Production.json` or environment variables (never in Git), static IP, firewall inbound rule, MongoDB reachable. Host the **web app** as a second site. Announce the base URL. Update `DEPLOYMENT.md` with what actually happened, with screenshots.
 
-1. Install MongoDB Community on the Windows machine (or point the API at a reachable MongoDB) and confirm it runs.
-2. Enable IIS. Install the **.NET Hosting Bundle** that matches the API's target framework (`net10.0`), then restart IIS.
-3. Publish the API from `WebService/SmartSolar.Api` (framework-dependent). The publish profile `IISFolder.pubxml` and `web.config` are already in the repo.
-4. Create an IIS site for the publish folder with the app pool set to **No Managed Code**. Give the app pool identity read access to the folder.
-5. Configuration must not be in Git. Copy `appsettings.Production.json.example` to `appsettings.Production.json` on the server (or set environment variables) with the Mongo connection string and a real JWT key (32+ characters).
-6. Give the PC a **static LAN IP** (or a DHCP reservation), bind the site to all IPs on the chosen port, and add a **Windows Firewall inbound rule** for that port.
-7. Test: `/health` on the PC, then from a phone on the same Wi-Fi, then `POST /api/auth/login` from Swagger through IIS. Seed data loads on first start, so MongoDB must be reachable then.
-8. Publish the web app (`WebApp/SmartSolar.Web`) as a second IIS site or app, with `Api:BaseUrl` set to the API's LAN address.
-9. Fix the common errors: 500.19 (missing hosting bundle or module), 502.5 (app crashed at startup, check the `logs` folder), Mongo unreachable from the app pool, firewall blocking the port.
-10. Message the group with the base URL, Swagger URL and seed logins (see the announcement text in `docs/DEPLOYMENT.md`).
-11. Write and run the **smoke-test checklist**: health, login for each role, 401 and 403 checks, create a staff user in the web app, and a real phone calling the API over the LAN. Keep screenshots for the report.
+### API (`StationsController`, `SlotsController`, `StationService`, `SlotService`)
+| Endpoint | Role | Rules |
+|---|---|---|
+| `GET /api/stations`, `GET /api/stations/{id}` | any logged-in role | |
+| `POST /api/stations`, `PUT /api/stations/{id}` | Backoffice | name required; lat −90..90, lng −180..180; capacity > 0; battery slots ≥ 1; schedule open < close |
+| `POST /api/stations/{id}/deactivate` | Backoffice | **409 `STATION_HAS_RESERVATIONS`** if any future `Pending`/`Approved` reservation exists; `POST /{id}/activate` to undo |
+| `GET /api/stations/{id}/slots?date` | any | |
+| `POST /api/stations/{id}/slots`, `PUT /api/slots/{id}`, `DELETE /api/slots/{id}` | Backoffice, GridOperator | slot inside the station schedule; no overlapping slots beyond `batterySlotsTotal`; cannot delete or close a slot that has an active reservation |
+| `PUT /api/slots/{id}/availability` | GridOperator | the operator updates battery slot availability (from the project scenario) |
+| `GET /api/stations/nearby?lat&lng&radiusKm` | any | server computes the distance (haversine), returns only `Active` stations sorted by distance, with the free slot count |
 
-M1 helps remotely (screen share, config questions, API startup errors). If an error is in the API code, ask M1 to fix it on their branch.
+Add the repository write methods you need to `StationRepository` / `SlotRepository`, and a 2dsphere or lat/lng index if you use a Mongo geo query.
 
-Done when: a phone on the same Wi-Fi opens `http://<pc-ip>:<port>/health`, and M3 and M4 confirm they can log in.
+### Web
+Node list (status badges, search) · create/edit with GPS fields (optionally a small map preview) · deactivate with the server's 409 message shown clearly · schedule editor · slot management per node with an availability toggle for operators.
 
-## Milestone 1: API first (Day 2–5)
-Write your endpoints in your own controller and service files.
-1. **Stations**: create (name, GPS, capacity kWh, battery slots), update, list, get, deactivate. Deactivate must return `409 STATION_HAS_RESERVATIONS` if any Pending/Approved future reservation exists.
-2. **Slots**: create/update/delete slots for a station and update the schedule.
-3. **Prosumers admin**: create, update, list/search, deactivate, and reactivate. Reactivation is **Backoffice only**, and a GridOperator gets 403.
-4. **Reservations core** (`POST`, `PUT`, `cancel`, `GET by id`) with the rules below. **M3 needs these by Day 5**, so build them first.
-   - 7-day window and not in the past → `RULE_7DAYS`
-   - update/cancel at least 12 h before `scheduledAt` → `RULE_12H`
-   - slot must be free → `SLOT_TAKEN`; booking a slot marks it unavailable and cancelling frees it
-   - prosumer must be `Active` → `ACCOUNT_NOT_ACTIVE`
-   Rules live in **one service class** that both web and mobile reach through the API.
+### Android
+- **Nearby stations map:** Google Maps SDK, location permission flow (and a fallback to Colombo if denied), markers from `/stations/nearby`, tap a marker to open a bottom sheet with name, capacity, free slots, schedule and a **"Book here"** button that opens M3's booking screen with the station id.
+- **Station list** screen (a list alternative to the map).
+- Maps API key kept in `local.properties` / manifest placeholder, **not committed**.
 
-## Milestone 2: web pages (Day 4–8)
-- Nodes: list, create (with GPS fields), edit, deactivate with the server's error shown clearly.
-- Slots: manage per node.
-- Prosumers: list/search, create, edit, deactivate, reactivate (button shown to Backoffice only).
-- Reservations: list, create, edit, cancel, showing the server's rule messages.
-- Home (index) page: polished landing with role-aware quick links. UI consistency across the whole web app: Bootstrap 5, responsive, no page left unfinished.
+### SQLite
+`stations_cache(id PK, name, lat, lng, capacity_kwh, battery_slots, status, synced_at)`: the map and list show cached stations when offline, and it refreshes on open. This is "reference data persists in SQLite" from the marking scheme.
 
-## Depends on / blocks
-- Depends on: M1 (auth, DB, web skeleton, and the merged pull request for the IIS deployment).
-- Blocks: M3 and M4 (a reachable server for real login and LAN tests), plus M3 (reservation endpoints for the mobile booking flow) and M4 (approval, history and QR need reservations to exist). Ship the reservation endpoints early.
+## Roadmap
+| When | Do |
+|---|---|
+| Sat 26 PM | IIS setup on Windows. Station service + endpoints. |
+| Sun 27 | **12:00: IIS live and announced.** Slots + availability + nearby endpoints merged by 20:00. |
+| Mon 28 | Web node, schedule and slot pages. Get the Maps key working in the Android shell. |
+| Tue 29 | Android map, bottom sheet, list, SQLite cache. 18:00 team LAN test is on your machine. |
+| Wed 30 | Deployment section + use case diagram, screenshots, your code in the report, video segment. |
 
 ## Definition of done
-- Try every rule with a boundary case: exactly 7 days, 6 h 59 m vs 12 h 01 m, double booking, deactivating a station with and without reservations. Save these as your test evidence for the report.
-- Comment header on every `.cs` file, inline comment at the start of every method.
-- The web app contains no rule logic, only a call and a display of the response.
+Deactivate a node with and without reservations (both results captured); overlapping slots rejected; markers come from the API, not a fixed list; a real phone reaches IIS by IP.
 
-## Viva prep: be able to explain
-How the ASP.NET Core Module and app pool run the API, why "No Managed Code", what the Hosting Bundle does, and how configuration and secrets reach the app on IIS. Also: why rules sit in the service layer and not the controller or UI, how you compare times in UTC, how double booking is prevented under concurrent requests, how the 409 error reaches the screen.
-
-## Report
-You write the **deployment** section of the report (steps, screenshots of IIS, firewall rule, phone test, and the smoke-test results). M1 reviews it.
+## Viva prep
+What the ASP.NET Core Module and the Hosting Bundle do, why *No Managed Code*, how secrets reach IIS, how the haversine distance works, how the map gets its data, and why deactivation is checked on the server.

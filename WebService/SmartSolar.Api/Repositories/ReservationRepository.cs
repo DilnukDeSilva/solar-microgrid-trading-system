@@ -32,4 +32,21 @@ public class ReservationRepository : IReservationRepository
     {
         return await _context.Reservations.Find(reservation => reservation.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
+
+    // Inserts a new reservation.
+    public async Task InsertAsync(Reservation reservation, CancellationToken cancellationToken = default)
+    {
+        await _context.Reservations.InsertOneAsync(reservation, cancellationToken: cancellationToken);
+    }
+
+    // Saves a changed reservation only if nobody else changed it since it was loaded.
+    public async Task<bool> TryReplaceAsync(Reservation reservation, DateTime loadedUpdatedAt, CancellationToken cancellationToken = default)
+    {
+        var result = await _context.Reservations.ReplaceOneAsync(
+            r => r.Id == reservation.Id && r.UpdatedAt == loadedUpdatedAt,
+            reservation,
+            cancellationToken: cancellationToken);
+
+        return result.ModifiedCount == 1;
+    }
 }

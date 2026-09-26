@@ -16,4 +16,13 @@ public interface ISlotRepository
 
     // Loads one slot by id.
     Task<Slot?> FindByIdAsync(string id, CancellationToken cancellationToken = default);
+
+    // Returns free slots of a station that start after `from` and no later than `to`.
+    Task<IReadOnlyList<Slot>> GetFreeAsync(string stationId, DateTime from, DateTime to, CancellationToken cancellationToken = default);
+
+    // Marks a free slot as taken. Returns false if someone else already has it.
+    Task<bool> TryClaimAsync(string id, CancellationToken cancellationToken = default);
+
+    // Marks a slot as free again.
+    Task ReleaseAsync(string id, CancellationToken cancellationToken = default);
 }
