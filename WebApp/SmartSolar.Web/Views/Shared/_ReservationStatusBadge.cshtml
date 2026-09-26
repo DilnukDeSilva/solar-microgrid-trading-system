@@ -1,0 +1,11 @@
+@model string
+@{
+    var colour = Model switch
+    {
+        "Pending" => "text-bg-warning",
+        "Approved" => "text-bg-success",
+        "Completed" => "text-bg-primary",
+        _ => "text-bg-secondary"
+    };
+}
+<span class="badge @colour">@Model</span>

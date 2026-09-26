@@ -19,6 +19,9 @@ public class ReservationService : IReservationService
     public const int BookingWindowDays = 7;
     public const int ChangeNoticeHours = 12;
 
+    // Sri Lanka has no daylight saving, so local time is always UTC+05:30.
+    private static readonly TimeSpan SriLankaOffset = new(5, 30, 0);
+
     private readonly IReservationRepository _reservations;
     private readonly ISlotRepository _slots;
     private readonly IStationRepository _stations;
@@ -35,6 +38,44 @@ public class ReservationService : IReservationService
         _slots = slots;
         _stations = stations;
         _users = users;
+    }
+
+    // Returns the stations that are taking bookings.
+    public async Task<IReadOnlyList<BookingStationDto>> GetBookableStationsAsync(CancellationToken cancellationToken = default)
+    {
+        var stations = await _stations.GetAllAsync(cancellationToken);
+        return stations
+            .Where(station => station.Status == StationStatuses.Active)
+            .OrderBy(station => station.Name)
+            .Select(station => new BookingStationDto { Id = station.Id, Name = station.Name })
+            .ToList();
+    }
+
+    // Returns free slots of a station inside the booking window, optionally for one Sri Lanka date.
+    public async Task<IReadOnlyList<AvailableSlotDto>> GetAvailableSlotsAsync(string stationId, DateOnly? date, CancellationToken cancellationToken = default)
+    {
+        var station = await LoadStationAsync(stationId, cancellationToken);
+        EnsureStationActive(station);
+
+        var now = DateTime.UtcNow;
+        var from = now;
+        var to = now.AddDays(BookingWindowDays);
+
+        if (date is not null)
+        {
+            // The client picks a local date, so convert that day's start and end to UTC.
+            var dayStart = date.Value.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc) - SriLankaOffset;
+            from = dayStart > from ? dayStart : from;
+            to = dayStart.AddDays(1) < to ? dayStart.AddDays(1) : to;
+        }
+
+        if (from >= to)
+        {
+            return Array.Empty<AvailableSlotDto>();
+        }
+
+        var slots = await _slots.GetFreeAsync(station.Id, from, to, cancellationToken);
+        return slots.Select(AvailableSlotDto.From).ToList();
     }
 
     // Books a free slot for a prosumer, or for the given NIC when staff book on their behalf.

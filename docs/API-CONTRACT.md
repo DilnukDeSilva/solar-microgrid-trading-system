@@ -48,6 +48,7 @@ Change this file only through a Git pull request that all four members approve. 
 | `GET /reservations?status&from&to&q&nic` (list, history, filters) | Prosumer (own) / staff (all) | M4 |
 | `GET /reservations/pending` | Operator | M4 |
 | `POST /reservations/{id}/approve` → sets `qrToken` | Operator/Backoffice | M3 |
+| `GET /reservations/bookable-stations` → `[{id, name}]` (Active stations), `GET /reservations/available-slots?stationId&date` → `[{id, stationId, startTime, endTime}]` (free slots inside the 7-day window; `date` is a Sri Lanka date `yyyy-MM-dd`) | any auth | M3 |
 | `POST /reservations/verify-qr` `{qrToken}` → reservation details | Operator | M4 |
 | `POST /reservations/{id}/complete` | Operator | M4 |
 | `GET /dashboard/me` → `{pendingCount, approvedFutureCount, nextReservation}` | Prosumer | M4 |

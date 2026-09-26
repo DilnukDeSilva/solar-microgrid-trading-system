@@ -27,6 +27,27 @@ public class ReservationsController : ControllerBase
         _reservations = reservations;
     }
 
+    // Lists the stations that are taking bookings, for the booking pickers.
+    [HttpGet("bookable-stations")]
+    [ProducesResponseType(typeof(IReadOnlyList<BookingStationDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<BookingStationDto>>> GetBookableStations(CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.GetBookableStationsAsync(cancellationToken));
+    }
+
+    // Lists free slots of a station inside the 7-day window. `date` is a Sri Lanka date (yyyy-MM-dd).
+    [HttpGet("available-slots")]
+    [ProducesResponseType(typeof(IReadOnlyList<AvailableSlotDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IReadOnlyList<AvailableSlotDto>>> GetAvailableSlots(
+        [FromQuery] string stationId,
+        [FromQuery] DateOnly? date,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.GetAvailableSlotsAsync(stationId, date, cancellationToken));
+    }
+
     // Creates a booking. Staff send prosumerNic to book on behalf of a prosumer.
     [HttpPost]
     [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status201Created)]
