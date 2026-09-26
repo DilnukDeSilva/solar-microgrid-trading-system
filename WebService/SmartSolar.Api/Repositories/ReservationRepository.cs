@@ -32,4 +32,10 @@ public class ReservationRepository : IReservationRepository
     {
         return await _context.Reservations.Find(reservation => reservation.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
+
+    // Inserts a new reservation.
+    public async Task InsertAsync(Reservation reservation, CancellationToken cancellationToken = default)
+    {
+        await _context.Reservations.InsertOneAsync(reservation, cancellationToken: cancellationToken);
+    }
 }
