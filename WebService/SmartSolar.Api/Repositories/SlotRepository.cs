@@ -33,6 +33,15 @@ public class SlotRepository : ISlotRepository
         return await _context.Slots.Find(slot => slot.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
 
+    // Returns free slots of a station that start after `from` and no later than `to`.
+    public async Task<IReadOnlyList<Slot>> GetFreeAsync(string stationId, DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        return await _context.Slots
+            .Find(slot => slot.StationId == stationId && slot.IsAvailable && slot.StartTime > from && slot.StartTime <= to)
+            .SortBy(slot => slot.StartTime)
+            .ToListAsync(cancellationToken);
+    }
+
     // Marks a free slot as taken. Returns false if someone else already has it.
     public async Task<bool> TryClaimAsync(string id, CancellationToken cancellationToken = default)
     {

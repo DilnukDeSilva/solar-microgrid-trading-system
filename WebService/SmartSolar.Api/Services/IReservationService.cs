@@ -10,6 +10,12 @@ namespace SmartSolar.Api.Services;
 
 public interface IReservationService
 {
+    // Returns the stations that are taking bookings.
+    Task<IReadOnlyList<BookingStationDto>> GetBookableStationsAsync(CancellationToken cancellationToken = default);
+
+    // Returns free slots of a station inside the booking window, optionally for one Sri Lanka date.
+    Task<IReadOnlyList<AvailableSlotDto>> GetAvailableSlotsAsync(string stationId, DateOnly? date, CancellationToken cancellationToken = default);
+
     // Books a free slot for a prosumer, or for the given NIC when staff book on their behalf.
     Task<ReservationDto> CreateAsync(CreateReservationRequestDto request, ReservationActor actor, CancellationToken cancellationToken = default);
 
