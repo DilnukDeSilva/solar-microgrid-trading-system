@@ -6,6 +6,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SmartSolar.Api.Common;
 using SmartSolar.Api.DTOs;
 using SmartSolar.Api.Services;
@@ -46,6 +47,44 @@ public class ReservationsController : ControllerBase
     public async Task<ActionResult<ReservationDto>> GetById(string id, CancellationToken cancellationToken)
     {
         return Ok(await _reservations.GetByIdAsync(id, CurrentActor(), cancellationToken));
+    }
+
+    // Moves a booking to another slot. An approved booking goes back to Pending.
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ReservationDto>> Update(string id, [FromBody] UpdateReservationRequestDto request, CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.UpdateAsync(id, request, CurrentActor(), cancellationToken));
+    }
+
+    // Cancels a booking. The body with a reason is optional.
+    [HttpPost("{id}/cancel")]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ReservationDto>> Cancel(
+        string id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] CancelReservationRequestDto? request,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.CancelAsync(id, request, CurrentActor(), cancellationToken));
+    }
+
+    // Approves a pending booking and returns it with its QR token. Staff only.
+    [HttpPost("{id}/approve")]
+    [Authorize(Roles = RoleNames.Backoffice + "," + RoleNames.GridOperator)]
+    [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ReservationDto>> Approve(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await _reservations.ApproveAsync(id, CurrentActor(), cancellationToken));
     }
 
     // Builds the current user from the JWT claims.

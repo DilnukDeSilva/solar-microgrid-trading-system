@@ -15,4 +15,13 @@ public interface IReservationService
 
     // Returns one reservation. Prosumers can only read their own.
     Task<ReservationDto> GetByIdAsync(string id, ReservationActor actor, CancellationToken cancellationToken = default);
+
+    // Moves a booking to another free slot. Needs 12 hours notice.
+    Task<ReservationDto> UpdateAsync(string id, UpdateReservationRequestDto request, ReservationActor actor, CancellationToken cancellationToken = default);
+
+    // Cancels a booking and frees its slot. Needs 12 hours notice.
+    Task<ReservationDto> CancelAsync(string id, CancelReservationRequestDto? request, ReservationActor actor, CancellationToken cancellationToken = default);
+
+    // Approves a pending booking and gives it a QR token.
+    Task<ReservationDto> ApproveAsync(string id, ReservationActor actor, CancellationToken cancellationToken = default);
 }
