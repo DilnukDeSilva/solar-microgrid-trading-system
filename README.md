@@ -31,10 +31,10 @@ Seed: `admin / Admin@123` (Backoffice), `operator1 / Oper@123` (GridOperator).
 
 | Branch | Member |
 |---|---|
-| `feature/m1-service-auth-iis` | Member 1 |
-| `feature/m2-web-operations` | Member 2 |
-| `feature/m3-mobile-account-booking` | Member 3 |
-| `feature/m4-mobile-maps-qr-operator` | Member 4 |
+| `feature/service-auth-iis` | Member 1 |
+| `feature/web-operations` | Member 2 |
+| `feature/mobile-account-booking` | Member 3 |
+| `feature/mobile-maps-qr-operator` | Member 4 |
 
 ## TODO before submission
 - [ ] Individual contributions per member (with links to commits)
