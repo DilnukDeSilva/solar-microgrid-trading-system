@@ -55,7 +55,16 @@ public class MongoIndexInitializer
                     new CreateIndexOptions { Name = "ix_reservations_scheduledAt" }),
                 new CreateIndexModel<Reservation>(
                     Builders<Reservation>.IndexKeys.Ascending(r => r.Status),
-                    new CreateIndexOptions { Name = "ix_reservations_status" })
+                    new CreateIndexOptions { Name = "ix_reservations_status" }),
+                new CreateIndexModel<Reservation>(
+                    Builders<Reservation>.IndexKeys.Ascending(r => r.ProsumerNic).Ascending(r => r.ScheduledAt),
+                    new CreateIndexOptions { Name = "ix_reservations_prosumerNic_scheduledAt" }),
+                new CreateIndexModel<Reservation>(
+                    Builders<Reservation>.IndexKeys.Ascending(r => r.Status).Ascending(r => r.ScheduledAt),
+                    new CreateIndexOptions { Name = "ix_reservations_status_scheduledAt" }),
+                new CreateIndexModel<Reservation>(
+                    Builders<Reservation>.IndexKeys.Ascending(r => r.QrToken),
+                    new CreateIndexOptions { Name = "ux_reservations_qrToken", Unique = true, Sparse = true })
             },
             cancellationToken);
 

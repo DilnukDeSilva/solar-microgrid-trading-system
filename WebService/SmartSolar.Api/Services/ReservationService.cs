@@ -1,9 +1,11 @@
 /*
  * File: ReservationService.cs
- * Description: Reservation business rules (7-day window, slot availability, active accounts and ownership).
+ * Description: Reservation business rules: 7-day window, 12-hour notice, slot availability, status changes and QR approval.
  * Author: Janukshan S (IT22635266)
  */
 
+using System.Buffers.Text;
+using System.Security.Cryptography;
 using MongoDB.Bson;
 using SmartSolar.Api.Common;
 using SmartSolar.Api.DTOs;
@@ -15,6 +17,7 @@ namespace SmartSolar.Api.Services;
 public class ReservationService : IReservationService
 {
     public const int BookingWindowDays = 7;
+    public const int ChangeNoticeHours = 12;
 
     private readonly IReservationRepository _reservations;
     private readonly ISlotRepository _slots;
@@ -49,19 +52,12 @@ public class ReservationService : IReservationService
 
         RequireText(nic, "Prosumer NIC is required when booking on behalf of a prosumer.");
 
-        var prosumer = await LoadProsumerAsync(nic!, cancellationToken);
-        var station = await LoadStationAsync(request.StationId.Trim(), cancellationToken);
-        var slot = await LoadSlotAsync(request.SlotId.Trim(), station.Id, cancellationToken);
-
         var now = DateTime.UtcNow;
-        EnsureWithinBookingWindow(slot.StartTime, now);
+        var prosumer = await LoadProsumerAsync(nic!, cancellationToken);
+        var (station, slot) = await LoadBookableSlotAsync(request.StationId.Trim(), request.SlotId.Trim(), now, cancellationToken);
         EnsureProsumerActive(prosumer);
-        EnsureStationActive(station);
 
-        if (!await _slots.TryClaimAsync(slot.Id, cancellationToken))
-        {
-            throw new ApiException(StatusCodes.Status409Conflict, ErrorCodes.SlotTaken, "This slot has already been booked. Please pick another one.");
-        }
+        await ClaimSlotAsync(slot.Id, cancellationToken);
 
         var reservation = new Reservation
         {
@@ -96,6 +92,126 @@ public class ReservationService : IReservationService
     {
         var reservation = await LoadReservationAsync(id, cancellationToken);
         EnsureCanAccess(reservation, actor);
+        return ReservationDto.From(reservation);
+    }
+
+    // Moves a booking to another free slot. Needs 12 hours notice.
+    public async Task<ReservationDto> UpdateAsync(string id, UpdateReservationRequestDto request, ReservationActor actor, CancellationToken cancellationToken = default)
+    {
+        RequireText(request.SlotId, "Slot is required.");
+
+        var reservation = await LoadReservationAsync(id, cancellationToken);
+        EnsureCanAccess(reservation, actor);
+        EnsureChangeable(reservation);
+
+        var now = DateTime.UtcNow;
+        EnsureTwelveHoursNotice(reservation, now);
+
+        var stationId = string.IsNullOrWhiteSpace(request.StationId) ? reservation.StationId : request.StationId.Trim();
+        var slotId = request.SlotId.Trim();
+        if (slotId == reservation.SlotId)
+        {
+            throw new ApiException(StatusCodes.Status400BadRequest, ErrorCodes.ValidationError, "Please choose a different slot from the one already booked.");
+        }
+
+        var (station, slot) = await LoadBookableSlotAsync(stationId, slotId, now, cancellationToken);
+        await ClaimSlotAsync(slot.Id, cancellationToken);
+
+        var oldSlotId = reservation.SlotId;
+        var loadedUpdatedAt = reservation.UpdatedAt;
+
+        reservation.StationId = station.Id;
+        reservation.StationName = station.Name;
+        reservation.SlotId = slot.Id;
+        reservation.ScheduledAt = slot.StartTime;
+        reservation.UpdatedAt = now;
+
+        // A changed booking needs to be approved again, and the old QR must stop working.
+        reservation.Status = ReservationStatuses.Pending;
+        reservation.QrToken = null;
+        reservation.ApprovedAt = null;
+        reservation.ApprovedBy = null;
+
+        var saved = false;
+        try
+        {
+            saved = await _reservations.TryReplaceAsync(reservation, loadedUpdatedAt, cancellationToken);
+        }
+        finally
+        {
+            if (!saved)
+            {
+                await _slots.ReleaseAsync(slot.Id, CancellationToken.None);
+            }
+        }
+
+        if (!saved)
+        {
+            throw ChangedBySomeoneElse();
+        }
+
+        await _slots.ReleaseAsync(oldSlotId, CancellationToken.None);
+        return ReservationDto.From(reservation);
+    }
+
+    // Cancels a booking and frees its slot. Needs 12 hours notice.
+    public async Task<ReservationDto> CancelAsync(string id, CancelReservationRequestDto? request, ReservationActor actor, CancellationToken cancellationToken = default)
+    {
+        var reservation = await LoadReservationAsync(id, cancellationToken);
+        EnsureCanAccess(reservation, actor);
+        EnsureChangeable(reservation);
+
+        var now = DateTime.UtcNow;
+        EnsureTwelveHoursNotice(reservation, now);
+
+        var reason = request?.Reason?.Trim();
+        var loadedUpdatedAt = reservation.UpdatedAt;
+        reservation.Status = ReservationStatuses.Cancelled;
+        reservation.QrToken = null;
+        reservation.CancelledAt = now;
+        reservation.CancelledBy = actor.UserId;
+        reservation.CancelReason = string.IsNullOrEmpty(reason) ? null : reason;
+        reservation.UpdatedAt = now;
+
+        if (!await _reservations.TryReplaceAsync(reservation, loadedUpdatedAt, cancellationToken))
+        {
+            throw ChangedBySomeoneElse();
+        }
+
+        await _slots.ReleaseAsync(reservation.SlotId, CancellationToken.None);
+        return ReservationDto.From(reservation);
+    }
+
+    // Approves a pending booking and gives it a QR token.
+    public async Task<ReservationDto> ApproveAsync(string id, ReservationActor actor, CancellationToken cancellationToken = default)
+    {
+        var reservation = await LoadReservationAsync(id, cancellationToken);
+        if (reservation.Status != ReservationStatuses.Pending)
+        {
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                ErrorCodes.InvalidState,
+                $"Only pending reservations can be approved. This one is {reservation.Status}.");
+        }
+
+        var now = DateTime.UtcNow;
+        if (reservation.ScheduledAt <= now)
+        {
+            throw new ApiException(StatusCodes.Status409Conflict, ErrorCodes.InvalidState, "This reservation's slot has already started, so it cannot be approved.");
+        }
+
+        var loadedUpdatedAt = reservation.UpdatedAt;
+        reservation.Status = ReservationStatuses.Approved;
+        reservation.QrToken = NewQrToken();
+        reservation.ApprovedAt = now;
+        reservation.ApprovedBy = actor.UserId;
+        reservation.UpdatedAt = now;
+
+        if (!await _reservations.TryReplaceAsync(reservation, loadedUpdatedAt, cancellationToken))
+        {
+            throw ChangedBySomeoneElse();
+        }
+
         return ReservationDto.From(reservation);
     }
 
@@ -150,6 +266,61 @@ public class ReservationService : IReservationService
         }
 
         return slot;
+    }
+
+    // Loads the station and slot for a new booking and checks both can be booked.
+    private async Task<(Station Station, Slot Slot)> LoadBookableSlotAsync(string stationId, string slotId, DateTime now, CancellationToken cancellationToken)
+    {
+        var station = await LoadStationAsync(stationId, cancellationToken);
+        var slot = await LoadSlotAsync(slotId, station.Id, cancellationToken);
+        EnsureWithinBookingWindow(slot.StartTime, now);
+        EnsureStationActive(station);
+        return (station, slot);
+    }
+
+    // Takes the slot, or throws SLOT_TAKEN if another booking got it first.
+    private async Task ClaimSlotAsync(string slotId, CancellationToken cancellationToken)
+    {
+        if (!await _slots.TryClaimAsync(slotId, cancellationToken))
+        {
+            throw new ApiException(StatusCodes.Status409Conflict, ErrorCodes.SlotTaken, "This slot has already been booked. Please pick another one.");
+        }
+    }
+
+    // Completed and cancelled bookings are final.
+    private static void EnsureChangeable(Reservation reservation)
+    {
+        if (reservation.Status is not (ReservationStatuses.Pending or ReservationStatuses.Approved))
+        {
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                ErrorCodes.InvalidState,
+                $"This reservation is {reservation.Status} and can no longer be changed.");
+        }
+    }
+
+    // Updates and cancellations need at least 12 hours before the booked slot starts.
+    private static void EnsureTwelveHoursNotice(Reservation reservation, DateTime now)
+    {
+        if (reservation.ScheduledAt - now < TimeSpan.FromHours(ChangeNoticeHours))
+        {
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                ErrorCodes.RuleTwelveHours,
+                $"Reservations can only be changed or cancelled at least {ChangeNoticeHours} hours before the slot starts.");
+        }
+    }
+
+    // Error for when another request changed the reservation first.
+    private static ApiException ChangedBySomeoneElse()
+    {
+        return new ApiException(StatusCodes.Status409Conflict, ErrorCodes.InvalidState, "This reservation was just changed by someone else. Please reload and try again.");
+    }
+
+    // Makes a random, URL-safe token for the QR code. It holds no personal data.
+    private static string NewQrToken()
+    {
+        return Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(32));
     }
 
     // Slot must start in the future and no later than 7 days from now.
