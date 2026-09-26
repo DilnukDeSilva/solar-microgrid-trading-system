@@ -1,0 +1,79 @@
+@model ReservationEditViewModel
+@{
+    ViewData["Title"] = "Change booking";
+    var current = Model.Current!;
+}
+
+<h1 class="h3 mb-1">Change booking</h1>
+<p class="text-muted mb-4">Changes need at least 12 hours notice before the booked slot. An approved booking goes back to pending and needs approval again.</p>
+
+<partial name="_ApiErrors" />
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-semibold">Current booking</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Reference</dt>
+                    <dd class="col-sm-8 font-monospace small">@current.Id</dd>
+                    <dt class="col-sm-4">Prosumer</dt>
+                    <dd class="col-sm-8">@current.ProsumerNic</dd>
+                    <dt class="col-sm-4">Station</dt>
+                    <dd class="col-sm-8">@current.StationName</dd>
+                    <dt class="col-sm-4">Slot time</dt>
+                    <dd class="col-sm-8">@current.ScheduledAt.ToSriLankaText()</dd>
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8"><partial name="_ReservationStatusBadge" model="current.Status" /></dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">1. New station and date</div>
+            <div class="card-body">
+                <form asp-action="Edit" method="get">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="mb-3">
+                        <label asp-for="StationId" class="form-label">Station</label>
+                        <select asp-for="StationId" class="form-select" required>
+                            @foreach (var station in Model.Stations)
+                            {
+                                <option value="@station.Id" selected="@(station.Id == Model.StationId)">@station.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Date" class="form-label">Date</label>
+                        <input asp-for="Date" type="date" class="form-control" />
+                        <div class="form-text">Optional. Leave empty to see every free slot you can book.</div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">Show free slots</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">2. Pick the new slot</div>
+            <div class="card-body">
+                @if (Model.Slots.Count == 0)
+                {
+                    <p class="text-muted mb-0">No free slots found. Try another date or station.</p>
+                }
+                else
+                {
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="StationId" />
+                        <input type="hidden" asp-for="Date" />
+                        <partial name="_SlotPicker" model="(Model.Slots, Model.SlotId)" />
+                        <button type="submit" class="btn btn-primary">Save change</button>
+                        <a class="btn btn-outline-secondary" asp-action="Index">Back</a>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

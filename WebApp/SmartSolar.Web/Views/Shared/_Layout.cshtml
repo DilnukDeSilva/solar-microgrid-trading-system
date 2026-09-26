@@ -38,7 +38,7 @@
                         @if (User.IsInRole(RoleNames.Backoffice) || User.IsInRole(RoleNames.GridOperator))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Reservations" asp-action="Create">Book a slot</a>
+                                <a class="nav-link" asp-controller="Reservations" asp-action="Index">Reservations</a>
                             </li>
                         }
                     </ul>
