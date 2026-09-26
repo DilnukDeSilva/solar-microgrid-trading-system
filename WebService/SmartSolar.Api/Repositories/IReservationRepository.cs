@@ -16,4 +16,7 @@ public interface IReservationRepository
 
     // Loads one reservation by id.
     Task<Reservation?> FindByIdAsync(string id, CancellationToken cancellationToken = default);
+
+    // Inserts a new reservation.
+    Task InsertAsync(Reservation reservation, CancellationToken cancellationToken = default);
 }

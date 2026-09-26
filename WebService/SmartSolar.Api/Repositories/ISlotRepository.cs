@@ -16,4 +16,10 @@ public interface ISlotRepository
 
     // Loads one slot by id.
     Task<Slot?> FindByIdAsync(string id, CancellationToken cancellationToken = default);
+
+    // Marks a free slot as taken. Returns false if someone else already has it.
+    Task<bool> TryClaimAsync(string id, CancellationToken cancellationToken = default);
+
+    // Marks a slot as free again.
+    Task ReleaseAsync(string id, CancellationToken cancellationToken = default);
 }

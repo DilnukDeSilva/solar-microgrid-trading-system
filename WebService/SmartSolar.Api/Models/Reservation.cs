@@ -35,6 +35,9 @@ public class Reservation
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime CreatedAt { get; set; }
 
+    [BsonIgnoreIfNull]
+    public string? CreatedBy { get; set; }
+
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime UpdatedAt { get; set; }
 
