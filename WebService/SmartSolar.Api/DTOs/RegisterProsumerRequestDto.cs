@@ -1,7 +1,7 @@
 /*
  * File: RegisterProsumerRequestDto.cs
  * Description: Body for POST /api/auth/register. Creates a Pending prosumer.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 

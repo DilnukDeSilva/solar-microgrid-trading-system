@@ -1,7 +1,7 @@
 /*
  * File: UserDto.cs
  * Description: Public user shape. Password hashes are never copied onto this DTO.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

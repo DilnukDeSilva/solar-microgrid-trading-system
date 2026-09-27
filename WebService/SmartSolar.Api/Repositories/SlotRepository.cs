@@ -1,7 +1,7 @@
 /*
  * File: SlotRepository.cs
  * Description: MongoDB access for EnergyBookingSlots.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

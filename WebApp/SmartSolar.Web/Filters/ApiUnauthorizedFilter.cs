@@ -1,7 +1,7 @@
 /*
  * File: ApiUnauthorizedFilter.cs
  * Description: Signs the browser out when the API returns 401 so expired JWTs cannot linger.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

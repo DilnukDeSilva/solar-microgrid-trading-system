@@ -1,7 +1,7 @@
 /*
  * File: Program.cs
  * Description: Composition root for the MVC web client. No MongoDB and no business rules live here.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

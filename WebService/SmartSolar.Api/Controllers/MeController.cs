@@ -1,7 +1,7 @@
 /*
  * File: MeController.cs
  * Description: Current prosumer profile endpoints; identity always comes from the JWT.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 

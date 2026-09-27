@@ -1,4 +1,4 @@
-/* File: PendingActivationBadgeViewComponent.cs | Author: Dilnuk De Silva | Created: 27/09/2026 */
+/* File: PendingActivationBadgeViewComponent.cs | Author: DE SILVA R K D H (IT22001252) | Created: 27/09/2026 */
 using Microsoft.AspNetCore.Mvc;
 using SmartSolar.Web.Api;
 

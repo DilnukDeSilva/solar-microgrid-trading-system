@@ -1,7 +1,7 @@
 /*
  * File: IActiveAccountGuard.cs
  * Description: Looks up the current user status during JWT validation. Deactivated tokens must fail.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 21/09/2026
  */
 

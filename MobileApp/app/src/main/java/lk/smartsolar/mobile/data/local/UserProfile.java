@@ -1,7 +1,7 @@
 /*
  * File: UserProfile.java
  * Description: Cached public profile; password data is never stored on the device.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 package lk.smartsolar.mobile.data.local;

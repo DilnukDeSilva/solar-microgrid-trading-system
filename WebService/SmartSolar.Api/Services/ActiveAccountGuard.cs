@@ -1,7 +1,7 @@
 /*
  * File: ActiveAccountGuard.cs
  * Description: Reads Users by id so JWT validation can reject deactivated or missing accounts.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 21/09/2026
  */
 
