@@ -1,0 +1,40 @@
+@model IReadOnlyList<UserDto>
+@{ ViewData["Title"] = "Prosumers"; var isBackoffice = User.IsInRole(RoleNames.Backoffice); }
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Prosumers</h1>
+    @if (isBackoffice) { <a asp-action="Create" class="btn btn-primary">Create prosumer</a> }
+</div>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-6"><input name="q" value="@ViewBag.Query" class="form-control" placeholder="Search NIC, name, username or phone" /></div>
+    <div class="col-md-3">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+            @foreach (var status in new[] { "Pending", "Active", "Deactivated" }) { <option value="@status" selected="@(ViewBag.Status == status)">@status</option> }
+        </select>
+    </div>
+    <div class="col-md-3"><button class="btn btn-outline-primary" type="submit">Search</button> <a asp-action="Index" class="btn btn-link">Clear</a></div>
+</form>
+<div class="table-responsive card shadow-sm">
+<table class="table table-hover align-middle mb-0">
+    <thead><tr><th>NIC</th><th>Name</th><th>Username</th><th>Phone</th><th>Status</th>@if (isBackoffice) { <th class="text-end">Actions</th> }</tr></thead>
+    <tbody>
+    @if (Model.Count == 0) { <tr><td colspan="@(isBackoffice ? 6 : 5)" class="text-center text-muted py-4">No prosumers found.</td></tr> }
+    @foreach (var user in Model) {
+        <tr>
+            <td>@user.Nic</td><td>@user.FullName</td><td>@user.Username</td><td>@user.Phone</td>
+            <td><span class="badge @(user.Status == "Active" ? "bg-success" : user.Status == "Pending" ? "bg-warning text-dark" : "bg-secondary")">@user.Status</span></td>
+            @if (isBackoffice) {
+                <td class="text-end text-nowrap">
+                    <a asp-action="Edit" asp-route-id="@user.Nic" class="btn btn-sm btn-outline-primary">Edit</a>
+                    @if (user.Status == "Deactivated") {
+                        <form asp-action="Reactivate" asp-route-id="@user.Nic" method="post" class="d-inline"><button class="btn btn-sm btn-outline-success">Reactivate</button></form>
+                    } else {
+                        <form asp-action="Deactivate" asp-route-id="@user.Nic" method="post" class="d-inline" onsubmit="return confirm('Deactivate this prosumer?');"><button class="btn btn-sm btn-outline-danger">Deactivate</button></form>
+                    }
+                </td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+</div>

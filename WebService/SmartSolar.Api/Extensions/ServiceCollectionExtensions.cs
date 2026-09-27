@@ -48,6 +48,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ProsumerService>();
+        services.AddScoped<IProsumerService>(provider => provider.GetRequiredService<ProsumerService>());
         services.AddScoped<IReservationService, ReservationService>();
         services.AddSingleton<IActiveAccountGuard, ActiveAccountGuard>();
 

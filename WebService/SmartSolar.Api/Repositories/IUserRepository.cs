@@ -26,6 +26,9 @@ public interface IUserRepository
     // Returns Backoffice and GridOperator accounts for the staff Users API.
     Task<IReadOnlyList<User>> GetStaffAsync(CancellationToken cancellationToken = default);
 
+    // Returns prosumer accounts, optionally filtered by status and a free-text search.
+    Task<IReadOnlyList<User>> SearchProsumersAsync(string? status, string? query, CancellationToken cancellationToken = default);
+
     // Inserts a new user document.
     Task InsertAsync(User user, CancellationToken cancellationToken = default);
 
