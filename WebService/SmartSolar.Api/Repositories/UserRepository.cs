@@ -5,6 +5,8 @@
  * Created: 20/09/2026
  */
 
+using System.Text.RegularExpressions;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using SmartSolar.Api.Common;
 using SmartSolar.Api.Data;
@@ -55,6 +57,35 @@ public class UserRepository : IUserRepository
     {
         var filter = Builders<User>.Filter.In(user => user.Role, new[] { RoleNames.Backoffice, RoleNames.GridOperator });
         return await _context.Users.Find(filter).ToListAsync(cancellationToken);
+    }
+
+    // Returns Prosumer documents matching optional status and NIC/name/phone/username text.
+    public async Task<IReadOnlyList<User>> SearchProsumersAsync(string? status, string? query, CancellationToken cancellationToken = default)
+    {
+        var filters = new List<FilterDefinition<User>>
+        {
+            Builders<User>.Filter.Eq(user => user.Role, RoleNames.Prosumer)
+        };
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            filters.Add(Builders<User>.Filter.Eq(user => user.Status, status.Trim()));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            var escaped = Regex.Escape(query.Trim());
+            var pattern = new BsonRegularExpression(escaped, "i");
+            filters.Add(Builders<User>.Filter.Or(
+                Builders<User>.Filter.Regex(user => user.Nic, pattern),
+                Builders<User>.Filter.Regex(user => user.Username, pattern),
+                Builders<User>.Filter.Regex(user => user.FullName, pattern),
+                Builders<User>.Filter.Regex(user => user.Phone, pattern)));
+        }
+
+        return await _context.Users.Find(Builders<User>.Filter.And(filters))
+            .SortBy(user => user.FullName)
+            .ToListAsync(cancellationToken);
     }
 
     // Inserts a new user document.

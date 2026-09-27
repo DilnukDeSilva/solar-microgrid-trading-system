@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Create account" android:textSize="28sp" android:textStyle="bold" android:textColor="@color/solar_green_dark" />
+        <EditText android:id="@+id/registerNic" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="NIC" android:inputType="textCapCharacters" />
+        <EditText android:id="@+id/registerUsername" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Username" />
+        <EditText android:id="@+id/registerFullName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Full name" />
+        <EditText android:id="@+id/registerEmail" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Email (optional)" android:inputType="textEmailAddress" />
+        <EditText android:id="@+id/registerPhone" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Phone (optional)" android:inputType="phone" />
+        <EditText android:id="@+id/registerPassword" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Password (8+ characters)" android:inputType="textPassword" />
+        <Button android:id="@+id/createAccountButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Register" />
+    </LinearLayout>
+</ScrollView>

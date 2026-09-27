@@ -28,6 +28,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
+                            <li class="nav-item">
+                                @await Component.InvokeAsync("PendingActivationBadge")
+                            </li>
                         }
                         @if (User.IsInRole(RoleNames.GridOperator))
                         {
@@ -37,6 +40,9 @@
                         }
                         @if (User.IsInRole(RoleNames.Backoffice) || User.IsInRole(RoleNames.GridOperator))
                         {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Prosumers" asp-action="Index">Prosumers</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Reservations" asp-action="Create">Book a slot</a>
                             </li>
