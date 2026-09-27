@@ -1,7 +1,7 @@
 /*
  * File: DbHelper.java
  * Description: Single SQLite database for sessions and module-owned offline tables.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 package lk.smartsolar.mobile.data.local;

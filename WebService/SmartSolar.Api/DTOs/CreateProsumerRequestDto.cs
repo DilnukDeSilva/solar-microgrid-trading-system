@@ -1,7 +1,7 @@
 /*
  * File: CreateProsumerRequestDto.cs
  * Description: Body for POST /api/prosumers. Backoffice creates an Active prosumer.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 

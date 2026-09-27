@@ -1,7 +1,7 @@
 /*
  * File: BaseActivity.java
  * Description: Shared loading and API error presentation for every mobile screen.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 package lk.smartsolar.mobile.ui;

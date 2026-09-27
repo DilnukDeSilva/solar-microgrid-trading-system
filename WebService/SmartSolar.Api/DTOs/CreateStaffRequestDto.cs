@@ -1,7 +1,7 @@
 /*
  * File: CreateStaffRequestDto.cs
  * Description: Body for POST /api/users. Staff roles only; password is hashed in the service.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

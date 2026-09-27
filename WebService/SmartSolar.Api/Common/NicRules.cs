@@ -1,7 +1,7 @@
 /*
  * File: NicRules.cs
  * Description: Sri Lankan NIC format used for prosumer primary keys. Rules live in the service layer.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 

@@ -1,7 +1,7 @@
 /*
  * File: StationStatuses.cs
  * Description: Allowed values for SolarStationInfo.status.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

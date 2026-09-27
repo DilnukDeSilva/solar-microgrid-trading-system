@@ -1,7 +1,7 @@
 /*
  * File: Reservation.cs
  * Description: MongoDB document for EnergyReservation, including the operator QR token.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

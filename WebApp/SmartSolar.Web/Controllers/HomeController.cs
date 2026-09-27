@@ -1,7 +1,7 @@
 /*
  * File: HomeController.cs
  * Description: Public landing page and generic error page. Logged-in staff are sent to their role home.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 
