@@ -1,7 +1,7 @@
 /*
  * File: PasswordService.cs
  * Description: Hashes and verifies passwords with ASP.NET Core Identity PasswordHasher.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  *
  * Uses Microsoft.AspNetCore.Identity.PasswordHasher as described in:

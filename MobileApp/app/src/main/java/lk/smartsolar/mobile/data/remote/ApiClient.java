@@ -1,7 +1,7 @@
 /*
  * File: ApiClient.java
  * Description: Shared JSON API client with bearer auth, background I/O and contract error parsing.
- * Author: Dilnuk De Silva
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 27/09/2026
  */
 package lk.smartsolar.mobile.data.remote;

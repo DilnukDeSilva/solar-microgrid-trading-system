@@ -1,7 +1,7 @@
 /*
  * File: UsersController.cs
  * Description: Backoffice user-management pages. Controllers only call ApiClient and display results.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

@@ -1,4 +1,4 @@
-/* File: ApiClient.Prosumers.cs | Author: Dilnuk De Silva | Created: 27/09/2026 */
+/* File: ApiClient.Prosumers.cs | Author: DE SILVA R K D H (IT22001252) | Created: 27/09/2026 */
 using SmartSolar.Web.Models;
 
 namespace SmartSolar.Web.Api;

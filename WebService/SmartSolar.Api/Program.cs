@@ -1,7 +1,7 @@
 /*
  * File: Program.cs
  * Description: Composition root for the FAT Web API: pipeline, Mongo, JWT, Swagger and seed.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

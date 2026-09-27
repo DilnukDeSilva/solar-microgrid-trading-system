@@ -1,7 +1,7 @@
 /*
  * File: LoginViewModel.cs
  * Description: Login form fields posted to AccountController. The API validates credentials.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 
