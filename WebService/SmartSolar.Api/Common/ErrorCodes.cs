@@ -1,7 +1,7 @@
 /*
  * File: ErrorCodes.cs
  * Description: Error `code` values returned in the contract `{ code, message }` body.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

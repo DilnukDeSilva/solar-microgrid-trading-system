@@ -1,7 +1,7 @@
 /*
  * File: LoginResponseDto.cs
  * Description: Successful login payload: JWT, expiry and the public user object.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

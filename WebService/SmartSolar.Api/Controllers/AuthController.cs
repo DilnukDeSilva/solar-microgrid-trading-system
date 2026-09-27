@@ -1,7 +1,7 @@
 /*
  * File: AuthController.cs
  * Description: Thin HTTP adapter for login. All credential rules live in AuthService.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

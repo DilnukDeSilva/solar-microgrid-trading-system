@@ -1,4 +1,4 @@
-/* File: DeactivationActivity.java | Author: Dilnuk De Silva | Created: 27/09/2026 */
+/* File: DeactivationActivity.java | Author: DE SILVA R K D H (IT22001252) | Created: 27/09/2026 */
 package lk.smartsolar.mobile.ui.account;
 
 import android.os.Bundle;
