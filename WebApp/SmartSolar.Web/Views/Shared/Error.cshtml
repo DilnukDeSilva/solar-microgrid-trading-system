@@ -3,13 +3,12 @@
     ViewData["Title"] = "Error";
 }
 
-<div class="decision">
-    <p class="eyebrow">Error</p>
-    <h1>Something went wrong</h1>
-    <p class="lede">The page could not finish. The message above, if any, came from the API. Try the action again.</p>
-    @if (Model.ShowRequestId)
-    {
-        <p class="seed-note">Request ID <code>@Model.RequestId</code></p>
-    }
-    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to home</a>
-</div>
+<h1 class="text-danger">Something went wrong</h1>
+<p class="lead">An error occurred while processing your request.</p>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
