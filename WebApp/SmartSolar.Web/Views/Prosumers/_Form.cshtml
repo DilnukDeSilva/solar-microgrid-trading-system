@@ -1,14 +1,22 @@
 @model ProsumerForm
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div asp-validation-summary="ModelOnly" class="alert alert-danger notice" role="alert"></div>
 <div class="row g-3">
     <div class="col-md-6">
         <label asp-for="Nic" class="form-label"></label>
-        <input asp-for="Nic" class="form-control" readonly="@Model.IsEdit" />
+        @if (Model.IsEdit)
+        {
+            <input asp-for="Nic" class="form-control mono" readonly />
+        }
+        else
+        {
+            <input asp-for="Nic" class="form-control mono" placeholder="200012345678" />
+        }
+        <div class="form-text">@(Model.IsEdit ? "NIC is the primary key and cannot change." : "Old NIC (9 digits plus V or X) or new 12-digit NIC.")</div>
         <span asp-validation-for="Nic" class="text-danger"></span>
     </div>
     <div class="col-md-6">
         <label asp-for="Username" class="form-label"></label>
-        <input asp-for="Username" class="form-control" />
+        <input asp-for="Username" class="form-control" autocomplete="username" />
         <span asp-validation-for="Username" class="text-danger"></span>
     </div>
     <div class="col-12">
@@ -16,11 +24,23 @@
         <input asp-for="FullName" class="form-control" />
         <span asp-validation-for="FullName" class="text-danger"></span>
     </div>
-    <div class="col-md-6"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
-    <div class="col-md-6"><label asp-for="Phone" class="form-label"></label><input asp-for="Phone" class="form-control" /><span asp-validation-for="Phone" class="text-danger"></span></div>
+    <div class="col-md-6">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
     <div class="col-12">
-        <label asp-for="Password" class="form-label">@(Model.IsEdit ? "New password (leave blank to keep current)" : "Password")</label>
-        <input asp-for="Password" class="form-control" />
+        <label asp-for="Password" class="form-label">@(Model.IsEdit ? "New password" : "Password")</label>
+        <div class="input-group">
+            <input asp-for="Password" class="form-control" autocomplete="new-password" />
+            <button class="btn btn-outline-secondary" type="button" data-toggle-password="#Password">Show</button>
+        </div>
+        <div class="form-text">@(Model.IsEdit ? "Leave blank to keep the current password." : "At least 8 characters. Created accounts are Active immediately.")</div>
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
 </div>

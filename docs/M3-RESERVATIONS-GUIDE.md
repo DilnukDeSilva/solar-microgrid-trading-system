@@ -94,13 +94,13 @@ All comparisons in **UTC** on the server (`DateTime.UtcNow`). The clients show S
 
 Generate it with a **cryptographically secure** random generator (research: `RandomNumberGenerator` in .NET), at least 32 bytes, encoded URL-safe. The QR contains **only this opaque token**: no NIC, no name. M4's `verify-qr` looks it up and completes the booking. Agree the exact field name with M4 on Saturday.
 
-## 5. Web (ASP.NET Core MVC + Bootstrap 5)
+## 5. Web (React + Tailwind CSS)
 
-Controller `ReservationsController` in `SmartSolar.Web`, using M1's `ApiClient`. No rules here: call the API and display the result or the error.
+Pages live in `WebApp/smartsolar-ui` and call the API with the session JWT. No rules here: call the API and display the result or the error `message`.
 
 | Page        | Contents                                                                                                                                                         |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Index**   | Upcoming bookings table (from M4's `GET /api/reservations?from=now`), status badges, actions: Edit / Cancel / Approve. Server errors shown in a Bootstrap alert. |
+| **Index**   | Upcoming bookings table (from M4's `GET /api/reservations?from=now`), status badges, actions: Edit / Cancel / Approve. Server errors shown in an alert banner. |
 | **Create**  | Step form: prosumer NIC (lookup via M1's `/prosumers/{nic}`) → station dropdown (M2) → date → free-slot list (M2's `/stations/{id}/slots?date`) → confirm.       |
 | **Edit**    | Current booking card + pick a new slot.                                                                                                                          |
 | **Cancel**  | Confirmation page with the 12-hour rule explained; the server decides.                                                                                           |
@@ -152,7 +152,7 @@ Tip: for T5/T6, M1's seeder (or a Compass edit) lets you place a slot at exactly
 - [ ] No `if (date …)` rule logic in `SmartSolar.Web` or Android.
 - [ ] Every error path shows the server's message, and nothing crashes on 409/403/network loss.
 - [ ] Commits from **your** account: small and descriptive, e.g. "Reject bookings more than 7 days ahead with RULE_7DAYS".
-- [ ] All pages styled with Bootstrap 5, and the Android screens use the shared theme.
+- [ ] All pages styled with React + Tailwind CSS in `WebApp/smartsolar-ui`, and the Android screens use the shared theme.
 
 ## 9. Roadmap (today → Wed)
 

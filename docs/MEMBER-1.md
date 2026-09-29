@@ -23,7 +23,8 @@ API foundation, Mongo + seed + indexes, JWT, staff Users API, web login / role r
 | `POST /api/prosumers/{nic}/reactivate` | **Backoffice only** | GridOperator gets 403 |
 | `GET /api/prosumers/pending`, `POST /api/prosumers/{nic}/activate` | Backoffice | only `Pending` → `Active` |
 
-### Web (MVC + Bootstrap 5)
+### Web (React + Tailwind CSS)
+The shared client is `WebApp/smartsolar-ui`. Pages call the API directly with the JWT. No business rules live in the browser.
 - **Prosumers** page: list with search, create, edit, deactivate; **Reactivate** button visible only to Backoffice.
 - **Pending activations** page: table of `Pending` prosumers with Activate / Reject, and a badge count in the navbar (2 marks on its own).
 

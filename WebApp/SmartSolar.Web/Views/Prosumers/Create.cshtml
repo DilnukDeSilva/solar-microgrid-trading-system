@@ -1,9 +1,25 @@
 @model ProsumerForm
-@{ ViewData["Title"] = "Create prosumer"; }
-<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3 mb-0">Create prosumer</h1><a asp-action="Index" class="btn btn-outline-secondary">Back</a></div>
-<p class="text-muted">Staff-created prosumer accounts are active immediately.</p>
-<form method="post" class="card card-body shadow-sm">
+@{
+    ViewData["Title"] = "Create prosumer";
+}
+
+<div class="page-head">
+    <div>
+        <p class="eyebrow">Prosumers</p>
+        <h1>Create prosumer</h1>
+        <p class="lede">Staff-created accounts start as Active. Self-registration on the phone starts as Pending.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to list</a>
+</div>
+
+<form method="post" class="panel panel-pad">
     <partial name="_Form" model="Model" />
-    <div class="mt-4"><button class="btn btn-primary" type="submit">Create active account</button></div>
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Create active account</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
 </form>
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
