@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Smart Solar</string>
+    <string name="book_slot">Book a slot</string>
+    <string name="booking_summary">Booking summary</string>
+</resources>

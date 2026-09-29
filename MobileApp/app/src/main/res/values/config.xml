@@ -1,0 +1,4 @@
+<resources>
+    <!-- 10.0.2.2 is the PC when running on the emulator. Use the PC's LAN IP (or the IIS address) on a real phone. -->
+    <string name="api_base_url" translatable="false">http://10.0.2.2:5080/api/</string>
+</resources>
