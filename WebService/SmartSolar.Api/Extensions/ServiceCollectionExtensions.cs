@@ -51,6 +51,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ProsumerService>();
         services.AddScoped<IProsumerService>(provider => provider.GetRequiredService<ProsumerService>());
         services.AddScoped<IReservationService, ReservationService>();
+        services.AddScoped<IReservationQueryService, ReservationQueryService>();
         services.AddSingleton<IActiveAccountGuard, ActiveAccountGuard>();
 
         services.AddControllers()

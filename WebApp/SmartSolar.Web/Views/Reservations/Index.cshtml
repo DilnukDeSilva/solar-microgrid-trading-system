@@ -1,0 +1,90 @@
+@model ReservationIndexViewModel
+@{
+    ViewData["Title"] = "Reservations";
+    string[] statuses = ["Pending", "Approved", "Cancelled", "Completed"];
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Reservations</h1>
+    <a class="btn btn-primary" asp-action="Create">Book a slot</a>
+</div>
+
+<form asp-action="Index" method="get" class="card card-body shadow-sm mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label asp-for="Status" class="form-label small">Status</label>
+            <select asp-for="Status" class="form-select">
+                <option value="">All</option>
+                @foreach (var status in statuses)
+                {
+                    <option value="@status" selected="@(status == Model.Status)">@status</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Nic" class="form-label small">Prosumer NIC</label>
+            <input asp-for="Nic" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Q" class="form-label small">Search</label>
+            <input asp-for="Q" class="form-control" placeholder="Station or reference" />
+        </div>
+        <div class="col-md-3 d-flex gap-3 align-items-center">
+            <div class="form-check">
+                <input asp-for="IncludePast" class="form-check-input" />
+                <label asp-for="IncludePast" class="form-check-label">Include past</label>
+            </div>
+            <button type="submit" class="btn btn-outline-primary ms-auto">Filter</button>
+        </div>
+    </div>
+</form>
+
+<p class="text-muted small mb-2">@Model.Items.Count booking(s)@(Model.IncludePast ? "" : ", upcoming only")</p>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle bg-white">
+        <thead>
+            <tr>
+                <th>Slot time</th>
+                <th>Station</th>
+                <th>Prosumer NIC</th>
+                <th>Status</th>
+                <th>Reference</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.Items.Count == 0)
+        {
+            <tr>
+                <td colspan="6" class="text-muted">No bookings match these filters.</td>
+            </tr>
+        }
+        @foreach (var r in Model.Items)
+        {
+            var open = r.Status is "Pending" or "Approved";
+            <tr>
+                <td class="text-nowrap">@r.ScheduledAt.ToSriLankaText()</td>
+                <td>@r.StationName</td>
+                <td>@r.ProsumerNic</td>
+                <td><partial name="_ReservationStatusBadge" model="r.Status" /></td>
+                <td class="font-monospace small">@r.Id</td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Summary" asp-route-id="@r.Id">View</a>
+                    @if (open)
+                    {
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@r.Id">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger" asp-action="Cancel" asp-route-id="@r.Id">Cancel</a>
+                    }
+                    @if (r.Status == "Pending")
+                    {
+                        <form asp-action="Approve" asp-route-id="@r.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

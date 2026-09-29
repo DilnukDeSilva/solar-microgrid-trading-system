@@ -70,7 +70,7 @@
                     @if (User.IsInRole(RoleNames.Backoffice) || User.IsInRole(RoleNames.GridOperator))
                     {
                         <p class="side-label">Trading</p>
-                        <a class="side-link @Active("Reservations")" asp-controller="Reservations" asp-action="Create">Book a slot</a>
+                        <a class="side-link @Active("Reservations")" asp-controller="Reservations" asp-action="Index">Reservations</a>
                     }
 
                     <div class="sidebar-user">
