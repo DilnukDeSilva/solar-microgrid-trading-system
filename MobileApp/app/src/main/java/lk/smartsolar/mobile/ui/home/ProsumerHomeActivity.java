@@ -15,6 +15,7 @@ import lk.smartsolar.mobile.ui.BaseActivity;
 import lk.smartsolar.mobile.ui.account.ProfileActivity;
 import lk.smartsolar.mobile.ui.auth.LogoutActivity;
 import lk.smartsolar.mobile.ui.bookings.BookingsActivity;
+import lk.smartsolar.mobile.ui.reservations.BookSlotActivity;
 import lk.smartsolar.mobile.util.TimeText;
 
 public class ProsumerHomeActivity extends BaseActivity {
@@ -27,6 +28,7 @@ public class ProsumerHomeActivity extends BaseActivity {
         setContentView(R.layout.activity_prosumer_dashboard);
         refresh = findViewById(R.id.refresh);
         refresh.setOnRefreshListener(this::loadDashboard);
+        findViewById(R.id.bookSlotButton).setOnClickListener(v -> startActivity(new Intent(this, BookSlotActivity.class)));
         findViewById(R.id.bookingsButton).setOnClickListener(v -> startActivity(new Intent(this, BookingsActivity.class)));
         findViewById(R.id.profileButton).setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         findViewById(R.id.logoutButton).setOnClickListener(v -> startActivity(new Intent(this, LogoutActivity.class)));

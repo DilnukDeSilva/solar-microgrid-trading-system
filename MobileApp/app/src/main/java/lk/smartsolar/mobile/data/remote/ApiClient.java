@@ -161,7 +161,16 @@ public class ApiClient {
         return body;
     }
 
+    // Sends an authenticated request whose answer may be a JSON object or a JSON array (used by the reservation screens).
+    public <T> void send(String method, String path, JSONObject body, TextMapper<T> mapper, ApiCallback<T> callback) {
+        execute(method, path, body, true, mapper, callback);
+    }
+
     private <T> void request(String method, String path, JSONObject body, boolean bearer, JsonMapper<T> mapper, ApiCallback<T> callback) {
+        execute(method, path, body, bearer, text -> mapper.map(text.isEmpty() ? new JSONObject() : new JSONObject(text)), callback);
+    }
+
+    private <T> void execute(String method, String path, JSONObject body, boolean bearer, TextMapper<T> mapper, ApiCallback<T> callback) {
         executor.execute(() -> {
             HttpURLConnection connection = null;
             try {
@@ -190,13 +199,13 @@ public class ApiClient {
 
                 int status = connection.getResponseCode();
                 String text = read(status >= 200 && status < 300 ? connection.getInputStream() : connection.getErrorStream());
-                JSONObject json = text.isEmpty() ? new JSONObject() : new JSONObject(text);
                 if (status < 200 || status >= 300) {
+                    JSONObject json = text.startsWith("{") ? new JSONObject(text) : new JSONObject();
                     if (status == 401) SessionManager.get(context).clear();
                     throw new ApiError(status, json.optString("code", "ERROR"), json.optString("message", "The request failed."));
                 }
 
-                T value = mapper.map(json);
+                T value = mapper.map(text);
                 main.post(() -> callback.onSuccess(value));
             } catch (ApiError error) {
                 main.post(() -> callback.onError(error));
@@ -224,4 +233,6 @@ public class ApiClient {
     }
 
     private interface JsonMapper<T> { T map(JSONObject json) throws Exception; }
+
+    public interface TextMapper<T> { T map(String body) throws Exception; }
 }

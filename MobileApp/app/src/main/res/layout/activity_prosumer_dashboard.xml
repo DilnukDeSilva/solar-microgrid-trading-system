@@ -60,10 +60,18 @@
                 android:textSize="17sp" />
 
             <Button
-                android:id="@+id/bookingsButton"
+                android:id="@+id/bookSlotButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:text="Book a slot" />
+
+            <Button
+                android:id="@+id/bookingsButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="My bookings" />
 
             <Button
