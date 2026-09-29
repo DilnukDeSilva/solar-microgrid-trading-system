@@ -7,17 +7,41 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartSolar.Web.Api;
 using SmartSolar.Web.Common;
+using SmartSolar.Web.Models;
 
 namespace SmartSolar.Web.Controllers;
 
 [Authorize(Roles = RoleNames.Backoffice)]
 public class AdminController : Controller
 {
-    // Shows the Backoffice home with links to user management.
-    [HttpGet]
-    public IActionResult Index()
+    private readonly ApiClient _api;
+
+    // Injects the shared API client used for the live Home figures.
+    public AdminController(ApiClient api)
     {
-        return View();
+        _api = api;
+    }
+
+    // Shows the Backoffice home with live operations counts and a link to user management.
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        return View(await LoadDashboardAsync(cancellationToken));
+    }
+
+    // Loads the operations dashboard, or an empty one when the API call fails.
+    private async Task<OperationsDashboardDto> LoadDashboardAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await _api.GetOperationsDashboardAsync(cancellationToken);
+        }
+        catch (ApiClientException ex) when (ex.StatusCode != StatusCodes.Status401Unauthorized)
+        {
+            TempData["Error"] = ex.ApiMessage;
+            return new OperationsDashboardDto();
+        }
     }
 }

@@ -1,0 +1,162 @@
+@model BookingMonitorViewModel
+@{
+    ViewData["Title"] = "Bookings";
+    var tabs = new (string Key, string Label)[]
+    {
+        ("all", "All"),
+        ("upcoming", "Upcoming"),
+        ("pending", "Pending approval"),
+        ("history", "History")
+    };
+    var pageCount = Model.Result.PageSize == 0 ? 1 : (int)Math.Ceiling(Model.Result.TotalCount / (double)Model.Result.PageSize);
+    if (pageCount < 1) pageCount = 1;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Bookings</h1>
+    <a class="btn btn-primary" asp-controller="Reservations" asp-action="Create">Book a slot</a>
+</div>
+
+<ul class="nav nav-pills mb-3">
+    @foreach (var item in tabs)
+    {
+        <li class="nav-item">
+            <a class="nav-link @(Model.Tab == item.Key ? "active" : "")"
+               asp-action="Index"
+               asp-route-tab="@item.Key"
+               asp-route-q="@Model.Query"
+               asp-route-stationId="@Model.StationId"
+               asp-route-nic="@Model.Nic"
+               asp-route-from="@Model.From?.ToString("yyyy-MM-dd")"
+               asp-route-to="@Model.To?.ToString("yyyy-MM-dd")">@item.Label</a>
+        </li>
+    }
+</ul>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <input type="hidden" name="tab" value="@Model.Tab" />
+    <div class="col-md-2">
+        <label class="form-label" for="status">Status</label>
+        <select class="form-select" id="status" name="status">
+            <option value="">Any</option>
+            @foreach (var status in new[] { "Pending", "Approved", "Completed", "Cancelled" })
+            {
+                if (Model.Status == status)
+                {
+                    <option value="@status" selected>@status</option>
+                }
+                else
+                {
+                    <option value="@status">@status</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label" for="from">From</label>
+        <input class="form-control" type="date" id="from" name="from" value="@Model.From?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label" for="to">To</label>
+        <input class="form-control" type="date" id="to" name="to" value="@Model.To?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label" for="stationId">Station id</label>
+        <input class="form-control" id="stationId" name="stationId" value="@Model.StationId" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label" for="nic">NIC</label>
+        <input class="form-control" id="nic" name="nic" value="@Model.Nic" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label" for="q">Keyword</label>
+        <input class="form-control" id="q" name="q" value="@Model.Query" placeholder="Name, NIC or id" />
+    </div>
+    <div class="col-12">
+        <button class="btn btn-outline-primary" type="submit">Apply filters</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>When</th>
+                <th>Station</th>
+                <th>NIC</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.Result.Items.Count == 0)
+        {
+            <tr>
+                <td colspan="5" class="text-muted">No bookings match these filters.</td>
+            </tr>
+        }
+        @foreach (var booking in Model.Result.Items)
+        {
+            <tr>
+                <td>@booking.ScheduledAt.ToSriLankaText()</td>
+                <td>@booking.StationName</td>
+                <td>@booking.ProsumerNic</td>
+                <td><partial name="_ReservationStatusBadge" model="booking.Status" /></td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Reservations" asp-action="Summary" asp-route-id="@booking.Id">Details</a>
+                    @if (booking.Status == "Pending")
+                    {
+                        <form asp-action="Approve" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@booking.Id" />
+                            <input type="hidden" name="tab" value="@Model.Tab" />
+                            <button class="btn btn-sm btn-success" type="submit">Approve</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (pageCount > 1)
+{
+    <nav aria-label="Booking pages">
+        <ul class="pagination">
+            @for (var number = 1; number <= pageCount; number++)
+            {
+                <li class="page-item @(number == Model.Result.Page ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-tab="@Model.Tab"
+                       asp-route-status="@Model.Status"
+                       asp-route-stationId="@Model.StationId"
+                       asp-route-nic="@Model.Nic"
+                       asp-route-q="@Model.Query"
+                       asp-route-from="@Model.From?.ToString("yyyy-MM-dd")"
+                       asp-route-to="@Model.To?.ToString("yyyy-MM-dd")"
+                       asp-route-page="@number">@number</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@if (User.IsInRole(RoleNames.GridOperator))
+{
+    <div class="card mt-4">
+        <div class="card-body">
+            <h2 class="h5">Verify a QR code</h2>
+            <p class="text-muted">Paste the token from the prosumer's QR. The API accepts it only for an approved booking scheduled today.</p>
+            <form asp-action="Verify" method="post" class="row g-2">
+                <div class="col-md-8">
+                    <label class="form-label" for="qrToken">QR token</label>
+                    <input class="form-control" id="qrToken" name="qrToken" required />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary" type="submit">Verify</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

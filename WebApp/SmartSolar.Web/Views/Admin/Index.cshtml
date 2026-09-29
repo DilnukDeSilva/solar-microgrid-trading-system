@@ -1,9 +1,10 @@
+@model OperationsDashboardDto
 @{
     ViewData["Title"] = "Dashboard";
 }
 
 <h1 class="h3 mb-3">Backoffice dashboard</h1>
-<p class="text-muted">User management is ready. Stations, slots and reservations are Member 2.</p>
+<partial name="_OperationsDashboard" model="Model" />
 
 <div class="row g-3">
     <div class="col-md-4">
@@ -12,6 +13,15 @@
                 <h2 class="h5">Staff users</h2>
                 <p class="text-muted">Create, update and deactivate Backoffice and Grid Operator accounts.</p>
                 <a class="btn btn-primary" asp-controller="Users" asp-action="Index">Manage users</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5">Bookings</h2>
+                <p class="text-muted">Filter today's work, the approval queue and booking history.</p>
+                <a class="btn btn-outline-primary" asp-controller="Bookings" asp-action="Index">Open monitor</a>
             </div>
         </div>
     </div>
