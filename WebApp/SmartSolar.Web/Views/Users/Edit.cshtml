@@ -3,8 +3,17 @@
     ViewData["Title"] = "Edit staff account";
 }
 
-<h1 class="h3 mb-3">Edit @Model.Username</h1>
-<partial name="_Form" model="Model" />
+<div class="page-head">
+    <div>
+        <p class="eyebrow">Staff</p>
+        <h1>Edit @Model.Username</h1>
+        <p class="lede">Username stays fixed. You cannot change your own role from this account if you are editing yourself.</p>
+    </div>
+</div>
+
+<div class="panel panel-pad">
+    <partial name="_Form" model="Model" />
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
