@@ -1,0 +1,10 @@
+<resources>
+    <color name="solar_green">#1E7D4F</color>
+    <color name="solar_green_dark">#145C39</color>
+    <color name="solar_amber">#F2A900</color>
+    <color name="status_pending">#B58100</color>
+    <color name="status_approved">#1E7D4F</color>
+    <color name="status_cancelled">#6C757D</color>
+    <color name="status_completed">#0D6EFD</color>
+    <color name="page_background">#F7F8FA</color>
+</resources>
