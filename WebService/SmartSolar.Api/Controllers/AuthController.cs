@@ -1,7 +1,7 @@
 /*
  * File: AuthController.cs
  * Description: Thin HTTP adapter for login. All credential rules live in AuthService.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 
@@ -36,5 +36,17 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.LoginAsync(request, cancellationToken);
         return Ok(result);
+    }
+
+    // Creates a Pending prosumer; no JWT is issued until Backoffice activates the account.
+    [HttpPost("register")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<UserDto>> Register([FromBody] RegisterProsumerRequestDto request, CancellationToken cancellationToken)
+    {
+        var created = await _authService.RegisterAsync(request, cancellationToken);
+        return Created($"/api/prosumers/{Uri.EscapeDataString(created.Nic!)}", created);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * File: UpdateStaffRequestDto.cs
  * Description: Body for PUT /api/users/{id}. Password is optional; omit it to keep the hash.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

@@ -6,7 +6,16 @@
     android:padding="16dp">
 
     <TextView
-        style="@style/TextAppearance.Material3.LabelLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Book a slot"
+        android:textColor="@color/solar_green_dark"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Station" />
@@ -18,7 +27,7 @@
         android:layout_marginBottom="12dp" />
 
     <TextView
-        style="@style/TextAppearance.Material3.LabelLarge"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Date" />
@@ -38,21 +47,21 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/pick_date_button"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pick date" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/any_day_button"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Any day" />
     </LinearLayout>
 
     <TextView
-        style="@style/TextAppearance.Material3.LabelLarge"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"

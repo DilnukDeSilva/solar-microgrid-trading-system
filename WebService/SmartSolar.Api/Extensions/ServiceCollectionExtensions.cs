@@ -1,7 +1,7 @@
 /*
  * File: ServiceCollectionExtensions.cs
  * Description: Registers Mongo, repositories, services, JWT, Swagger and CORS.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  *
  * JWT bearer events adapted from Microsoft docs:
@@ -48,6 +48,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ProsumerService>();
+        services.AddScoped<IProsumerService>(provider => provider.GetRequiredService<ProsumerService>());
         services.AddScoped<IReservationService, ReservationService>();
         services.AddScoped<IReservationQueryService, ReservationQueryService>();
         services.AddSingleton<IActiveAccountGuard, ActiveAccountGuard>();

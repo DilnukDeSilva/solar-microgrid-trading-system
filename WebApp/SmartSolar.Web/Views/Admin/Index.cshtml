@@ -1,18 +1,59 @@
+@model AdminDashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<h1 class="h3 mb-3">Backoffice dashboard</h1>
-<p class="text-muted">User management is ready. Stations, slots and reservations are Member 2.</p>
-
-<div class="row g-3">
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h2 class="h5">Staff users</h2>
-                <p class="text-muted">Create, update and deactivate Backoffice and Grid Operator accounts.</p>
-                <a class="btn btn-primary" asp-controller="Users" asp-action="Index">Manage users</a>
-            </div>
-        </div>
+<div class="page-head">
+    <div>
+        <p class="eyebrow">Backoffice</p>
+        <h1>Account desk</h1>
+        <p class="lede">Staff accounts, solar prosumers, and registrations waiting to be switched on.</p>
     </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.LoadError))
+{
+    <div class="alert alert-warning notice" role="alert">Counts could not be loaded. @Model.LoadError</div>
+}
+
+<div class="stat-grid mb-4">
+    <a class="panel stat" asp-controller="Users" asp-action="Index">
+        <div class="stat-value">@Model.StaffCount</div>
+        <div class="stat-label">Staff accounts</div>
+    </a>
+    <a class="panel stat" asp-controller="Prosumers" asp-action="Index">
+        <div class="stat-value">@Model.ProsumerCount</div>
+        <div class="stat-label">Prosumers</div>
+    </a>
+    <a class="panel stat" asp-controller="Prosumers" asp-action="Index" asp-route-status="Active">
+        <div class="stat-value">@Model.ActiveProsumerCount</div>
+        <div class="stat-label">Active prosumers</div>
+    </a>
+    <a class="panel stat" asp-controller="PendingActivations" asp-action="Index">
+        <div class="stat-value">@Model.PendingCount</div>
+        <div class="stat-label">Awaiting activation</div>
+    </a>
+</div>
+
+<div class="link-grid">
+    <a class="panel panel-pad link-card" asp-controller="Users" asp-action="Create">
+        <p class="eyebrow">Staff</p>
+        <h2 class="h4">New staff account</h2>
+        <p class="text-muted mb-0">Create a Backoffice officer or a Grid Operator. Passwords are hashed by the API.</p>
+    </a>
+    <a class="panel panel-pad link-card" asp-controller="Prosumers" asp-action="Create">
+        <p class="eyebrow">Prosumers</p>
+        <h2 class="h4">Register a prosumer</h2>
+        <p class="text-muted mb-0">NIC is the key. An account created here is Active immediately.</p>
+    </a>
+    <a class="panel panel-pad link-card" asp-controller="PendingActivations" asp-action="Index">
+        <p class="eyebrow">Approvals</p>
+        <h2 class="h4">Pending activations</h2>
+        <p class="text-muted mb-0">Self-registered mobile accounts stay Pending until you activate or reject them.</p>
+    </a>
+    <a class="panel panel-pad link-card" asp-controller="Reservations" asp-action="Create">
+        <p class="eyebrow">Trading</p>
+        <h2 class="h4">Book a slot</h2>
+        <p class="text-muted mb-0">Reserve a charging window for a prosumer who calls or visits the office.</p>
+    </a>
 </div>

@@ -1,7 +1,7 @@
 /*
  * File: IUserService.cs
  * Description: Staff user use-cases for Backoffice. Prosumer admin endpoints belong to Member 2.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

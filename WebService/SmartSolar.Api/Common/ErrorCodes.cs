@@ -1,7 +1,7 @@
 /*
  * File: ErrorCodes.cs
  * Description: Error `code` values returned in the contract `{ code, message }` body.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 
@@ -16,6 +16,7 @@ public static class ErrorCodes
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
     public const string AccountNotActive = "ACCOUNT_NOT_ACTIVE";
     public const string UsernameExists = "USERNAME_EXISTS";
+    public const string NicExists = "NIC_EXISTS";
     public const string RuleSevenDays = "RULE_7DAYS";
     public const string RuleTwelveHours = "RULE_12H";
     public const string SlotTaken = "SLOT_TAKEN";

@@ -1,7 +1,7 @@
 /*
  * File: AuthService.cs
  * Description: Validates credentials, rejects inactive accounts, and issues a JWT.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 
@@ -16,13 +16,29 @@ public class AuthService : IAuthService
     private readonly IUserRepository _users;
     private readonly IPasswordService _passwords;
     private readonly IJwtTokenService _tokens;
+    private readonly ProsumerService _prosumers;
 
     // Wires the repository and crypto helpers used during login.
-    public AuthService(IUserRepository users, IPasswordService passwords, IJwtTokenService tokens)
+    public AuthService(IUserRepository users, IPasswordService passwords, IJwtTokenService tokens, ProsumerService prosumers)
     {
         _users = users;
         _passwords = passwords;
         _tokens = tokens;
+        _prosumers = prosumers;
+    }
+
+    // Registers a Pending account. Activation is deliberately a separate Backoffice action.
+    public Task<UserDto> RegisterAsync(RegisterProsumerRequestDto request, CancellationToken cancellationToken = default)
+    {
+        return _prosumers.CreateAccountAsync(
+            request.Nic,
+            request.Username,
+            request.Password,
+            request.FullName,
+            request.Email,
+            request.Phone,
+            UserStatuses.Pending,
+            cancellationToken);
     }
 
     // Authenticates by username or NIC and returns a token plus the public user.
