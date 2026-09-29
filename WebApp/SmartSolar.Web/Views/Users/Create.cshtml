@@ -3,17 +3,8 @@
     ViewData["Title"] = "New staff account";
 }
 
-<div class="page-head">
-    <div>
-        <p class="eyebrow">Staff</p>
-        <h1>New staff account</h1>
-        <p class="lede">Roles are Backoffice or Grid Operator. Prosumers are created on the prosumer screen, keyed by NIC.</p>
-    </div>
-</div>
-
-<div class="panel panel-pad">
-    <partial name="_Form" model="Model" />
-</div>
+<h1 class="h3 mb-3">New staff account</h1>
+<partial name="_Form" model="Model" />
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

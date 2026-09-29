@@ -1,6 +1,6 @@
 /*
  * File: AdminController.cs
- * Description: Backoffice dashboard. Shows account counts from the API and links to user management.
+ * Description: Backoffice dashboard. Live operations counts plus account desk links.
  * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
@@ -18,17 +18,27 @@ public class AdminController : Controller
 {
     private readonly ApiClient _api;
 
-    // Injects the API client used to load live account counts.
+    // Injects the API client used for operations and account counts.
     public AdminController(ApiClient api)
     {
         _api = api;
     }
 
-    // Loads staff, prosumer and pending counts, then shows the Backoffice home.
+    // Loads operations figures and account counts for the Backoffice home.
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var model = new AdminDashboardViewModel();
+        try
+        {
+            model.Operations = await _api.GetOperationsDashboardAsync(cancellationToken);
+        }
+        catch (ApiClientException ex) when (ex.StatusCode != StatusCodes.Status401Unauthorized)
+        {
+            model.LoadError = ex.ApiMessage;
+            model.Operations = new OperationsDashboardDto();
+        }
+
         try
         {
             var staff = await _api.GetStaffAsync(cancellationToken);
@@ -39,9 +49,9 @@ public class AdminController : Controller
             model.ActiveProsumerCount = prosumers.Count(user => user.Status == "Active");
             model.PendingCount = pending.Count;
         }
-        catch (ApiClientException ex)
+        catch (ApiClientException ex) when (ex.StatusCode != StatusCodes.Status401Unauthorized)
         {
-            model.LoadError = ex.ApiMessage;
+            model.LoadError = string.IsNullOrWhiteSpace(model.LoadError) ? ex.ApiMessage : model.LoadError + " " + ex.ApiMessage;
         }
 
         return View(model);

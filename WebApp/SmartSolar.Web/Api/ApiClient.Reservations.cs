@@ -40,17 +40,17 @@ public partial class ApiClient
         return SendAsync<ReservationDto>(HttpMethod.Get, $"reservations/{Uri.EscapeDataString(id)}", null, true, cancellationToken);
     }
 
-    // Calls GET /reservations with the list filters. Empty filters are left out.
+    // Calls GET /reservations with the list filters. Reads the paged envelope from Member 4's endpoint.
     public async Task<IReadOnlyList<ReservationDto>> SearchReservationsAsync(string? status, string? nic, string? q, DateTime? from, CancellationToken cancellationToken = default)
     {
-        var query = new List<string>();
+        var query = new List<string> { "page=1" };
         if (!string.IsNullOrWhiteSpace(status)) query.Add($"status={Uri.EscapeDataString(status)}");
         if (!string.IsNullOrWhiteSpace(nic)) query.Add($"nic={Uri.EscapeDataString(nic.Trim())}");
         if (!string.IsNullOrWhiteSpace(q)) query.Add($"q={Uri.EscapeDataString(q.Trim())}");
-        if (from is not null) query.Add($"from={Uri.EscapeDataString(from.Value.ToString("o"))}");
+        if (from is not null) query.Add($"from={Uri.EscapeDataString(from.Value.ToUniversalTime().ToString("o"))}");
 
-        var url = query.Count == 0 ? "reservations" : "reservations?" + string.Join("&", query);
-        return await SendAsync<List<ReservationDto>>(HttpMethod.Get, url, null, true, cancellationToken);
+        var page = await SendAsync<ReservationPageDto>(HttpMethod.Get, "reservations?" + string.Join("&", query), null, true, cancellationToken);
+        return page.Items;
     }
 
     // Calls PUT /reservations/{id} to move a booking to another slot.

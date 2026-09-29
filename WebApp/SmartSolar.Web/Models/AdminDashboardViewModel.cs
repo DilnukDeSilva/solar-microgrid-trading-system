@@ -9,6 +9,8 @@ namespace SmartSolar.Web.Models;
 
 public class AdminDashboardViewModel
 {
+    public OperationsDashboardDto Operations { get; set; } = new();
+
     public int StaffCount { get; set; }
 
     public int ProsumerCount { get; set; }

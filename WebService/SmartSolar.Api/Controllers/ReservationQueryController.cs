@@ -1,7 +1,8 @@
 /*
  * File: ReservationQueryController.cs
- * Description: GET /api/reservations list endpoint. Owned by Member 4; stand-in written by Janukshan S (IT22635266) so the web list works before merge.
- * Author: Member 4
+ * Description: Reservation list, history filters and the operator approval queue.
+ * Author: samudith
+ * Created: 29/09/2026
  */
 
 using Microsoft.AspNetCore.Authorization;
@@ -20,29 +21,44 @@ public class ReservationQueryController : ControllerBase
 {
     private readonly IReservationQueryService _queries;
 
-    // Injects the reservation query service.
+    // Injects the read service that applies prosumer scoping.
     public ReservationQueryController(IReservationQueryService queries)
     {
         _queries = queries;
     }
 
-    // Lists reservations. Filters: status, from/to (slot time), q (station, NIC or reference), nic (staff only).
+    // Lists bookings. Filters combine. A prosumer's NIC comes from the token, not the query.
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyList<ReservationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ReservationPageDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorDto), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IReadOnlyList<ReservationDto>>> Search(
+    public async Task<ActionResult<ReservationPageDto>> Search(
         [FromQuery] string? status,
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
+        [FromQuery] string? stationId,
         [FromQuery] string? q,
         [FromQuery] string? nic,
-        CancellationToken cancellationToken)
+        [FromQuery] int page = 1,
+        CancellationToken cancellationToken = default)
     {
-        var actor = new ReservationActor(
+        return Ok(await _queries.SearchAsync(CurrentActor(), status, from, to, stationId, q, nic, page, cancellationToken));
+    }
+
+    // Returns future Pending bookings for Backoffice and Grid Operators.
+    [HttpGet("pending")]
+    [Authorize(Roles = RoleNames.Backoffice + "," + RoleNames.GridOperator)]
+    [ProducesResponseType(typeof(ReservationPageDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ReservationPageDto>> Pending([FromQuery] int page = 1, CancellationToken cancellationToken = default)
+    {
+        return Ok(await _queries.GetPendingQueueAsync(page, cancellationToken));
+    }
+
+    // Builds the current user from the JWT claims.
+    private ReservationActor CurrentActor()
+    {
+        return new ReservationActor(
             User.FindFirst("sub")?.Value ?? string.Empty,
             User.FindFirst("role")?.Value ?? string.Empty,
             User.FindFirst("nic")?.Value);
-
-        return Ok(await _queries.SearchAsync(status, from, to, q, nic, actor, cancellationToken));
     }
 }

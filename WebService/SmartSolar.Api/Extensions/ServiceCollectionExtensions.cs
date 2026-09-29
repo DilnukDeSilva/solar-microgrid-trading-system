@@ -1,4 +1,4 @@
-/*
+﻿/*
  * File: ServiceCollectionExtensions.cs
  * Description: Registers Mongo, repositories, services, JWT, Swagger and CORS.
  * Author: DE SILVA R K D H (IT22001252)
@@ -51,7 +51,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ProsumerService>();
         services.AddScoped<IProsumerService>(provider => provider.GetRequiredService<ProsumerService>());
         services.AddScoped<IReservationService, ReservationService>();
+        services.AddSingleton<IReservationQueryRepository, ReservationQueryRepository>();
         services.AddScoped<IReservationQueryService, ReservationQueryService>();
+        services.AddScoped<IOperatorService, OperatorService>();
         services.AddSingleton<IActiveAccountGuard, ActiveAccountGuard>();
 
         services.AddControllers()
@@ -209,3 +211,4 @@ public static class ServiceCollectionExtensions
         return services;
     }
 }
+

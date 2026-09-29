@@ -1,24 +1,39 @@
+@model OperationsDashboardDto
 @{
     ViewData["Title"] = "Operations";
 }
 
-<div class="page-head">
-    <div>
-        <p class="eyebrow">Grid operator</p>
-        <h1>Operations desk</h1>
-        <p class="lede">Look up a prosumer and book an energy slot on their behalf. Node and slot maintenance is on this same desk.</p>
-    </div>
-</div>
+<h1 class="h3 mb-3">Operations home</h1>
+<p class="text-muted">Today's bookings, pending approvals, and tools to look up a prosumer or book a slot.</p>
 
-<div class="link-grid">
-    <a class="panel panel-pad link-card" asp-controller="Prosumers" asp-action="Index">
-        <p class="eyebrow">Accounts</p>
-        <h2 class="h4">Find a prosumer</h2>
-        <p class="text-muted mb-0">Search by NIC, name, username or phone. Reactivation stays with Backoffice.</p>
-    </a>
-    <a class="panel panel-pad link-card" asp-controller="Reservations" asp-action="Create">
-        <p class="eyebrow">Trading</p>
-        <h2 class="h4">Book a slot</h2>
-        <p class="text-muted mb-0">Choose the prosumer, the station and a free window. The API enforces the booking rules.</p>
-    </a>
+<partial name="_OperationsDashboard" model="Model" />
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5">Booking monitor</h2>
+                <p class="text-muted">Filter the queue, verify a QR token, and finalise completed jobs.</p>
+                <a class="btn btn-primary" asp-controller="Bookings" asp-action="Index">Open monitor</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5">Find a prosumer</h2>
+                <p class="text-muted">Search by NIC, name, username or phone.</p>
+                <a class="btn btn-outline-primary" asp-controller="Prosumers" asp-action="Index">Prosumers</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5">Book a slot</h2>
+                <p class="text-muted">Choose the prosumer, station and a free window.</p>
+                <a class="btn btn-outline-primary" asp-controller="Reservations" asp-action="Create">Book a slot</a>
+            </div>
+        </div>
+    </div>
 </div>

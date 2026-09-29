@@ -1,0 +1,70 @@
+@model OperationsDashboardDto
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Today's bookings</div>
+                <div class="display-6">@Model.TodaysBookingCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Pending approvals</div>
+                <div class="display-6">@Model.PendingApprovals</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Active stations</div>
+                <div class="display-6">@Model.ActiveStations</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Completed today</div>
+                <div class="display-6">@Model.CompletedToday</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 mb-0">Today's bookings</h2>
+    <a class="btn btn-sm btn-outline-primary" asp-controller="Bookings" asp-action="Index" asp-route-tab="pending">Approval queue</a>
+</div>
+<div class="table-responsive mb-4">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>When</th>
+                <th>Station</th>
+                <th>NIC</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.TodaysBookings.Count == 0)
+        {
+            <tr>
+                <td colspan="4" class="text-muted">No bookings scheduled for today.</td>
+            </tr>
+        }
+        @foreach (var booking in Model.TodaysBookings)
+        {
+            <tr>
+                <td>@booking.ScheduledAt.ToSriLankaText()</td>
+                <td>@booking.StationName</td>
+                <td>@booking.ProsumerNic</td>
+                <td><partial name="_ReservationStatusBadge" model="booking.Status" /></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -7,9 +7,11 @@
 package lk.smartsolar.mobile.data.remote;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -20,10 +22,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import lk.smartsolar.mobile.BuildConfig;
+import lk.smartsolar.mobile.data.local.Booking;
+import lk.smartsolar.mobile.data.local.DashboardSnapshot;
 import lk.smartsolar.mobile.data.local.Session;
 import lk.smartsolar.mobile.data.local.SessionManager;
 import lk.smartsolar.mobile.data.local.UserProfile;
@@ -93,6 +99,56 @@ public class ApiClient {
 
     public void requestDeactivation(ApiCallback<UserProfile> callback) {
         request("POST", "me/request-deactivation", null, true, UserProfile::fromJson, callback);
+    }
+
+    // Calls GET /dashboard/me and stores the counts for offline display.
+    public void getMyDashboard(ApiCallback<DashboardSnapshot> callback) {
+        request("GET", "dashboard/me", null, true, json -> {
+            DashboardSnapshot snapshot = DashboardSnapshot.fromJson(json);
+            SessionManager.get(context).database().saveDashboard(snapshot);
+            return snapshot;
+        }, callback);
+    }
+
+    // Calls GET /reservations with an already encoded query string and caches the page.
+    public void listReservations(String query, ApiCallback<List<Booking>> callback) {
+        String path = "reservations" + (query == null || query.isEmpty() ? "" : "?" + query);
+        request("GET", path, null, true, json -> cacheBookings(json), callback);
+    }
+
+    // Calls GET /reservations/pending for the operator approval queue.
+    public void listPendingReservations(ApiCallback<List<Booking>> callback) {
+        request("GET", "reservations/pending", null, true, json -> cacheBookings(json), callback);
+    }
+
+    // Calls POST /reservations/{id}/approve.
+    public void approveReservation(String id, ApiCallback<Booking> callback) {
+        request("POST", "reservations/" + Uri.encode(id) + "/approve", null, true, Booking::fromJson, callback);
+    }
+
+    // Calls POST /reservations/verify-qr. The body is only the opaque token.
+    public void verifyQr(String qrToken, ApiCallback<Booking> callback) {
+        JSONObject body = new JSONObject();
+        put(body, "qrToken", qrToken);
+        request("POST", "reservations/verify-qr", body, true, Booking::fromJson, callback);
+    }
+
+    // Calls POST /reservations/{id}/complete.
+    public void completeReservation(String id, ApiCallback<Booking> callback) {
+        request("POST", "reservations/" + Uri.encode(id) + "/complete", null, true, Booking::fromJson, callback);
+    }
+
+    // Reads the page envelope and replaces the on-device booking cache.
+    private List<Booking> cacheBookings(JSONObject json) throws Exception {
+        JSONArray items = json.optJSONArray("items");
+        ArrayList<Booking> bookings = new ArrayList<>();
+        if (items != null) {
+            for (int index = 0; index < items.length(); index++) {
+                bookings.add(Booking.fromJson(items.getJSONObject(index)));
+            }
+        }
+        SessionManager.get(context).database().replaceBookings(bookings, System.currentTimeMillis());
+        return bookings;
     }
 
     private JSONObject profileBody(String username, String password, String fullName, String email, String phone) {
