@@ -3,22 +3,22 @@
     ViewData["Title"] = "Deactivate user";
 }
 
-<div class="col-lg-6">
-    <h1 class="h3 mb-3">Deactivate @Model.Username?</h1>
-    <p>
-        This sets status to <strong>Deactivated</strong> in the API. The account will no longer be able to log in.
-        You cannot deactivate your own account.
-    </p>
-    <dl class="row">
-        <dt class="col-sm-3">Name</dt>
-        <dd class="col-sm-9">@Model.FullName</dd>
-        <dt class="col-sm-3">Role</dt>
-        <dd class="col-sm-9">@Model.Role</dd>
-        <dt class="col-sm-3">Status</dt>
-        <dd class="col-sm-9">@Model.Status</dd>
-    </dl>
-    <form asp-action="Deactivate" asp-route-id="@Model.Id" method="post">
-        <button type="submit" class="btn btn-danger">Deactivate</button>
-        <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+<div class="decision">
+    <p class="eyebrow">Staff</p>
+    <h1>Deactivate @Model.Username?</h1>
+    <p class="lede">The API sets the status to Deactivated. That account can no longer log in. You cannot deactivate the account you are using.</p>
+    <div class="panel panel-pad my-4">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+            <dt class="col-sm-3">Role</dt>
+            <dd class="col-sm-9"><partial name="_AccountStatus" model="Model.Role" /></dd>
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9"><partial name="_AccountStatus" model="Model.Status" /></dd>
+        </dl>
+    </div>
+    <form asp-action="Deactivate" asp-route-id="@Model.Id" method="post" class="d-inline">
+        <button type="submit" class="btn btn-danger">Deactivate account</button>
     </form>
+    <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
 </div>
