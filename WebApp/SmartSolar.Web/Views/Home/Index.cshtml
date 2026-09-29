@@ -1,16 +1,14 @@
 ﻿@{
-    ViewData["Title"] = "Welcome";
+    ViewData["Title"] = "Home";
 }
 
-<div class="gate">
-    <partial name="_BrandPanel" />
-    <section class="gate-pane">
-        <div class="gate-card">
-            <p class="eyebrow">Opening screen</p>
-            <h2>Sign in to the desk</h2>
-            <p class="lede mb-4">Use a Backoffice or Grid Operator account. Prosumer logins are rejected here and belong on the phone.</p>
-            <a class="btn btn-primary btn-lg" asp-controller="Account" asp-action="Login">Staff log in</a>
-            <p class="seed-note">Seed accounts: <code>admin</code> · <code>operator1</code></p>
-        </div>
-    </section>
+<div class="p-5 mb-4 bg-light rounded-3">
+    <div class="container-fluid py-2">
+        <h1 class="display-5 fw-semibold">Smart Solar Microgrid</h1>
+        <p class="col-md-8 fs-5 text-muted">
+            Backoffice and Grid Operator tools. Prosumers use the Android app.
+            This web app never talks to MongoDB — every action goes through the FAT API.
+        </p>
+        <a class="btn btn-primary btn-lg" asp-controller="Account" asp-action="Login">Staff log in</a>
+    </div>
 </div>
