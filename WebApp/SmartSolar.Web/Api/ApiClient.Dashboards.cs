@@ -46,12 +46,6 @@ public partial class ApiClient
         return SendAsync<OperationsDashboardDto>(HttpMethod.Get, "dashboard/operations", null, true, cancellationToken);
     }
 
-    // Calls POST /reservations/{id}/approve.
-    public Task<ReservationDto> ApproveReservationAsync(string id, CancellationToken cancellationToken = default)
-    {
-        return SendAsync<ReservationDto>(HttpMethod.Post, $"reservations/{Uri.EscapeDataString(id)}/approve", null, true, cancellationToken);
-    }
-
     // Calls POST /reservations/verify-qr.
     public Task<ReservationDto> VerifyQrAsync(string qrToken, CancellationToken cancellationToken = default)
     {

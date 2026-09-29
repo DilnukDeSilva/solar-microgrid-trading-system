@@ -49,6 +49,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
+// Serves wwwroot directly. MapStaticAssets returns an empty body when the browser asks for gzip.
+app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();

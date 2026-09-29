@@ -17,6 +17,9 @@ public interface IReservationRepository
     // Loads one reservation by id.
     Task<Reservation?> FindByIdAsync(string id, CancellationToken cancellationToken = default);
 
+    // Finds reservations matching the optional filters, ordered by slot time.
+    Task<IReadOnlyList<Reservation>> SearchAsync(string? nic, string? status, DateTime? from, DateTime? to, string? text, CancellationToken cancellationToken = default);
+
     // Inserts a new reservation.
     Task InsertAsync(Reservation reservation, CancellationToken cancellationToken = default);
 

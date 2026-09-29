@@ -1,6 +1,6 @@
 /*
  * File: AdminController.cs
- * Description: Backoffice dashboard. Links only; Member 2 owns stations, slots and reservations UI.
+ * Description: Backoffice dashboard. Live operations counts plus account desk links.
  * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
@@ -18,30 +18,42 @@ public class AdminController : Controller
 {
     private readonly ApiClient _api;
 
-    // Injects the shared API client used for the live Home figures.
+    // Injects the API client used for operations and account counts.
     public AdminController(ApiClient api)
     {
         _api = api;
     }
 
-    // Shows the Backoffice home with live operations counts and a link to user management.
+    // Loads operations figures and account counts for the Backoffice home.
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        return View(await LoadDashboardAsync(cancellationToken));
-    }
-
-    // Loads the operations dashboard, or an empty one when the API call fails.
-    private async Task<OperationsDashboardDto> LoadDashboardAsync(CancellationToken cancellationToken)
-    {
+        var model = new AdminDashboardViewModel();
         try
         {
-            return await _api.GetOperationsDashboardAsync(cancellationToken);
+            model.Operations = await _api.GetOperationsDashboardAsync(cancellationToken);
         }
         catch (ApiClientException ex) when (ex.StatusCode != StatusCodes.Status401Unauthorized)
         {
-            TempData["Error"] = ex.ApiMessage;
-            return new OperationsDashboardDto();
+            model.LoadError = ex.ApiMessage;
+            model.Operations = new OperationsDashboardDto();
         }
+
+        try
+        {
+            var staff = await _api.GetStaffAsync(cancellationToken);
+            var prosumers = await _api.GetProsumersAsync(null, null, cancellationToken);
+            var pending = await _api.GetPendingProsumersAsync(cancellationToken);
+            model.StaffCount = staff.Count;
+            model.ProsumerCount = prosumers.Count;
+            model.ActiveProsumerCount = prosumers.Count(user => user.Status == "Active");
+            model.PendingCount = pending.Count;
+        }
+        catch (ApiClientException ex) when (ex.StatusCode != StatusCodes.Status401Unauthorized)
+        {
+            model.LoadError = string.IsNullOrWhiteSpace(model.LoadError) ? ex.ApiMessage : model.LoadError + " " + ex.ApiMessage;
+        }
+
+        return View(model);
     }
 }

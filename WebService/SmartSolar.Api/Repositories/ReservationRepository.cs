@@ -5,6 +5,8 @@
  * Created: 20/09/2026
  */
 
+using System.Text.RegularExpressions;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using SmartSolar.Api.Data;
 using SmartSolar.Api.Models;
@@ -31,6 +33,45 @@ public class ReservationRepository : IReservationRepository
     public async Task<Reservation?> FindByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         return await _context.Reservations.Find(reservation => reservation.Id == id).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    // Finds reservations matching the optional filters, ordered by slot time.
+    public async Task<IReadOnlyList<Reservation>> SearchAsync(string? nic, string? status, DateTime? from, DateTime? to, string? text, CancellationToken cancellationToken = default)
+    {
+        var f = Builders<Reservation>.Filter;
+        var filter = f.Empty;
+
+        if (!string.IsNullOrWhiteSpace(nic))
+        {
+            filter &= f.Eq(r => r.ProsumerNic, nic);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            filter &= f.Eq(r => r.Status, status);
+        }
+
+        if (from is not null)
+        {
+            filter &= f.Gte(r => r.ScheduledAt, from.Value);
+        }
+
+        if (to is not null)
+        {
+            filter &= f.Lte(r => r.ScheduledAt, to.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            // Escape the user's text so it is matched as plain text, not as a regex.
+            var pattern = new BsonRegularExpression(Regex.Escape(text), "i");
+            filter &= f.Or(
+                f.Regex(r => r.StationName, pattern),
+                f.Regex(r => r.ProsumerNic, pattern),
+                f.Regex(r => r.Id, pattern));
+        }
+
+        return await _context.Reservations.Find(filter).SortBy(r => r.ScheduledAt).ToListAsync(cancellationToken);
     }
 
     // Inserts a new reservation.

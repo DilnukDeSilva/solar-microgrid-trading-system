@@ -1,4 +1,4 @@
-/*
+﻿/*
  * File: ServiceCollectionExtensions.cs
  * Description: Registers Mongo, repositories, services, JWT, Swagger and CORS.
  * Author: DE SILVA R K D H (IT22001252)
@@ -211,3 +211,4 @@ public static class ServiceCollectionExtensions
         return services;
     }
 }
+

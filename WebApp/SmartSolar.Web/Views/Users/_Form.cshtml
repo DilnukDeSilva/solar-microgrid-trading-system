@@ -3,58 +3,59 @@
     var action = Model.IsEdit ? "Edit" : "Create";
 }
 
-<form asp-action="@action" asp-route-id="@Model.Id" method="post" class="col-lg-6">
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<form asp-action="@action" asp-route-id="@Model.Id" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger notice" role="alert"></div>
     <input type="hidden" asp-for="IsEdit" />
     <input type="hidden" asp-for="Id" />
 
-    <div class="mb-3">
-        <label asp-for="Username" class="form-label"></label>
-        @if (Model.IsEdit)
-        {
-            <p class="form-control-plaintext mb-0">@Model.Username</p>
-        }
-        else
-        {
-            <input asp-for="Username" class="form-control" autocomplete="username" />
-            <span asp-validation-for="Username" class="text-danger"></span>
-        }
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="Username" class="form-label"></label>
+            @if (Model.IsEdit)
+            {
+                <p class="form-control-plaintext mono mb-0">@Model.Username</p>
+            }
+            else
+            {
+                <input asp-for="Username" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            }
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Role" class="form-label"></label>
+            <select asp-for="Role" class="form-select">
+                <option value="@RoleNames.Backoffice">Backoffice</option>
+                <option value="@RoleNames.GridOperator">Grid operator</option>
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Phone" class="form-label"></label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Password" class="form-label"></label>
+            <div class="input-group">
+                <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                <button class="btn btn-outline-secondary" type="button" data-toggle-password="#Password">Show</button>
+            </div>
+            <div class="form-text">@(Model.IsEdit ? "Leave blank to keep the current password. New passwords need 8 characters." : "At least 8 characters. The API stores only the hash.")</div>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label"></label>
-        <input asp-for="Password" class="form-control" autocomplete="new-password" />
-        <div class="form-text">@(Model.IsEdit ? "Leave blank to keep the current password." : "Required. Hashed by the API, never stored here.")</div>
-        <span asp-validation-for="Password" class="text-danger"></span>
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Save account</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="FullName" class="form-label"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Phone" class="form-label"></label>
-        <input asp-for="Phone" class="form-control" />
-        <span asp-validation-for="Phone" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Role" class="form-label"></label>
-        <select asp-for="Role" class="form-select">
-            <option value="@RoleNames.Backoffice">@RoleNames.Backoffice</option>
-            <option value="@RoleNames.GridOperator">@RoleNames.GridOperator</option>
-        </select>
-        <span asp-validation-for="Role" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
 </form>
