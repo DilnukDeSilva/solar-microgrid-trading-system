@@ -1,7 +1,7 @@
 /*
  * File: IJwtTokenService.cs
  * Description: Issues signed JWTs with the contract claims: sub, role, nic.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

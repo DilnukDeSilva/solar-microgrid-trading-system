@@ -1,7 +1,7 @@
 /*
  * File: LoginRequestDto.cs
  * Description: Login body: username or NIC plus password, matching API-CONTRACT.md.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

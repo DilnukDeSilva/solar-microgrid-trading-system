@@ -1,7 +1,7 @@
 /*
  * File: RoleNames.cs
  * Description: Role strings that match the API contract. Used only for navbar and redirects.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

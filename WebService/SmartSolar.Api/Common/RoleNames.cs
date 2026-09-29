@@ -1,7 +1,7 @@
 /*
  * File: RoleNames.cs
  * Description: Role strings used by JWT claims and [Authorize(Roles)] attributes.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

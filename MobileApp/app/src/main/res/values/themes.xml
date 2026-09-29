@@ -1,9 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.SmartSolar" parent="Theme.Material3.Light">
+    <style name="Theme.SmartSolar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/solar_green</item>
-        <item name="colorPrimaryDark">@color/solar_green_dark</item>
-        <item name="colorSecondary">@color/solar_amber</item>
-        <item name="android:windowBackground">@color/page_background</item>
+        <item name="colorPrimaryVariant">@color/solar_green_dark</item>
+        <item name="colorSecondary">@color/solar_gold</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/solar_green_dark</item>
+        <item name="android:navigationBarColor">@color/solar_green_dark</item>
     </style>
 </resources>

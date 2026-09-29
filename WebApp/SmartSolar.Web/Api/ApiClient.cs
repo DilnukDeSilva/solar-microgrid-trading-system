@@ -1,7 +1,7 @@
 /*
  * File: ApiClient.cs
  * Description: Shared HTTP client for every MVC page. Attach the session JWT; do not encode rules here.
- * Author: Member 1
+ * Author: DE SILVA R K D H (IT22001252)
  * Created: 20/09/2026
  */
 

@@ -1,0 +1,107 @@
+@model IReadOnlyList<UserDto>
+@{
+    ViewData["Title"] = "Prosumers";
+    var isBackoffice = User.IsInRole(RoleNames.Backoffice);
+    var query = ViewBag.Query as string;
+    var status = ViewBag.Status as string;
+}
+
+<div class="page-head">
+    <div>
+        <p class="eyebrow">Accounts</p>
+        <h1>Prosumers</h1>
+        <p class="lede">
+            Search by NIC, name, username or phone.
+            @(isBackoffice ? "Reactivate is available only to Backoffice." : "You can look up accounts. Only Backoffice can reactivate one.")
+        </p>
+    </div>
+    @if (isBackoffice)
+    {
+        <a asp-action="Create" class="btn btn-primary">Create prosumer</a>
+    }
+</div>
+
+<form method="get" class="panel toolbar">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label" for="q">Search</label>
+            <input id="q" name="q" value="@query" class="form-control" placeholder="NIC, name, username or phone" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" name="status" class="form-select">
+                <option value="">All statuses</option>
+                @foreach (var option in new[] { "Pending", "Active", "Deactivated" })
+                {
+                    <option value="@option" selected="@(status == option)">@option</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-primary" type="submit">Search</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+        </div>
+    </div>
+</form>
+
+<div class="panel table-responsive">
+    <table class="table table-hover data-table align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Prosumer</th>
+                <th>NIC</th>
+                <th>Username</th>
+                <th>Phone</th>
+                <th>Status</th>
+                @if (isBackoffice)
+                {
+                    <th class="text-end">Actions</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="@(isBackoffice ? 6 : 5)">
+                    <div class="empty">No prosumers match this search.</div>
+                </td>
+            </tr>
+        }
+        @foreach (var user in Model)
+        {
+            var initial = string.IsNullOrWhiteSpace(user.FullName) ? "?" : user.FullName.Trim()[0].ToString().ToUpperInvariant();
+            <tr>
+                <td>
+                    <div class="person">
+                        <span class="avatar" aria-hidden="true">@initial</span>
+                        <span>@user.FullName</span>
+                    </div>
+                </td>
+                <td class="mono">@user.Nic</td>
+                <td>@user.Username</td>
+                <td>@user.Phone</td>
+                <td><partial name="_AccountStatus" model="user.Status" /></td>
+                @if (isBackoffice)
+                {
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@user.Nic" class="btn btn-sm btn-outline-primary">Edit</a>
+                        @if (user.Status == "Deactivated")
+                        {
+                            <form asp-action="Reactivate" asp-route-id="@user.Nic" method="post" class="d-inline">
+                                <button class="btn btn-sm btn-success" type="submit">Reactivate</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Deactivate" asp-route-id="@user.Nic" method="post" class="d-inline" onsubmit="return confirm('Deactivate this prosumer? They will not be able to log in until Backoffice reactivates them.');">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate</button>
+                            </form>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
