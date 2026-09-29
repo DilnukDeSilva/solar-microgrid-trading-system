@@ -9,6 +9,8 @@
         android:theme="@style/Theme.SmartSolar"
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.settings.SettingsActivity" />
+        <activity android:name=".ui.reservations.BookSlotActivity" />
+        <activity android:name=".ui.reservations.BookingSummaryActivity" />
         <activity android:name=".ui.auth.LogoutActivity" />
         <activity android:name=".ui.account.DeactivationActivity" />
         <activity android:name=".ui.account.ProfileActivity" />
