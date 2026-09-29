@@ -1,0 +1,38 @@
+@model ReservationDto
+@{
+    ViewData["Title"] = Model.Status == "Completed" ? "Booking completed" : "QR verified";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4">@(Model.Status == "Completed" ? "Job completed" : "QR verified")</h1>
+                <dl class="row">
+                    <dt class="col-sm-4">Reference</dt>
+                    <dd class="col-sm-8 font-monospace">@Model.Id</dd>
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8"><partial name="_ReservationStatusBadge" model="Model.Status" /></dd>
+                    <dt class="col-sm-4">Prosumer NIC</dt>
+                    <dd class="col-sm-8">@Model.ProsumerNic</dd>
+                    <dt class="col-sm-4">Station</dt>
+                    <dd class="col-sm-8">@Model.StationName</dd>
+                    <dt class="col-sm-4">Slot time</dt>
+                    <dd class="col-sm-8">@Model.ScheduledAt.ToSriLankaText()</dd>
+                </dl>
+                @if (Model.Status == "Approved")
+                {
+                    <form asp-action="Complete" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button class="btn btn-success" type="submit">Finalise</button>
+                        <a class="btn btn-outline-secondary" asp-action="Index">Back</a>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-outline-secondary" asp-action="Index">Back to bookings</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

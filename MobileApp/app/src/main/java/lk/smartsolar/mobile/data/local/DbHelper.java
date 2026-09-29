@@ -12,10 +12,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "smart_solar.db";
     // Every module adds its CREATE statement and increments this version.
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     public DbHelper(Context context) {
         super(context.getApplicationContext(), DB_NAME, null, DB_VERSION);
@@ -25,11 +28,21 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE session (token TEXT NOT NULL, expires_at INTEGER NOT NULL, role TEXT NOT NULL, user_id TEXT NOT NULL, nic TEXT)");
         db.execSQL("CREATE TABLE user_profile (nic TEXT PRIMARY KEY, username TEXT NOT NULL, full_name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT NOT NULL, status TEXT NOT NULL, synced_at INTEGER NOT NULL)");
+        createBookingCache(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Additive migrations belong here. Never drop other modules' offline data.
+        if (oldVersion < 2) {
+            createBookingCache(db);
+        }
+    }
+
+    // Creates the offline booking list and dashboard snapshot tables.
+    private void createBookingCache(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS booking_history_cache (id TEXT PRIMARY KEY, prosumer_nic TEXT, station_name TEXT, scheduled_at TEXT, status TEXT, synced_at INTEGER NOT NULL)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS dashboard_snapshot (id INTEGER PRIMARY KEY CHECK (id = 1), pending_count INTEGER NOT NULL, approved_future_count INTEGER NOT NULL, active_count INTEGER NOT NULL, next_station TEXT, next_when TEXT, synced_at INTEGER NOT NULL)");
     }
 
     public synchronized void saveSession(Session session) {
@@ -90,6 +103,74 @@ public class DbHelper extends SQLiteOpenHelper {
             profile.status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
             profile.syncedAt = cursor.getLong(cursor.getColumnIndexOrThrow("synced_at"));
             return profile;
+        }
+    }
+
+    // Replaces the cached booking list with the latest API page.
+    public synchronized void replaceBookings(List<Booking> bookings, long syncedAt) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete("booking_history_cache", null, null);
+            for (Booking booking : bookings) {
+                ContentValues values = new ContentValues();
+                values.put("id", booking.id);
+                values.put("prosumer_nic", booking.prosumerNic);
+                values.put("station_name", booking.stationName);
+                values.put("scheduled_at", booking.scheduledAt);
+                values.put("status", booking.status);
+                values.put("synced_at", syncedAt);
+                db.insertWithOnConflict("booking_history_cache", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    // Returns the last booking list saved on this phone.
+    public synchronized List<Booking> readBookings() {
+        ArrayList<Booking> bookings = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().query("booking_history_cache", null, null, null, null, null, "scheduled_at ASC")) {
+            while (cursor.moveToNext()) {
+                Booking booking = new Booking();
+                booking.id = cursor.getString(cursor.getColumnIndexOrThrow("id"));
+                booking.prosumerNic = cursor.getString(cursor.getColumnIndexOrThrow("prosumer_nic"));
+                booking.stationName = cursor.getString(cursor.getColumnIndexOrThrow("station_name"));
+                booking.scheduledAt = cursor.getString(cursor.getColumnIndexOrThrow("scheduled_at"));
+                booking.status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+                booking.syncedAt = cursor.getLong(cursor.getColumnIndexOrThrow("synced_at"));
+                bookings.add(booking);
+            }
+        }
+        return bookings;
+    }
+
+    // Stores the latest prosumer dashboard so it can be shown offline.
+    public synchronized void saveDashboard(DashboardSnapshot snapshot) {
+        ContentValues values = new ContentValues();
+        values.put("id", 1);
+        values.put("pending_count", snapshot.pendingCount);
+        values.put("approved_future_count", snapshot.approvedFutureCount);
+        values.put("active_count", snapshot.activeCount);
+        values.put("next_station", snapshot.nextStation);
+        values.put("next_when", snapshot.nextWhen);
+        values.put("synced_at", snapshot.syncedAt);
+        getWritableDatabase().insertWithOnConflict("dashboard_snapshot", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    // Returns the last dashboard snapshot, or null when the phone has never synced.
+    public synchronized DashboardSnapshot readDashboard() {
+        try (Cursor cursor = getReadableDatabase().query("dashboard_snapshot", null, "id = 1", null, null, null, null, "1")) {
+            if (!cursor.moveToFirst()) return null;
+            DashboardSnapshot snapshot = new DashboardSnapshot();
+            snapshot.pendingCount = cursor.getInt(cursor.getColumnIndexOrThrow("pending_count"));
+            snapshot.approvedFutureCount = cursor.getInt(cursor.getColumnIndexOrThrow("approved_future_count"));
+            snapshot.activeCount = cursor.getInt(cursor.getColumnIndexOrThrow("active_count"));
+            snapshot.nextStation = cursor.getString(cursor.getColumnIndexOrThrow("next_station"));
+            snapshot.nextWhen = cursor.getString(cursor.getColumnIndexOrThrow("next_when"));
+            snapshot.syncedAt = cursor.getLong(cursor.getColumnIndexOrThrow("synced_at"));
+            return snapshot;
         }
     }
 }
