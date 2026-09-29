@@ -24,7 +24,7 @@ Follow `docs/DEPLOYMENT.md` on a Windows PC: .NET **10** Hosting Bundle, publish
 
 Add the repository write methods you need to `StationRepository` / `SlotRepository`, and a 2dsphere or lat/lng index if you use a Mongo geo query.
 
-### Web
+### Web (React + Tailwind CSS, in `WebApp/smartsolar-ui`)
 Node list (status badges, search) · create/edit with GPS fields (optionally a small map preview) · deactivate with the server's 409 message shown clearly · schedule editor · slot management per node with an availability toggle for operators.
 
 ### Android

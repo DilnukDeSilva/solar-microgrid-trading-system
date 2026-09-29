@@ -3,30 +3,34 @@
     ViewData["Title"] = "Log in";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h1 class="h4 mb-3">Staff log in</h1>
-                <p class="text-muted">Use a Backoffice or Grid Operator account. Seed admin is <code>admin</code>.</p>
-                <form asp-action="Login" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
-                    <div class="mb-3">
-                        <label asp-for="Username" class="form-label"></label>
-                        <input asp-for="Username" class="form-control" autocomplete="username" autofocus />
-                        <span asp-validation-for="Username" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label"></label>
+<div class="gate">
+    <partial name="_BrandPanel" />
+    <section class="gate-pane">
+        <div class="gate-card">
+            <p class="eyebrow">Staff access</p>
+            <h2>Log in</h2>
+            <p class="lede mb-4">Username, or a prosumer NIC if you are checking that mobile accounts stay off this desk.</p>
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger notice" role="alert"></div>
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label"></label>
+                    <input asp-for="Username" class="form-control" autocomplete="username" autofocus placeholder="admin" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <div class="input-group">
                         <input asp-for="Password" class="form-control" autocomplete="current-password" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle-password="#Password">Show</button>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Log in</button>
-                </form>
-            </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Enter the desk</button>
+            </form>
+            <p class="seed-note mb-0"><a asp-controller="Home" asp-action="Index">Back to the opening screen</a></p>
         </div>
-    </div>
+    </section>
 </div>
 
 @section Scripts {

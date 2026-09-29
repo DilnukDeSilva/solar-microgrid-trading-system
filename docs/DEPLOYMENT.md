@@ -75,15 +75,19 @@ If the IP changes after a router reboot, run `ipconfig getifaddr en0` and update
 
 To pin a static address on macOS: **System Settings → Wi-Fi → Details → TCP/IP → Configure IPv4: Manually**. Keep the same subnet and router the DHCP lease used.
 
-### MVC web app (local run)
+### Web app (local run)
 
-The web client is `WebApp/SmartSolar.Web`. It stores the JWT in session and calls `http://localhost:5080/api/`. No MongoDB connection from the web project.
+The web client is `WebApp/smartsolar-ui` (React + Tailwind CSS). It stores the JWT in the browser and calls `http://localhost:5080/api/`. No MongoDB connection from the web project. Set `VITE_API_BASE` if the API is not on that address.
 
 ```bash
-dotnet run --project "WebApp/SmartSolar.Web/SmartSolar.Web.csproj"
+cd WebApp/smartsolar-ui
+npm install
+npm run dev
 ```
 
-Open `http://localhost:5081`. Seed logins: `admin / Admin@123` (Backoffice dashboard + Users), `operator1 / Oper@123` (Operations home). Other members' pages reuse `ApiClient` and the shared layout.
+Open `http://localhost:5173`. Seed logins: `admin / Admin@123` (Backoffice dashboard), `operator1 / Oper@123` (Operations home).
+
+The older ASP.NET MVC project at `WebApp/SmartSolar.Web` is no longer the desk UI. New pages belong in the React app.
 
 ---
 
