@@ -1,6 +1,6 @@
 /*
  * File: StationsController.cs
- * Description: Staff MVC pages for the station list. Status changes go through the API.
+ * Description: Staff MVC pages for listing, creating and editing stations. Rules stay on the API.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -36,6 +36,70 @@ public class StationsController : Controller
         {
             TempData["Error"] = ex.ApiMessage;
             return View(Array.Empty<StationDto>());
+        }
+    }
+
+    // Shows an empty station form. Backoffice only.
+    [HttpGet, Authorize(Roles = RoleNames.Backoffice)]
+    public IActionResult Create() => View(new StationForm());
+
+    // Creates a station. The API's validation message is shown on the form.
+    [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<IActionResult> Create(StationForm form, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(form);
+        }
+
+        try
+        {
+            await _api.CreateStationAsync(form, cancellationToken);
+            TempData["Success"] = $"Created station {form.Name}.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (ApiClientException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.ApiMessage);
+            return View(form);
+        }
+    }
+
+    // Loads a station into the edit form. Backoffice only.
+    [HttpGet, Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<IActionResult> Edit(string id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var station = await _api.GetStationAsync(id, cancellationToken);
+            return View(StationForm.From(station));
+        }
+        catch (ApiClientException ex)
+        {
+            TempData["Error"] = ex.ApiMessage;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    // Saves station edits. The API's validation message is shown on the form.
+    [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<IActionResult> Edit(string id, StationForm form, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(form);
+        }
+
+        try
+        {
+            await _api.UpdateStationAsync(id, form, cancellationToken);
+            TempData["Success"] = $"Updated {form.Name}.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (ApiClientException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.ApiMessage);
+            return View(form);
         }
     }
 

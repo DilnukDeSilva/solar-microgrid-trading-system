@@ -28,4 +28,23 @@ public partial class ApiClient
     // Calls POST /stations/{id}/activate.
     public Task<StationDto> ActivateStationAsync(string id, CancellationToken cancellationToken = default) =>
         SendAsync<StationDto>(HttpMethod.Post, $"stations/{Uri.EscapeDataString(id)}/activate", null, true, cancellationToken);
+
+    // Calls POST /stations. Closed days are omitted from the schedule.
+    public Task<StationDto> CreateStationAsync(StationForm form, CancellationToken cancellationToken = default) =>
+        SendAsync<StationDto>(HttpMethod.Post, "stations", StationBody(form), true, cancellationToken);
+
+    // Calls PUT /stations/{id}. Closed days are omitted from the schedule.
+    public Task<StationDto> UpdateStationAsync(string id, StationForm form, CancellationToken cancellationToken = default) =>
+        SendAsync<StationDto>(HttpMethod.Put, $"stations/{Uri.EscapeDataString(id)}", StationBody(form), true, cancellationToken);
+
+    // Builds the station JSON. Only days marked open are included.
+    private static object StationBody(StationForm form) => new
+    {
+        form.Name,
+        form.Latitude,
+        form.Longitude,
+        form.CapacityKwh,
+        form.BatterySlotsTotal,
+        Schedule = form.Days.Where(day => day.Open).Select(day => new { day.DayOfWeek, day.OpenTime, day.CloseTime })
+    };
 }

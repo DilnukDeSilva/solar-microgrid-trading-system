@@ -5,6 +5,10 @@
 }
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">Stations</h1>
+    @if (isBackoffice)
+    {
+        <a asp-action="Create" class="btn btn-primary">Create station</a>
+    }
 </div>
 <div class="table-responsive card shadow-sm">
 <table class="table table-hover align-middle mb-0">
