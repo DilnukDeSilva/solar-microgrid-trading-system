@@ -1,6 +1,6 @@
 /*
  * File: StationService.cs
- * Description: Business rules for listing, reading, updating and activating stations.
+ * Description: Business rules for listing, reading, updating, activating and finding nearby stations.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -15,11 +15,13 @@ namespace SmartSolar.Api.Services;
 public class StationService : IStationService
 {
     private readonly IStationRepository _stations;
+    private readonly ISlotRepository _slots;
 
-    // Stores the station repository used by every station use-case.
-    public StationService(IStationRepository stations)
+    // Stores the station and slot repositories. Nearby search counts free slots.
+    public StationService(IStationRepository stations, ISlotRepository slots)
     {
         _stations = stations;
+        _slots = slots;
     }
 
     // Returns every station document.
@@ -106,6 +108,84 @@ public class StationService : IStationService
         return station;
     }
 
+    // Returns Active stations within radiusKm, nearest first, with free slots in the next 7 days.
+    public async Task<IReadOnlyList<NearbyStationDto>> NearbyAsync(
+        double lat,
+        double lng,
+        double radiusKm,
+        CancellationToken cancellationToken = default)
+    {
+        RequireCoordinates(lat, lng);
+        if (!double.IsFinite(radiusKm) || radiusKm <= 0 || radiusKm > 100)
+        {
+            throw new ApiException(
+                StatusCodes.Status400BadRequest,
+                ErrorCodes.ValidationError,
+                "Radius must be greater than 0 and at most 100 km.");
+        }
+
+        var now = DateTime.UtcNow;
+        var stations = await _stations.GetAllAsync(cancellationToken);
+        var withinRadius = stations
+            .Where(station => station.Status == StationStatuses.Active)
+            .Select(station => (Station: station, Distance: DistanceKm(lat, lng, station.Latitude, station.Longitude)))
+            .Where(item => item.Distance <= radiusKm)
+            .OrderBy(item => item.Distance)
+            .ToList();
+
+        var nearby = new List<NearbyStationDto>(withinRadius.Count);
+        foreach (var (station, distance) in withinRadius)
+        {
+            var free = await _slots.GetFreeAsync(station.Id, now, now.AddDays(7), cancellationToken);
+            nearby.Add(new NearbyStationDto
+            {
+                Id = station.Id,
+                Name = station.Name,
+                Latitude = station.Latitude,
+                Longitude = station.Longitude,
+                CapacityKwh = station.CapacityKwh,
+                BatterySlotsTotal = station.BatterySlotsTotal,
+                DistanceKm = Math.Round(distance, 2),
+                FreeSlots = free.Count
+            });
+        }
+
+        return nearby;
+    }
+
+    // Great-circle distance in kilometres between two GPS points.
+    private static double DistanceKm(double lat1, double lng1, double lat2, double lng2)
+    {
+        const double earthRadiusKm = 6371;
+        var phi1 = DegreesToRadians(lat1);
+        var phi2 = DegreesToRadians(lat2);
+        var deltaPhi = DegreesToRadians(lat2 - lat1);
+        var deltaLambda = DegreesToRadians(lng2 - lng1);
+
+        var a = Math.Sin(deltaPhi / 2) * Math.Sin(deltaPhi / 2)
+            + Math.Cos(phi1) * Math.Cos(phi2) * Math.Sin(deltaLambda / 2) * Math.Sin(deltaLambda / 2);
+        return 2 * earthRadiusKm * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+    }
+
+    // Converts degrees to radians for the haversine formula.
+    private static double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+
+    // Rejects a latitude or longitude outside the GPS ranges.
+    private static void RequireCoordinates(double latitude, double longitude)
+    {
+        if (!double.IsFinite(latitude) || latitude < -90 || latitude > 90
+            || !double.IsFinite(longitude) || longitude < -180 || longitude > 180)
+        {
+            throw new ApiException(
+                StatusCodes.Status400BadRequest,
+                ErrorCodes.ValidationError,
+                "Latitude must be between -90 and 90, and longitude between -180 and 180.");
+        }
+    }
+
     // Rejects a station body that breaks a MEMBER-2 field rule.
     private static void RequireValid(
         string? name,
@@ -120,14 +200,7 @@ public class StationService : IStationService
             throw new ApiException(StatusCodes.Status400BadRequest, ErrorCodes.ValidationError, "Name is required.");
         }
 
-        if (!double.IsFinite(latitude) || latitude < -90 || latitude > 90
-            || !double.IsFinite(longitude) || longitude < -180 || longitude > 180)
-        {
-            throw new ApiException(
-                StatusCodes.Status400BadRequest,
-                ErrorCodes.ValidationError,
-                "Latitude must be between -90 and 90, and longitude between -180 and 180.");
-        }
+        RequireCoordinates(latitude, longitude);
 
         if (!double.IsFinite(capacityKwh) || capacityKwh <= 0 || batterySlotsTotal < 1)
         {

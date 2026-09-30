@@ -1,6 +1,6 @@
 /*
  * File: StationsController.cs
- * Description: HTTP endpoints for listing, reading, updating and activating stations. Rules stay in StationService.
+ * Description: HTTP endpoints for listing, reading, updating, activating and finding nearby stations. Rules stay in StationService.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -33,6 +33,18 @@ public class StationsController : ControllerBase
     public async Task<ActionResult<IReadOnlyList<Station>>> List(CancellationToken cancellationToken)
     {
         return Ok(await _stations.ListAsync(cancellationToken));
+    }
+
+    // Returns Active stations near a GPS point for any logged-in role.
+    [HttpGet("nearby")]
+    [Authorize]
+    public async Task<ActionResult<IReadOnlyList<NearbyStationDto>>> Nearby(
+        [FromQuery] double lat,
+        [FromQuery] double lng,
+        [FromQuery] double radiusKm = 10,
+        CancellationToken cancellationToken = default)
+    {
+        return Ok(await _stations.NearbyAsync(lat, lng, radiusKm, cancellationToken));
     }
 
     // Returns one station for any logged-in role.

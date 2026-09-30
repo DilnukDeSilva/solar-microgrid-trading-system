@@ -1,6 +1,6 @@
 /*
  * File: IStationService.cs
- * Description: Station use-cases. All node rules, including deactivation, live here.
+ * Description: Station use-cases. All node rules, including deactivation and nearby search, live here.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -29,4 +29,7 @@ public interface IStationService
 
     // Sets a station Active again.
     Task<Station> ActivateAsync(string id, CancellationToken cancellationToken = default);
+
+    // Returns Active stations within radiusKm, nearest first, with free slots in the next 7 days.
+    Task<IReadOnlyList<NearbyStationDto>> NearbyAsync(double lat, double lng, double radiusKm, CancellationToken cancellationToken = default);
 }
