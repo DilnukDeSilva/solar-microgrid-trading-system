@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.SmartSolar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/solar_green</item>
         <item name="colorPrimaryVariant">@color/solar_green_dark</item>
@@ -8,5 +8,9 @@
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/solar_green_dark</item>
         <item name="android:navigationBarColor">@color/solar_green_dark</item>
+        <item name="android:windowBackground">@color/solar_background</item>
+        <item name="materialButtonStyle">@style/Widget.SmartSolar.Button</item>
+        <!-- Android 15 draws behind the system bars by default; keep the solid green bars instead. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 </resources>

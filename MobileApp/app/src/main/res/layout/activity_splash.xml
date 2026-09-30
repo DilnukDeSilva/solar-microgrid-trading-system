@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:gravity="center" android:orientation="vertical" android:padding="32dp"
-    android:background="@color/solar_green">
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Smart Solar" android:textColor="@color/white" android:textSize="34sp" android:textStyle="bold" />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" android:text="Microgrid Trading" android:textColor="@color/white" android:textSize="18sp" />
-    <ProgressBar android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="32dp" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/solar_green_dark"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="☀"
+        android:textColor="@color/solar_gold"
+        android:textSize="56sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Smart Solar"
+        android:textColor="@color/white"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Microgrid energy trading"
+        android:textColor="#C8E6D5"
+        android:textSize="17sp" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:indeterminateTint="@color/solar_gold" />
 </LinearLayout>
