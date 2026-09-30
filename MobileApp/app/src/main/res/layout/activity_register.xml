@@ -1,13 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Create account" android:textSize="28sp" android:textStyle="bold" android:textColor="@color/solar_green_dark" />
-        <EditText android:id="@+id/registerNic" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="NIC" android:inputType="textCapCharacters" />
-        <EditText android:id="@+id/registerUsername" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Username" />
-        <EditText android:id="@+id/registerFullName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Full name" />
-        <EditText android:id="@+id/registerEmail" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Email (optional)" android:inputType="textEmailAddress" />
-        <EditText android:id="@+id/registerPhone" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Phone (optional)" android:inputType="phone" />
-        <EditText android:id="@+id/registerPassword" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Password (8+ characters)" android:inputType="textPassword" />
-        <Button android:id="@+id/createAccountButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Register" />
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/solar_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create account"
+            android:textColor="@color/solar_green_dark"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Register with your NIC. A Backoffice officer activates new accounts before you can log in."
+            android:textSize="14sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.SmartSolar.TextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:hint="NIC">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registerNic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapCharacters" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.SmartSolar.TextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Username">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registerUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.SmartSolar.TextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Full name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registerFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.SmartSolar.TextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email (optional)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registerEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.SmartSolar.TextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Phone (optional)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registerPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.SmartSolar.TextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password (8+ characters)"
+                    app:endIconMode="password_toggle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registerPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/createAccountButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Register" />
     </LinearLayout>
 </ScrollView>
