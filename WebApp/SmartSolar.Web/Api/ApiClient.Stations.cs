@@ -52,8 +52,8 @@ public partial class ApiClient
             $"stations/{Uri.EscapeDataString(stationId)}/slots",
             new
             {
-                StartTime = new DateTimeOffset(form.Start, offset),
-                EndTime = new DateTimeOffset(form.End, offset)
+                StartTime = new DateTimeOffset(form.Start!.Value, offset),
+                EndTime = new DateTimeOffset(form.End!.Value, offset)
             },
             true,
             cancellationToken);

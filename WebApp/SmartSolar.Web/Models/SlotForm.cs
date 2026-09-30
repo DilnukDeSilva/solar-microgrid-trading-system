@@ -11,11 +11,11 @@ namespace SmartSolar.Web.Models;
 
 public class SlotForm
 {
-    [Display(Name = "Start")]
-    public DateTime Start { get; set; }
+    [Required, Display(Name = "Start")]
+    public DateTime? Start { get; set; }
 
-    [Display(Name = "End")]
-    public DateTime End { get; set; }
+    [Required, Display(Name = "End")]
+    public DateTime? End { get; set; }
 }
 
 public class SlotsPage
