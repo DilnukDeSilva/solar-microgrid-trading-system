@@ -25,4 +25,16 @@ public interface ISlotRepository
 
     // Marks a slot as free again.
     Task ReleaseAsync(string id, CancellationToken cancellationToken = default);
+
+    // Inserts a new slot document.
+    Task InsertAsync(Slot slot, CancellationToken cancellationToken = default);
+
+    // Replaces an existing slot document by id.
+    Task ReplaceAsync(Slot slot, CancellationToken cancellationToken = default);
+
+    // Deletes a slot document by id.
+    Task DeleteAsync(string id, CancellationToken cancellationToken = default);
+
+    // True when a Pending or Approved reservation still holds this slot.
+    Task<bool> HasActiveReservationAsync(string slotId, CancellationToken cancellationToken = default);
 }

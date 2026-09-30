@@ -18,6 +18,12 @@ public static class SriLankaClock
         return DateTime.UtcNow;
     }
 
+    // Converts a UTC time to Sri Lanka local time.
+    public static DateTime ToLocal(DateTime utc)
+    {
+        return DateTime.SpecifyKind(utc, DateTimeKind.Utc).Add(Offset);
+    }
+
     // Returns the UTC start (inclusive) and end (exclusive) of the Sri Lanka calendar day containing utc.
     public static (DateTime StartUtc, DateTime EndUtc) DayRangeUtc(DateTime utc)
     {

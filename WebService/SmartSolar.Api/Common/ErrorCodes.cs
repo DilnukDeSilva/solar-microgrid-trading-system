@@ -20,6 +20,7 @@ public static class ErrorCodes
     public const string RuleSevenDays = "RULE_7DAYS";
     public const string RuleTwelveHours = "RULE_12H";
     public const string SlotTaken = "SLOT_TAKEN";
+    public const string SlotOverlap = "SLOT_OVERLAP";
     public const string InvalidState = "INVALID_STATE";
     public const string QrInvalid = "QR_INVALID";
     public const string QrAlreadyUsed = "QR_ALREADY_USED";
