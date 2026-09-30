@@ -24,6 +24,17 @@ public static class SriLankaClock
         return DateTime.SpecifyKind(utc, DateTimeKind.Utc).Add(Offset);
     }
 
+    // Converts a request time to UTC. Unspecified is already UTC and must not be shifted by this machine's zone.
+    public static DateTime ToUtc(DateTime value)
+    {
+        return value.Kind switch
+        {
+            DateTimeKind.Utc => value,
+            DateTimeKind.Local => value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+        };
+    }
+
     // Returns the UTC start (inclusive) and end (exclusive) of the Sri Lanka calendar day containing utc.
     public static (DateTime StartUtc, DateTime EndUtc) DayRangeUtc(DateTime utc)
     {

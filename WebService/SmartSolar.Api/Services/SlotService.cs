@@ -35,6 +35,8 @@ public class SlotService : ISlotService
     // Creates an available slot after the schedule and battery rules pass.
     public async Task<Slot> CreateAsync(string stationId, SaveSlotRequestDto request, CancellationToken cancellationToken = default)
     {
+        var start = SriLankaClock.ToUtc(request.StartTime);
+        var end = SriLankaClock.ToUtc(request.EndTime);
         var station = await LoadStationAsync(stationId, cancellationToken);
         if (station.Status != StationStatuses.Active)
         {
@@ -45,14 +47,14 @@ public class SlotService : ISlotService
         }
 
         var existing = await _slots.GetByStationAsync(station.Id, cancellationToken);
-        RequireValidSlot(station, request.StartTime, request.EndTime, existing, ignoreSlotId: null);
+        RequireValidSlot(station, start, end, existing, ignoreSlotId: null);
 
         var slot = new Slot
         {
             Id = Guid.NewGuid().ToString(),
             StationId = station.Id,
-            StartTime = request.StartTime,
-            EndTime = request.EndTime,
+            StartTime = start,
+            EndTime = end,
             IsAvailable = true
         };
 
@@ -63,15 +65,17 @@ public class SlotService : ISlotService
     // Moves a free slot. A slot with an active reservation cannot be moved.
     public async Task<Slot> UpdateAsync(string slotId, SaveSlotRequestDto request, CancellationToken cancellationToken = default)
     {
+        var start = SriLankaClock.ToUtc(request.StartTime);
+        var end = SriLankaClock.ToUtc(request.EndTime);
         var slot = await LoadSlotAsync(slotId, cancellationToken);
         await RejectIfBookedAsync(slot.Id, cancellationToken);
 
         var station = await LoadStationAsync(slot.StationId, cancellationToken);
         var existing = await _slots.GetByStationAsync(slot.StationId, cancellationToken);
-        RequireValidSlot(station, request.StartTime, request.EndTime, existing, slot.Id);
+        RequireValidSlot(station, start, end, existing, slot.Id);
 
-        slot.StartTime = request.StartTime;
-        slot.EndTime = request.EndTime;
+        slot.StartTime = start;
+        slot.EndTime = end;
         await _slots.ReplaceAsync(slot, cancellationToken);
         return slot;
     }
