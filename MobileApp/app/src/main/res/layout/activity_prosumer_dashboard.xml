@@ -97,6 +97,13 @@
                 android:text="Book a slot" />
 
             <Button
+                android:id="@+id/nearbyStationsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Nearby stations" />
+
+            <Button
                 android:id="@+id/bookingsButton"
                 style="@style/Widget.SmartSolar.Button.Outlined"
                 android:layout_width="match_parent"
