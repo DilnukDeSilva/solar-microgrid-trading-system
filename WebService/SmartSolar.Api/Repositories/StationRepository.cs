@@ -32,4 +32,16 @@ public class StationRepository : IStationRepository
     {
         return await _context.Stations.Find(station => station.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
+
+    // Inserts a new station document.
+    public Task InsertAsync(Station station, CancellationToken cancellationToken = default)
+    {
+        return _context.Stations.InsertOneAsync(station, cancellationToken: cancellationToken);
+    }
+
+    // Replaces an existing station document by id.
+    public Task ReplaceAsync(Station station, CancellationToken cancellationToken = default)
+    {
+        return _context.Stations.ReplaceOneAsync(existing => existing.Id == station.Id, station, cancellationToken: cancellationToken);
+    }
 }
