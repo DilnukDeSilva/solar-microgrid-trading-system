@@ -10,8 +10,8 @@
         <a asp-action="Create" class="btn btn-primary">Create station</a>
     }
 </div>
-<div class="table-responsive card shadow-sm">
-<table class="table table-hover align-middle mb-0">
+<div class="card">
+<table class="table table-hover align-middle mb-0 table-stack">
     <thead>
         <tr>
             <th>Name</th>
@@ -30,30 +30,35 @@
     @foreach (var station in Model)
     {
         <tr>
-            <td>@station.Name</td>
-            <td>@station.Latitude.ToString("0.0000"), @station.Longitude.ToString("0.0000")</td>
-            <td>@station.CapacityKwh</td>
-            <td>@station.BatterySlotsTotal</td>
-            <td>
-                <span class="badge @(station.Status == "Active" ? "bg-success" : "bg-secondary")">@station.Status</span>
-            </td>
+            <td data-label="Name">@station.Name</td>
+            <td data-label="Location" class="font-monospace">@station.Latitude.ToString("0.0000"), @station.Longitude.ToString("0.0000")</td>
+            <td data-label="Capacity">@station.CapacityKwh</td>
+            <td data-label="Batteries">@station.BatterySlotsTotal</td>
+            <td data-label="Status"><partial name="_AccountStatus" model="station.Status" /></td>
             <td class="text-end text-nowrap">
-                <a asp-controller="Slots" asp-action="Index" asp-route-stationId="@station.Id" class="btn btn-sm btn-outline-secondary">Slots</a>
+                <a asp-controller="Slots" asp-action="Index" asp-route-stationId="@station.Id" class="btn btn-sm btn-outline-primary">Slots</a>
                 @if (isBackoffice)
                 {
-                    <a asp-action="Edit" asp-route-id="@station.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                    @if (station.Status == "Active")
-                    {
-                        <form asp-action="Deactivate" asp-route-id="@station.Id" method="post" class="d-inline" onsubmit="return confirm('Deactivate this station?');">
-                            <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <form asp-action="Activate" asp-route-id="@station.Id" method="post" class="d-inline">
-                            <button class="btn btn-sm btn-outline-success" type="submit">Activate</button>
-                        </form>
-                    }
+                    <div class="dropdown d-inline">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-label="More actions">⋯</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@station.Id">Edit</a></li>
+                            <li>
+                                @if (station.Status == "Active")
+                                {
+                                    <form asp-action="Deactivate" asp-route-id="@station.Id" method="post" onsubmit="return confirm('Deactivate this station?');">
+                                        <button class="dropdown-item text-danger" type="submit">Deactivate</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Activate" asp-route-id="@station.Id" method="post">
+                                        <button class="dropdown-item" type="submit">Activate</button>
+                                    </form>
+                                }
+                            </li>
+                        </ul>
+                    </div>
                 }
             </td>
         </tr>

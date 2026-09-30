@@ -33,25 +33,10 @@
     }
 </ul>
 
+<button class="btn btn-outline-primary d-md-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#bookingFilters">Filters</button>
+<div class="collapse" id="bookingFilters">
 <form method="get" class="row g-2 align-items-end mb-3">
     <input type="hidden" name="tab" value="@Model.Tab" />
-    <div class="col-md-2">
-        <label class="form-label" for="status">Status</label>
-        <select class="form-select" id="status" name="status">
-            <option value="">Any</option>
-            @foreach (var status in new[] { "Pending", "Approved", "Completed", "Cancelled" })
-            {
-                if (Model.Status == status)
-                {
-                    <option value="@status" selected>@status</option>
-                }
-                else
-                {
-                    <option value="@status">@status</option>
-                }
-            }
-        </select>
-    </div>
     <div class="col-md-2">
         <label class="form-label" for="from">From</label>
         <input class="form-control" type="date" id="from" name="from" value="@Model.From?.ToString("yyyy-MM-dd")" />
@@ -60,9 +45,22 @@
         <label class="form-label" for="to">To</label>
         <input class="form-control" type="date" id="to" name="to" value="@Model.To?.ToString("yyyy-MM-dd")" />
     </div>
-    <div class="col-md-2">
-        <label class="form-label" for="stationId">Station id</label>
-        <input class="form-control" id="stationId" name="stationId" value="@Model.StationId" />
+    <div class="col-md-3">
+        <label class="form-label" for="stationId">Station</label>
+        <select class="form-select" id="stationId" name="stationId">
+            <option value="">All stations</option>
+            @foreach (var station in Model.Stations)
+            {
+                if (Model.StationId == station.Id)
+                {
+                    <option value="@station.Id" selected>@station.Name</option>
+                }
+                else
+                {
+                    <option value="@station.Id">@station.Name</option>
+                }
+            }
+        </select>
     </div>
     <div class="col-md-2">
         <label class="form-label" for="nic">NIC</label>
@@ -70,15 +68,16 @@
     </div>
     <div class="col-md-2">
         <label class="form-label" for="q">Keyword</label>
-        <input class="form-control" id="q" name="q" value="@Model.Query" placeholder="Name, NIC or id" />
+        <input class="form-control" id="q" name="q" value="@Model.Query" placeholder="Name or NIC" />
     </div>
     <div class="col-12">
         <button class="btn btn-outline-primary" type="submit">Apply filters</button>
     </div>
 </form>
+</div>
 
-<div class="table-responsive">
-    <table class="table table-striped align-middle">
+<div class="card">
+    <table class="table table-hover align-middle mb-0 table-stack">
         <thead>
             <tr>
                 <th>When</th>
@@ -98,10 +97,10 @@
         @foreach (var booking in Model.Result.Items)
         {
             <tr>
-                <td>@booking.ScheduledAt.ToSriLankaText()</td>
-                <td>@booking.StationName</td>
-                <td>@booking.ProsumerNic</td>
-                <td><partial name="_ReservationStatusBadge" model="booking.Status" /></td>
+                <td data-label="When">@booking.ScheduledAt.ToSriLankaText()</td>
+                <td data-label="Station">@booking.StationName</td>
+                <td data-label="NIC">@booking.ProsumerNic</td>
+                <td data-label="Status"><partial name="_ReservationStatusBadge" model="booking.Status" /></td>
                 <td class="text-end text-nowrap">
                     <a class="btn btn-sm btn-outline-secondary" asp-controller="Reservations" asp-action="Summary" asp-route-id="@booking.Id">Details</a>
                     @if (booking.Status == "Pending")

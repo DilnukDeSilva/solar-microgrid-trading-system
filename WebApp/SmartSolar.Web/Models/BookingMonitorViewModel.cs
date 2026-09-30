@@ -18,4 +18,6 @@ public class BookingMonitorViewModel
     public DateOnly? To { get; set; }
     public int Page { get; set; } = 1;
     public ReservationPageDto Result { get; set; } = new();
+
+    public IReadOnlyList<StationDto> Stations { get; set; } = [];
 }

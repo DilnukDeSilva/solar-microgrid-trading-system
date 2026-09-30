@@ -5,23 +5,27 @@
         <div class="card h-100 border-0 shadow-sm">
             <div class="card-body">
                 <div class="text-muted small">Today's bookings</div>
-                <div class="display-6">@Model.TodaysBookingCount</div>
+                <div class="tile-number">@Model.TodaysBookingCount</div>
             </div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm">
+        <a class="card h-100 text-decoration-none text-body @(Model.PendingApprovals > 0 ? "tile-attention" : "")" asp-controller="Bookings" asp-action="Index" asp-route-tab="pending">
             <div class="card-body">
-                <div class="text-muted small">Pending approvals</div>
-                <div class="display-6">@Model.PendingApprovals</div>
+                <div class="small text-muted">Pending approvals</div>
+                <div class="tile-number">@Model.PendingApprovals</div>
+                @if (Model.PendingApprovals > 0)
+                {
+                    <div class="small">Open queue</div>
+                }
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-lg-3">
         <div class="card h-100 border-0 shadow-sm">
             <div class="card-body">
                 <div class="text-muted small">Active stations</div>
-                <div class="display-6">@Model.ActiveStations</div>
+                <div class="tile-number">@Model.ActiveStations</div>
             </div>
         </div>
     </div>
@@ -29,7 +33,7 @@
         <div class="card h-100 border-0 shadow-sm">
             <div class="card-body">
                 <div class="text-muted small">Completed today</div>
-                <div class="display-6">@Model.CompletedToday</div>
+                <div class="tile-number">@Model.CompletedToday</div>
             </div>
         </div>
     </div>
@@ -53,7 +57,10 @@
         @if (Model.TodaysBookings.Count == 0)
         {
             <tr>
-                <td colspan="4" class="text-muted">No bookings scheduled for today.</td>
+                <td colspan="4">
+                    <div class="text-muted">Approved bookings for today appear here.</div>
+                    <a asp-controller="Bookings" asp-action="Index">Open booking monitor</a>
+                </td>
             </tr>
         }
         @foreach (var booking in Model.TodaysBookings)

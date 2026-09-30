@@ -70,6 +70,7 @@ public class BookingsController : Controller
 
         try
         {
+            model.Stations = await _api.GetStationsAsync(cancellationToken);
             model.Result = await _api.SearchReservationsAsync(status, fromUtc, toUtc, stationId, q, nic, model.Page, cancellationToken);
         }
         catch (ApiClientException ex) when (ex.StatusCode != StatusCodes.Status401Unauthorized)
