@@ -4,6 +4,7 @@ Change this file only through a Git pull request that all four members approve. 
 
 ## Conventions
 - Base URL: `http://<host-ip>:<port>/api` (emulator: `10.0.2.2`).
+- Health probe is **not** under `/api`: `GET http://<host-ip>:<port>/health`. The same JSON is also at `GET /api/health`.
 - JSON `camelCase`. Dates are ISO-8601 UTC strings (`2026-09-25T10:00:00Z`). The clients convert to local time for display.
 - Auth: `Authorization: Bearer <jwt>`. The JWT claims are `sub` (user id), `role`, `nic` (prosumers only).
 - Roles: `Backoffice`, `GridOperator`, `Prosumer`.
@@ -13,7 +14,7 @@ Change this file only through a Git pull request that all four members approve. 
   - reservation status: `Pending` | `Approved` | `Cancelled` | `Completed`
 - Error body for every non-2xx: `{ "code": "RULE_12H", "message": "Updates need 12 hours notice" }`
   - Status codes: 400 validation, 401 no/invalid token, 403 wrong role, 404 missing, 409 business-rule conflict.
-  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`.
+  - Rule codes: `RULE_7DAYS`, `RULE_12H`, `STATION_HAS_RESERVATIONS`, `SLOT_TAKEN`, `NIC_EXISTS`, `USERNAME_EXISTS`, `ACCOUNT_NOT_ACTIVE`, `QR_INVALID`, `QR_ALREADY_USED`, `INVALID_STATE` (action not allowed for the reservation's current status).
 - Every response is data only, with no HTML. All rules are enforced server-side; clients only display the error `message`.
 
 ## Data shapes
@@ -34,19 +35,20 @@ Change this file only through a Git pull request that all four members approve. 
 
 | Method + path | Role | Owner |
 |---|---|---|
-| `GET /health` | anon | M1 |
+| `GET /health` and `GET /api/health` (same `{status, serverTime}` body; prefer `/health` for LAN/IIS smoke tests) | anon | M1 |
 | `POST /auth/login` `{username|nic, password}` → `{token, expiresAt, user}` | anon | M1 |
 | `GET /users`, `GET /users/{id}`, `POST /users`, `PUT /users/{id}`, `POST /users/{id}/deactivate` (staff accounts) | Backoffice | M1 |
 | `GET /prosumers?status&q`, `GET /prosumers/{nic}`, `POST /prosumers`, `PUT /prosumers/{nic}`, `POST /prosumers/{nic}/deactivate`, `POST /prosumers/{nic}/reactivate` (Backoffice only) | Backoffice/GridOperator | M2 |
 | `GET /stations`, `GET /stations/{id}`, `POST /stations`, `PUT /stations/{id}`, `POST /stations/{id}/deactivate` | Backoffice (read: all) | M2 |
 | `GET /stations/{id}/slots`, `POST /stations/{id}/slots`, `PUT /slots/{id}`, `DELETE /slots/{id}` | Backoffice/GridOperator | M2 |
-| `POST /reservations`, `PUT /reservations/{id}`, `POST /reservations/{id}/cancel`, `GET /reservations/{id}` | Prosumer (own) / Operator | M2 |
+| `POST /reservations` `{stationId, slotId, prosumerNic?}` (nic for staff only), `PUT /reservations/{id}` `{slotId, stationId?}`, `POST /reservations/{id}/cancel` `{reason?}`, `GET /reservations/{id}` | Prosumer (own) / Backoffice / GridOperator | M3 |
 | `POST /auth/register` (prosumer, creates `Pending`) | anon | M3 |
 | `GET /me`, `PUT /me`, `POST /me/request-deactivation` | Prosumer | M3 |
 | `GET /prosumers/pending`, `POST /prosumers/{nic}/activate` | Backoffice | M3 |
 | `GET /reservations?status&from&to&q&nic` (list, history, filters) | Prosumer (own) / staff (all) | M4 |
 | `GET /reservations/pending` | Operator | M4 |
-| `POST /reservations/{id}/approve` → sets `qrToken` | Operator/Backoffice | M4 |
+| `POST /reservations/{id}/approve` → sets `qrToken` | Operator/Backoffice | M3 |
+| `GET /reservations/bookable-stations` → `[{id, name}]` (Active stations), `GET /reservations/available-slots?stationId&date` → `[{id, stationId, startTime, endTime}]` (free slots inside the 7-day window; `date` is a Sri Lanka date `yyyy-MM-dd`) | any auth | M3 |
 | `POST /reservations/verify-qr` `{qrToken}` → reservation details | Operator | M4 |
 | `POST /reservations/{id}/complete` | Operator | M4 |
 | `GET /dashboard/me` → `{pendingCount, approvedFutureCount, nextReservation}` | Prosumer | M4 |
@@ -61,16 +63,24 @@ Notes:
 
 | Rule | Where | Owner |
 |---|---|---|
-| Reservation `scheduledAt` ≤ now + 7 days and in the future | create | M2 |
-| Update/cancel only if `scheduledAt` − now ≥ 12 h | update, cancel | M2 |
-| Slot must be available (no double booking) | create, update | M2 |
+| Reservation `scheduledAt` ≤ now + 7 days and in the future → `RULE_7DAYS` | create, update (new slot) | M3 |
+| Update/cancel only if `scheduledAt` − now ≥ 12 h → `RULE_12H` | update, cancel | M3 |
+| Slot must be available (no double booking) → `SLOT_TAKEN` | create, update | M3 |
+| Only `Pending`/`Approved` can be updated or cancelled; only future `Pending` can be approved → `INVALID_STATE` | update, cancel, approve | M3 |
+| Updating an `Approved` reservation sets it back to `Pending` and clears `qrToken` | update | M3 |
 | Station deactivation blocked with Pending/Approved future reservations | station deactivate | M2 |
 | Deactivated prosumer reactivated by Backoffice only | reactivate | M2 |
-| Only `Active` prosumers may reserve | create | M2 |
+| Staff username must be unique → `USERNAME_EXISTS` (409) | create staff | M1 |
+| Staff role must be `Backoffice` or `GridOperator`; prosumers are not created here | create/update staff | M1 |
+| Password at least 8 characters; email must be valid when supplied → `VALIDATION_ERROR` | create/update staff | M1 |
+| A staff user cannot deactivate their own account or change their own role → `VALIDATION_ERROR` | deactivate, update staff | M1 |
+| A deactivated or missing account's token is rejected with 401 on every request, not only at login | JWT validation | M1 |
+| Login to a non-`Active` account → 409 `ACCOUNT_NOT_ACTIVE` | login | M1 |
+| Only `Active` prosumers may reserve | create | M3 |
 | New mobile accounts start `Pending` | register | M3 |
 | Only `Approved` reservations produce a QR; token is single-use | approve, verify, complete | M4 |
 
 ## Seed data everyone can rely on (M1 provides on Day 2)
-- Users: `admin / Admin@123` (Backoffice), `operator1 / Oper@123` (GridOperator), prosumers with NICs `200012345678` (Active) and `199912345678` (Pending).
+- Users: `admin / Admin@123` (Backoffice), `operator1 / Oper@123` (GridOperator), Active prosumer `nimal` or NIC `200012345678 / Solar@123`, Pending prosumer `saman` or NIC `199912345678 / Solar@123` (login is rejected with `ACCOUNT_NOT_ACTIVE`).
 - 3 stations around Colombo/Malabe with 4 slots each on the next 5 days.
 - A handful of reservations in each status, including one in the past.

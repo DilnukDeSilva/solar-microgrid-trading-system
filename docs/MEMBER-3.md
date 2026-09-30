@@ -1,40 +1,41 @@
-# Member 3: Android App Foundation: Account, SQLite, Booking Workflow, Pending Activation
+# Member 3: Energy Reservations & QR Dispatch
 
-## Marks you own
-- Individual: Mobile Authentication & Account Management (9), Reservation Workflow (9), SQLite local persistence (3), Mobile ↔ API (2)
-- Group: Mobile interfaces (share with M4)
+Branch: `feature/m3-reservations` · Module owner for the whole reservation lifecycle (create → update → cancel → approve), the business rules on it, and QR generation.
 
-## Blocked until
-- M1's Milestone 0 for real login. Until then, build UI and SQLite against mock JSON from `API-CONTRACT.md`.
-- M2's reservation endpoints (target Day 5) for the booking screens. You can build the screens and local layer earlier.
+The detailed implementation guide is in `docs/M3-RESERVATIONS-GUIDE.md`.
 
-## Milestone 0: unblock M4 (Day 1–3): **M4 depends on this**
-- Pure native Android project (Java or Kotlin, **no cross-platform, no Flutter/React Native/Xamarin**).
-- Package structure agreed with M4: `data/local` (SQLite), `data/remote` (API client), `ui/`, `util/`.
-- Shared plumbing: API client with base URL setting and bearer-token interceptor, the error-body parser, a session store, and a role-aware navigation shell (Prosumer home vs Operator home tabs). M4 plugs their screens into this shell.
-- **SQLite** via `SQLiteOpenHelper` (confirm with your lecturer if you want to use Room): tables for the logged-in user/session and reference data (e.g. cached stations). State clearly in the report what is stored locally and why.
-- Push it to `dev` by **end of Day 3**.
+## Marks you lead
+- **Individual:** Slot booking management on the web (5), **Reservation workflow & booking management (9)**, QR generation (feeds the operator flow), SQLite (shared), Web↔API (2), Mobile↔API (2).
+- **Group:** DFD diagrams, references list, business-rule test evidence.
 
-## Milestone 1: account features (Day 3–6)
-- Register (NIC as primary key, client-side format check only for UX; the server validates) → `POST /auth/register`. Show "awaiting activation".
-- Login → role-based home (Prosumer vs GridOperator). Handle `ACCOUNT_NOT_ACTIVE`.
-- Edit profile (`PUT /me`), request deactivation.
-- API side (your own controllers): `/auth/register` (creates `Pending`), `/me`, `/me/request-deactivation`, `/prosumers/pending`, `/prosumers/{nic}/activate`.
-- **Web "pending activation" view** (Backoffice page listing pending prosumers with Activate button). Add it into M1's web skeleton after Day 4.
+## Scope
 
-## Milestone 2: booking workflow (Day 5–8)
-- Create booking: pick a station, pick a free slot, submit.
-- Update and cancel own booking. The server enforces 7-day and 12-hour rules, so display the server message.
-- **Summary screen after each action** (created / updated / cancelled): station, slot, time, status.
+### API (`ReservationsController`, `ReservationService`)
+| Endpoint | Role | Rules |
+|---|---|---|
+| `POST /api/reservations` | Prosumer (own NIC) / staff on behalf | prosumer `Active`; station `Active`; slot free; **slot start within the next 7 days** (`RULE_7DAYS`); the slot is claimed atomically (`SLOT_TAKEN`) |
+| `PUT /api/reservations/{id}` | owner / staff | current booking ≥ **12 h** away (`RULE_12H`); new slot also meets the 7-day rule; old slot released; an `Approved` booking goes back to `Pending` and its QR is cleared |
+| `POST /api/reservations/{id}/cancel` | owner / staff | ≥ 12 h notice; only `Pending`/`Approved`; frees the slot |
+| `GET /api/reservations/{id}` | owner / staff | a prosumer sees only their own (else 403) |
+| `POST /api/reservations/{id}/approve` | GridOperator, Backoffice | only `Pending`, and only while still in the future; generates a random single-use `qrToken` |
 
-## Depends on / blocks
-- Depends on: M1 (login, server), M2 (reservation endpoints).
-- Blocks: M4 (navigation shell, API client, SQLite helper, session).
+### Web (React + Tailwind CSS, in `WebApp/smartsolar-ui`)
+Reservations page: upcoming bookings (uses M4's list endpoint), **create on behalf of a prosumer** (NIC → station → slot), edit, cancel (the "cancel with the assistance of a grid operator" scenario), approve. Show the API's rule messages in alert banners.
+
+### Android
+Book (station → date → free slot → confirm) · My bookings → Modify / Cancel · **Summary screen after each action** (created / updated / cancelled: station, slot time, status, reference) · **QR screen** for `Approved` bookings (render `qrToken` as a QR bitmap).
+
+### SQLite
+`my_reservations(id PK, station_name, slot_start, status, qr_token, synced_at)`: the prosumer can open their QR without signal at the station. It refreshes from the API when online.
+
+## Roadmap
+| When | Do |
+|---|---|
+| Sat 26 PM | Rule design, service + create endpoint with atomic slot claim. |
+| Sun 27 | Update, cancel, get, approve. **Merged by 20:00** with Swagger boundary tests. |
+| Mon 28 | Web reservation pages. Android booking flow on M1's shell. |
+| Tue 29 | Modify/cancel, summary screens, QR screen, SQLite cache. Team LAN test at 18:00. |
+| Wed 30 | DFD, references, your code in the report, contribution + AI reflection, video segment. |
 
 ## Definition of done
-- Registration, login and profile edit work end to end against the hosted API on a real phone over LAN.
-- Nothing in the app decides business rules (no date checks except for UX hints).
-- Comment header and inline comments on all your files. Cite any snippet you didn't write.
-
-## Viva prep: be able to explain
-What lives in SQLite vs MongoDB and why, how the token is attached to calls, how the session survives an app restart, what happens offline, how you show the 12-hour rule error.
+The boundary tests in the guide all pass through IIS from both clients. The summary page is shown after every action. The QR appears only once the booking is approved.

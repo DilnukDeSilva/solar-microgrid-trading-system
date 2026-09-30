@@ -1,42 +1,56 @@
-# Member 1: Service Foundation, Database, Auth, IIS/LAN, Web Login & Users
+# Member 1 (Dilnuk): Identity & Accounts
 
-**You start first. Every other member is blocked on your Milestone 0.** Finish it in about 2 days and tell the group chat.
+Branch: `feature/m1-identity` · Module owner for users, prosumers, login, the Android app shell and SQLite session storage.
 
-## Marks you own
-- Group: Service Architecture & API Design (8), Database Design (4), Documentation & Deployment (part)
-- Individual: Web login + role-based access (4), Web user management (4), plus Service Integration (Web ↔ API) (2)
+## Marks you lead
+- **Individual:** Web login + role-based access (4) ✅, Web user management (4) ✅, **Mobile authentication & account management (9)**, SQLite local persistence (3, shared), Web↔API (2), Mobile↔API (2).
+- **Group:** MongoDB connection & layering (part of Service Architecture), Database design (4), Client build & architecture (the Android shell and web skeleton).
 
-## Milestone 0: unblocks everyone (Day 1–2)
-1. GitHub repo with folders `WebService/`, `WebApp/`, `MobileApp/`, `docs/`. Add `main` protected, `dev` branch, one branch per feature, and a PR template. Invite all members.
-2. Commit `PLAN.md`, `API-CONTRACT.md` and the member files.
-3. ASP.NET Core Web API project that builds. Add Swagger (all members test through it), CORS, and the global error format from the contract.
-4. MongoDB connection via configuration (no hard-coded strings) and the **four collections** with model classes matching the contract. Create indexes: unique NIC, unique username.
-5. Seed script or seeder that loads the seed data listed in the contract.
-6. Auth: `POST /auth/login`, JWT issuing and validation, password hashing, role-based authorization policies the others can reuse (`[Authorize(Roles=...)]`).
-7. `GET /health` reachable from another device on the LAN, after **publishing to IIS** (install .NET Hosting Bundle, app pool "No Managed Code", firewall inbound rule, static IP). Write the exact steps in `docs/DEPLOYMENT.md` as you go. That is your reproducible deployment mark.
-8. Announce the base URL and test credentials to the group.
+## Already done on `dev`
+API foundation, Mongo + seed + indexes, JWT, staff Users API, web login / role redirect / user pages, deployment doc. 
 
-## Milestone 1: your features (Day 3–6)
-- `Users` staff API (`/users`): create Backoffice/GridOperator accounts, list, update, deactivate. Backoffice only.
-- Web app skeleton (ASP.NET Core MVC + Bootstrap 5): shared layout, navbar that changes by role, login page, session/cookie storing the JWT, an API client class all web pages reuse (M2 depends on this), 403 page, logout.
-- Role-based redirect after login: Backoffice → admin dashboard, GridOperator → operations home.
-- User management pages: list, create, edit, deactivate.
+## Remaining scope
 
-Hand the web skeleton + API client to M2 by **end of Day 4**.
+### API (your own controllers and services; reuse `UserRepository`)
+| Endpoint | Role | Rules |
+|---|---|---|
+| `POST /api/auth/register` | anon | NIC format valid (old 9 digits + V/X, or new 12 digits); NIC unique → `NIC_EXISTS`; username unique; password ≥ 8; creates `Prosumer` with status **`Pending`** |
+| `GET /api/me`, `PUT /api/me` | Prosumer | NIC and role cannot be changed; email and phone validated |
+| `POST /api/me/request-deactivation` | Prosumer | **Decision to document:** sets status `Deactivated` immediately, logs the user out; only Backoffice can reactivate. |
+| `GET /api/prosumers?status&q` | Backoffice, GridOperator | search by NIC, name, phone |
+| `GET/POST/PUT /api/prosumers/{nic}` | Backoffice | staff can create prosumers directly as `Active` |
+| `POST /api/prosumers/{nic}/deactivate` | Backoffice | |
+| `POST /api/prosumers/{nic}/reactivate` | **Backoffice only** | GridOperator gets 403 |
+| `GET /api/prosumers/pending`, `POST /api/prosumers/{nic}/activate` | Backoffice | only `Pending` → `Active` |
 
-## Milestone 2 (Day 7+)
-- Help integrate everything on the IIS box, run a full LAN test with a real phone, and support the smoke test checklist.
-- Lead the report's architecture, DB design and deployment sections.
+### Web (React + Tailwind CSS)
+The shared client is `WebApp/smartsolar-ui`. Pages call the API directly with the JWT. No business rules live in the browser.
+- **Prosumers** page: list with search, create, edit, deactivate; **Reactivate** button visible only to Backoffice.
+- **Pending activations** page: table of `Pending` prosumers with Activate / Reject, and a badge count in the navbar (2 marks on its own).
 
-## Depends on / blocks
-- Depends on: nothing.
-- Blocks: M2, M3, M4 (all need login, DB and the reachable server). Also M2 needs your web skeleton.
+### Android: the app shell (merge by **Sun 27, 12:00**, the others depend on it)
+- Project setup: Java, min SDK 24, package layout `data/local`, `data/remote`, `ui/<module>`, `util`.
+- `ApiClient` (base URL from a settings screen or `BuildConfig`, bearer token on every call, parses `{code, message}` errors), `SessionManager`, `DbHelper extends SQLiteOpenHelper` (one DB for the app, **each module adds its own table** via a version bump), `BaseActivity` (loading spinner + error dialog), shared colours / styles.
+- Role routing after login: Prosumer → prosumer home (M4 fills in the dashboard), GridOperator → operator home (M4 fills in the operator tools).
+
+### Android: your screens
+Splash → Login (username or NIC) → role home · Register (NIC as the primary key, shows "awaiting activation") · Profile view/edit · Request deactivation (confirm dialog) · Logout · Friendly messages for `ACCOUNT_NOT_ACTIVE` and `NIC_EXISTS`.
+
+### SQLite (your tables)
+- `session(token, expires_at, role, user_id, nic)`: keeps the user logged in after an app restart; cleared on logout or a 401.
+- `user_profile(nic PK, username, full_name, email, phone, status, synced_at)`: the profile screen shows cached data first, then refreshes from the API.
+
+## Roadmap
+| When | Do |
+|---|---|
+| Sat 26 PM | Android shell: project, ApiClient, SessionManager, DbHelper, role routing. Register/me API. |
+| Sun 27 | **12:00: shell merged, announced.** Prosumer admin API + pending/activate/reactivate. Help M2 remotely with IIS. |
+| Mon 28 | Web prosumer pages + pending activation page. Android login, register, profile, deactivation. |
+| Tue 29 | SQLite session / profile polish, error handling, real phone test via IIS. Report: high-level diagram, DB design. |
+| Wed 30 | Screenshots, your source code into the report, contribution + AI reflection, video segment (70 s). |
 
 ## Definition of done
-- Every `.cs` file has the comment header block, and every method starts with an inline comment.
-- No business rules in the web controllers or views.
-- Swagger shows all your endpoints with the correct role protection.
-- A wrong-role call returns 403 with the contract error body.
+Every rule tested with a boundary case (duplicate NIC, invalid NIC, Pending login, GridOperator trying to reactivate → 403). The app survives a restart logged in. File headers carry your name and IT number.
 
-## Viva prep: be able to explain
-How JWT works and where the secret lives, how the app pool and hosting bundle run your API, why NIC and username indexes are unique, what FAT service means, why clients never touch MongoDB, how passwords are stored.
+## Viva prep
+JWT and where the key lives; how `ActiveAccountGuard` rejects deactivated tokens; why NIC is the `_id`; what the app stores in SQLite versus MongoDB and why; how role routing works on both clients.

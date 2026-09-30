@@ -1,0 +1,69 @@
+@model ReservationCreateViewModel
+@{
+    ViewData["Title"] = "Book a slot";
+}
+
+<h1 class="h3 mb-1">Book a slot for a prosumer</h1>
+<p class="text-muted mb-4">For prosumers who call or visit. The API checks the booking rules and tells you if something is not allowed.</p>
+
+<partial name="_ApiErrors" />
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">1. Prosumer and station</div>
+            <div class="card-body">
+                <form asp-action="Create" method="get">
+                    <div class="mb-3">
+                        <label asp-for="ProsumerNic" class="form-label"></label>
+                        <input asp-for="ProsumerNic" class="form-control" placeholder="e.g. 200012345678" required />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="StationId" class="form-label"></label>
+                        <select asp-for="StationId" class="form-select" required>
+                            <option value="">Choose a station</option>
+                            @foreach (var station in Model.Stations)
+                            {
+                                <option value="@station.Id" selected="@(station.Id == Model.StationId)">@station.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Date" class="form-label"></label>
+                        <input asp-for="Date" type="date" class="form-control" />
+                        <div class="form-text">Optional. Leave empty to see every free slot you can book.</div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">Show free slots</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">2. Pick a slot and confirm</div>
+            <div class="card-body">
+                @if (!Model.SlotsSearched)
+                {
+                    <p class="text-muted mb-0">Enter the prosumer's NIC and choose a station to see its free slots.</p>
+                }
+                else if (Model.Slots.Count == 0)
+                {
+                    <p class="text-muted mb-0">No free slots found. Try another date or station.</p>
+                }
+                else
+                {
+                    <form asp-action="Create" method="post">
+                        <input type="hidden" asp-for="ProsumerNic" />
+                        <input type="hidden" asp-for="StationId" />
+                        <input type="hidden" asp-for="Date" />
+
+                        <partial name="_SlotPicker" model="(Model.Slots, Model.SlotId)" />
+
+                        <button type="submit" class="btn btn-primary">Confirm booking</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

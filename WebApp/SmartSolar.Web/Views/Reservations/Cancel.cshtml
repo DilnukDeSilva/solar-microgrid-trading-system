@@ -1,0 +1,42 @@
+@model ReservationCancelViewModel
+@{
+    ViewData["Title"] = "Cancel booking";
+    var current = Model.Current!;
+}
+
+<div class="col-lg-7">
+    <h1 class="h3 mb-3">Cancel this booking?</h1>
+
+    <partial name="_ApiErrors" />
+
+    <div class="alert alert-info">
+        Bookings can only be cancelled at least 12 hours before the slot starts. The slot becomes free for others straight away.
+    </div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Reference</dt>
+                <dd class="col-sm-8 font-monospace small">@current.Id</dd>
+                <dt class="col-sm-4">Prosumer</dt>
+                <dd class="col-sm-8">@current.ProsumerNic</dd>
+                <dt class="col-sm-4">Station</dt>
+                <dd class="col-sm-8">@current.StationName</dd>
+                <dt class="col-sm-4">Slot time</dt>
+                <dd class="col-sm-8">@current.ScheduledAt.ToSriLankaText()</dd>
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8"><partial name="_ReservationStatusBadge" model="current.Status" /></dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Cancel" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label asp-for="Reason" class="form-label">Reason (optional)</label>
+            <input asp-for="Reason" class="form-control" maxlength="200" placeholder="e.g. Prosumer called to cancel" />
+        </div>
+        <button type="submit" class="btn btn-danger">Cancel booking</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Keep it</a>
+    </form>
+</div>

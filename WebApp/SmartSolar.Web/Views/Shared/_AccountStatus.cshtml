@@ -1,0 +1,13 @@
+@model string
+@{
+    var kind = (Model ?? "").ToLowerInvariant() switch
+    {
+        "active" => "status-active",
+        "pending" => "status-pending",
+        "deactivated" => "status-deactivated",
+        "backoffice" => "status-backoffice",
+        "gridoperator" => "status-gridoperator",
+        _ => "status-inactive"
+    };
+}
+<span class="status @kind">@(string.IsNullOrWhiteSpace(Model) ? "Unknown" : Model)</span>

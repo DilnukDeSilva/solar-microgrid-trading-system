@@ -1,0 +1,19 @@
+@model IReadOnlyList<UserDto>
+@{ ViewData["Title"] = "Pending activations"; }
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3 mb-0">Pending activations</h1><span class="badge bg-warning text-dark fs-6">@Model.Count pending</span></div>
+<div class="table-responsive card shadow-sm">
+<table class="table table-hover align-middle mb-0">
+    <thead><tr><th>NIC</th><th>Name</th><th>Username</th><th>Contact</th><th class="text-end">Decision</th></tr></thead>
+    <tbody>
+    @if (Model.Count == 0) { <tr><td colspan="5" class="text-center text-muted py-4">No accounts are awaiting activation.</td></tr> }
+    @foreach (var user in Model) {
+        <tr><td>@user.Nic</td><td>@user.FullName</td><td>@user.Username</td><td>@user.Email<br /><span class="text-muted">@user.Phone</span></td>
+            <td class="text-end text-nowrap">
+                <form asp-action="Activate" asp-route-id="@user.Nic" method="post" class="d-inline"><button class="btn btn-sm btn-success">Activate</button></form>
+                <form asp-action="Reject" asp-route-id="@user.Nic" method="post" class="d-inline" onsubmit="return confirm('Reject and deactivate this registration?');"><button class="btn btn-sm btn-outline-danger">Reject</button></form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>
