@@ -1,0 +1,59 @@
+@model IReadOnlyList<StationDto>
+@{
+    ViewData["Title"] = "Stations";
+    var isBackoffice = User.IsInRole(RoleNames.Backoffice);
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Stations</h1>
+</div>
+<div class="table-responsive card shadow-sm">
+<table class="table table-hover align-middle mb-0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>GPS</th>
+            <th>Capacity (kWh)</th>
+            <th>Battery slots</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (Model.Count == 0)
+    {
+        <tr><td colspan="6" class="text-center text-muted py-4">No stations found.</td></tr>
+    }
+    @foreach (var station in Model)
+    {
+        <tr>
+            <td>@station.Name</td>
+            <td>@station.Latitude.ToString("0.0000"), @station.Longitude.ToString("0.0000")</td>
+            <td>@station.CapacityKwh</td>
+            <td>@station.BatterySlotsTotal</td>
+            <td>
+                <span class="badge @(station.Status == "Active" ? "bg-success" : "bg-secondary")">@station.Status</span>
+            </td>
+            <td class="text-end text-nowrap">
+                <a asp-controller="Slots" asp-action="Index" asp-route-stationId="@station.Id" class="btn btn-sm btn-outline-secondary">Slots</a>
+                @if (isBackoffice)
+                {
+                    <a asp-action="Edit" asp-route-id="@station.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    @if (station.Status == "Active")
+                    {
+                        <form asp-action="Deactivate" asp-route-id="@station.Id" method="post" class="d-inline" onsubmit="return confirm('Deactivate this station?');">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Deactivate</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Activate" asp-route-id="@station.Id" method="post" class="d-inline">
+                            <button class="btn btn-sm btn-outline-success" type="submit">Activate</button>
+                        </form>
+                    }
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>
