@@ -94,7 +94,8 @@ public partial class ApiClient
         string relativeUrl,
         object? body,
         bool withBearer,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool allowEmptyBody = false)
     {
         using var request = new HttpRequestMessage(method, relativeUrl);
 
@@ -137,6 +138,11 @@ public partial class ApiClient
                     (int)response.StatusCode,
                     error?.Code ?? "ERROR",
                     string.IsNullOrWhiteSpace(error?.Message) ? "The API request failed." : error.Message);
+            }
+
+            if (allowEmptyBody && string.IsNullOrWhiteSpace(json))
+            {
+                return default!;
             }
 
             var result = JsonSerializer.Deserialize<T>(json, JsonOptions);
