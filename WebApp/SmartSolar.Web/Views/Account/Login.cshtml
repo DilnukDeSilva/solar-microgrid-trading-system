@@ -3,12 +3,12 @@
     ViewData["Title"] = "Log in";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
+<div class="row justify-content-center py-4">
+    <div class="col-md-5 col-lg-4">
+        <div class="card auth-card shadow-sm">
             <div class="card-body p-4">
-                <h1 class="h4 mb-3">Staff log in</h1>
-                <p class="text-muted">Use a Backoffice or Grid Operator account. Seed admin is <code>admin</code>.</p>
+                <h1 class="h4 mb-2">Staff log in</h1>
+                <p class="text-muted mb-4">Backoffice and Grid Operator accounts. Prosumers use the Android app.</p>
                 <form asp-action="Login" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                     <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />

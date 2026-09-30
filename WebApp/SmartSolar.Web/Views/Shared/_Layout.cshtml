@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="~/SmartSolar.Web.styles.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    string Active(string controller, string? action = null)
+    {
+        if (!string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)) return "";
+        if (action != null && !string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase)) return "";
+        return "active";
+    }
+}
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <div class="container">
@@ -23,10 +33,10 @@
                         @if (User.IsInRole(RoleNames.Backoffice))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                <a class="nav-link @Active("Admin")" asp-controller="Admin" asp-action="Index">Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Users" asp-action="Index">Users</a>
+                                <a class="nav-link @Active("Users")" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
                             <li class="nav-item">
                                 @await Component.InvokeAsync("PendingActivationBadge")
@@ -35,25 +45,25 @@
                         @if (User.IsInRole(RoleNames.GridOperator))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Operations" asp-action="Index">Operations</a>
+                                <a class="nav-link @Active("Operations")" asp-controller="Operations" asp-action="Index">Operations</a>
                             </li>
                         }
                         @if (User.IsInRole(RoleNames.Backoffice) || User.IsInRole(RoleNames.GridOperator))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Prosumers" asp-action="Index">Prosumers</a>
+                                <a class="nav-link @Active("Prosumers")" asp-controller="Prosumers" asp-action="Index">Prosumers</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Stations" asp-action="Index">Stations</a>
+                                <a class="nav-link @Active("Stations")" asp-controller="Stations" asp-action="Index">Stations</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Bookings" asp-action="Index">Bookings</a>
+                                <a class="nav-link @Active("Bookings")" asp-controller="Bookings" asp-action="Index">Bookings</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Reservations" asp-action="Index">Reservations</a>
+                                <a class="nav-link @Active("Reservations", "Index")" asp-controller="Reservations" asp-action="Index">Reservations</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Reservations" asp-action="Create">Book a slot</a>
+                                <a class="nav-link @Active("Reservations", "Create")" asp-controller="Reservations" asp-action="Create">Book a slot</a>
                             </li>
                         }
                     </ul>
