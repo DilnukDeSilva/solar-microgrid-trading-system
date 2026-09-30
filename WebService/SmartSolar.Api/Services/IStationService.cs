@@ -31,5 +31,5 @@ public interface IStationService
     Task<Station> ActivateAsync(string id, CancellationToken cancellationToken = default);
 
     // Returns Active stations within radiusKm, nearest first, with free slots in the next 7 days.
-    Task<IReadOnlyList<NearbyStationDto>> NearbyAsync(double lat, double lng, double radiusKm, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<NearbyStationDto>> NearbyAsync(double? lat, double? lng, double radiusKm, CancellationToken cancellationToken = default);
 }

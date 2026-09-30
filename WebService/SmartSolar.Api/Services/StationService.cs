@@ -110,12 +110,20 @@ public class StationService : IStationService
 
     // Returns Active stations within radiusKm, nearest first, with free slots in the next 7 days.
     public async Task<IReadOnlyList<NearbyStationDto>> NearbyAsync(
-        double lat,
-        double lng,
+        double? lat,
+        double? lng,
         double radiusKm,
         CancellationToken cancellationToken = default)
     {
-        RequireCoordinates(lat, lng);
+        if (lat is null || lng is null)
+        {
+            throw new ApiException(
+                StatusCodes.Status400BadRequest,
+                ErrorCodes.ValidationError,
+                "lat and lng are required.");
+        }
+
+        RequireCoordinates(lat.Value, lng.Value);
         if (!double.IsFinite(radiusKm) || radiusKm <= 0 || radiusKm > 100)
         {
             throw new ApiException(
@@ -128,7 +136,7 @@ public class StationService : IStationService
         var stations = await _stations.GetAllAsync(cancellationToken);
         var withinRadius = stations
             .Where(station => station.Status == StationStatuses.Active)
-            .Select(station => (Station: station, Distance: DistanceKm(lat, lng, station.Latitude, station.Longitude)))
+            .Select(station => (Station: station, Distance: DistanceKm(lat.Value, lng.Value, station.Latitude, station.Longitude)))
             .Where(item => item.Distance <= radiusKm)
             .OrderBy(item => item.Distance)
             .ToList();

@@ -39,8 +39,8 @@ public class StationsController : ControllerBase
     [HttpGet("nearby")]
     [Authorize]
     public async Task<ActionResult<IReadOnlyList<NearbyStationDto>>> Nearby(
-        [FromQuery] double lat,
-        [FromQuery] double lng,
+        [FromQuery] double? lat,
+        [FromQuery] double? lng,
         [FromQuery] double radiusKm = 10,
         CancellationToken cancellationToken = default)
     {
