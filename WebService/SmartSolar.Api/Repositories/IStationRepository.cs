@@ -16,4 +16,13 @@ public interface IStationRepository
 
     // Loads one station by id.
     Task<Station?> FindByIdAsync(string id, CancellationToken cancellationToken = default);
+
+    // Inserts a new station document.
+    Task InsertAsync(Station station, CancellationToken cancellationToken = default);
+
+    // Replaces an existing station document by id.
+    Task ReplaceAsync(Station station, CancellationToken cancellationToken = default);
+
+    // True when a future Pending or Approved reservation still points at this station.
+    Task<bool> HasActiveFutureReservationsAsync(string stationId, DateTime nowUtc, CancellationToken cancellationToken = default);
 }
