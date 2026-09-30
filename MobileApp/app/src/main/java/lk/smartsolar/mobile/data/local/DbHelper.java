@@ -18,7 +18,7 @@ import java.util.List;
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "smart_solar.db";
     // Every module adds its CREATE statement and increments this version.
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     public DbHelper(Context context) {
         super(context.getApplicationContext(), DB_NAME, null, DB_VERSION);
@@ -29,6 +29,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE session (token TEXT NOT NULL, expires_at INTEGER NOT NULL, role TEXT NOT NULL, user_id TEXT NOT NULL, nic TEXT)");
         db.execSQL("CREATE TABLE user_profile (nic TEXT PRIMARY KEY, username TEXT NOT NULL, full_name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT NOT NULL, status TEXT NOT NULL, synced_at INTEGER NOT NULL)");
         createBookingCache(db);
+        createMyReservations(db);
     }
 
     @Override
@@ -37,6 +38,14 @@ public class DbHelper extends SQLiteOpenHelper {
         if (oldVersion < 2) {
             createBookingCache(db);
         }
+        if (oldVersion < 3) {
+            createMyReservations(db);
+        }
+    }
+
+    // Creates the prosumer's own bookings table, so the QR can be opened without signal at the station.
+    private void createMyReservations(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS my_reservations (id TEXT PRIMARY KEY, station_name TEXT, slot_start TEXT, status TEXT, qr_token TEXT, synced_at INTEGER NOT NULL)");
     }
 
     // Creates the offline booking list and dashboard snapshot tables.

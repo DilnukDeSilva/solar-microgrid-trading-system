@@ -24,11 +24,13 @@ import lk.smartsolar.mobile.data.remote.ApiCallback;
 import lk.smartsolar.mobile.data.remote.ApiClient;
 import lk.smartsolar.mobile.data.remote.ApiError;
 import lk.smartsolar.mobile.ui.BaseActivity;
+import lk.smartsolar.mobile.ui.reservations.BookingDetailActivity;
 import lk.smartsolar.mobile.util.TimeText;
 
 public class BookingsActivity extends BaseActivity {
     private String tab = "current";
     private ArrayAdapter<String> adapter;
+    private final List<Booking> rows = new ArrayList<>();
 
     // Wires the three tabs and the keyword search, then loads Current.
     @Override
@@ -38,6 +40,10 @@ public class BookingsActivity extends BaseActivity {
         ((TextView) findViewById(R.id.screenTitle)).setText("My bookings");
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
         ((ListView) findViewById(R.id.bookingList)).setAdapter(adapter);
+        // Tapping a booking opens it with Change slot, Cancel and Show QR.
+        ((ListView) findViewById(R.id.bookingList)).setOnItemClickListener((parent, view, position, id) -> {
+            if (position < rows.size()) BookingDetailActivity.open(this, rows.get(position).id);
+        });
         findViewById(R.id.currentTab).setOnClickListener(v -> { tab = "current"; load(); });
         findViewById(R.id.pendingTab).setOnClickListener(v -> { tab = "pending"; load(); });
         findViewById(R.id.historyTab).setOnClickListener(v -> { tab = "history"; load(); });
@@ -48,6 +54,12 @@ public class BookingsActivity extends BaseActivity {
             }
             return false;
         });
+    }
+
+    // Reloads the tab whenever the screen comes back, so changes made on other screens show up.
+    @Override
+    protected void onResume() {
+        super.onResume();
         load();
     }
 
@@ -89,6 +101,8 @@ public class BookingsActivity extends BaseActivity {
         long syncedAt = bookings.isEmpty() ? 0 : bookings.get(0).syncedAt;
         updated.setText(offline ? "Offline. " + TimeText.lastUpdated(syncedAt) : "");
         adapter.clear();
+        rows.clear();
+        rows.addAll(bookings);
         if (bookings.isEmpty()) {
             adapter.add("No bookings in this tab.");
         }
