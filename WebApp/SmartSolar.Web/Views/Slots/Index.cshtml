@@ -1,0 +1,71 @@
+@model SlotsPage
+@{
+    ViewData["Title"] = Model.Station.Name + " slots";
+    var isOperator = User.IsInRole(RoleNames.GridOperator);
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">@Model.Station.Name</h1>
+    <a asp-controller="Stations" asp-action="Index" class="btn btn-outline-secondary">Back to stations</a>
+</div>
+<p class="text-muted">Times are shown in Sri Lanka time. The API decides whether a slot fits the schedule.</p>
+<div class="table-responsive card shadow-sm mb-4">
+<table class="table table-hover align-middle mb-0">
+    <thead>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (Model.Slots.Count == 0)
+    {
+        <tr><td colspan="4" class="text-center text-muted py-4">No slots yet.</td></tr>
+    }
+    @foreach (var slot in Model.Slots)
+    {
+        <tr>
+            <td>@slot.StartTime.ToSriLankaText()</td>
+            <td>@slot.EndTime.ToSriLankaText()</td>
+            <td>
+                <span class="badge @(slot.IsAvailable ? "bg-success" : "bg-secondary")">@(slot.IsAvailable ? "Available" : "Booked")</span>
+            </td>
+            <td class="text-end text-nowrap">
+                @if (isOperator)
+                {
+                    <form asp-action="Availability" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@slot.Id" />
+                        <input type="hidden" name="stationId" value="@Model.Station.Id" />
+                        <input type="hidden" name="isAvailable" value="@(!slot.IsAvailable ? "true" : "false")" />
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">@(slot.IsAvailable ? "Close" : "Open")</button>
+                    </form>
+                }
+                <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Delete this slot?');">
+                    <input type="hidden" name="id" value="@slot.Id" />
+                    <input type="hidden" name="stationId" value="@Model.Station.Id" />
+                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>
+<form asp-action="Create" asp-route-stationId="@Model.Station.Id" method="post" class="card card-body shadow-sm">
+    <h2 class="h6">Add a slot</h2>
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row g-3">
+        <div class="col-md-5">
+            <label asp-for="Form.Start" class="form-label"></label>
+            <input asp-for="Form.Start" class="form-control" type="datetime-local" />
+        </div>
+        <div class="col-md-5">
+            <label asp-for="Form.End" class="form-label"></label>
+            <input asp-for="Form.End" class="form-control" type="datetime-local" />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary w-100" type="submit">Add slot</button>
+        </div>
+    </div>
+</form>

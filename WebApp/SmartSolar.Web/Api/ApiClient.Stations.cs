@@ -37,6 +37,36 @@ public partial class ApiClient
     public Task<StationDto> UpdateStationAsync(string id, StationForm form, CancellationToken cancellationToken = default) =>
         SendAsync<StationDto>(HttpMethod.Put, $"stations/{Uri.EscapeDataString(id)}", StationBody(form), true, cancellationToken);
 
+    // Calls GET /stations/{id}/slots.
+    public async Task<IReadOnlyList<SlotDto>> GetSlotsAsync(string stationId, CancellationToken cancellationToken = default)
+    {
+        return await SendAsync<List<SlotDto>>(HttpMethod.Get, $"stations/{Uri.EscapeDataString(stationId)}/slots", null, true, cancellationToken);
+    }
+
+    // Calls POST /stations/{id}/slots. Local form times are sent as +05:30.
+    public Task<SlotDto> CreateSlotAsync(string stationId, SlotForm form, CancellationToken cancellationToken = default)
+    {
+        var offset = TimeSpan.FromHours(5.5);
+        return SendAsync<SlotDto>(
+            HttpMethod.Post,
+            $"stations/{Uri.EscapeDataString(stationId)}/slots",
+            new
+            {
+                StartTime = new DateTimeOffset(form.Start, offset),
+                EndTime = new DateTimeOffset(form.End, offset)
+            },
+            true,
+            cancellationToken);
+    }
+
+    // Calls DELETE /slots/{id}. A successful delete has an empty body.
+    public Task DeleteSlotAsync(string id, CancellationToken cancellationToken = default) =>
+        SendAsync<object>(HttpMethod.Delete, $"slots/{Uri.EscapeDataString(id)}", null, true, cancellationToken, allowEmptyBody: true);
+
+    // Calls PUT /slots/{id}/availability.
+    public Task<SlotDto> SetSlotAvailabilityAsync(string id, bool isAvailable, CancellationToken cancellationToken = default) =>
+        SendAsync<SlotDto>(HttpMethod.Put, $"slots/{Uri.EscapeDataString(id)}/availability", new { isAvailable }, true, cancellationToken);
+
     // Builds the station JSON. Only days marked open are included.
     private static object StationBody(StationForm form) => new
     {
