@@ -1,11 +1,11 @@
 @model string
 @{
-    var colour = Model switch
+    var css = Model switch
     {
-        "Pending" => "text-bg-warning",
-        "Approved" => "text-bg-success",
-        "Completed" => "text-bg-primary",
-        _ => "text-bg-secondary"
+        "Pending" => "badge-status-pending",
+        "Approved" or "Active" or "Available" => "badge-status-approved",
+        "Completed" => "badge-status-completed",
+        _ => "badge-status-muted"
     };
 }
-<span class="badge @colour">@Model</span>
+<span class="badge badge-status @css">@Model</span>

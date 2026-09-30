@@ -41,8 +41,8 @@
 
 <p class="text-muted small mb-2">@Model.Items.Count booking(s)@(Model.IncludePast ? "" : ", upcoming only")</p>
 
-<div class="table-responsive">
-    <table class="table table-striped align-middle bg-white">
+<div class="card">
+    <table class="table table-hover align-middle mb-0 table-stack">
         <thead>
             <tr>
                 <th>Slot time</th>
@@ -64,11 +64,11 @@
         {
             var open = r.Status is "Pending" or "Approved";
             <tr>
-                <td class="text-nowrap">@r.ScheduledAt.ToSriLankaText()</td>
-                <td>@r.StationName</td>
-                <td>@r.ProsumerNic</td>
-                <td><partial name="_ReservationStatusBadge" model="r.Status" /></td>
-                <td class="font-monospace small">@r.Id</td>
+                <td data-label="When" class="text-nowrap">@r.ScheduledAt.ToSriLankaText()</td>
+                <td data-label="Station">@r.StationName</td>
+                <td data-label="NIC">@r.ProsumerNic</td>
+                <td data-label="Status"><partial name="_ReservationStatusBadge" model="r.Status" /></td>
+                <td data-label="Reference" class="font-monospace small text-muted">@r.Id</td>
                 <td class="text-end text-nowrap">
                     <a class="btn btn-sm btn-outline-secondary" asp-action="Summary" asp-route-id="@r.Id">View</a>
                     @if (open)
