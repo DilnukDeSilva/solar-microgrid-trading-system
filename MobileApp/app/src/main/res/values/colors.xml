@@ -6,8 +6,15 @@
     <color name="solar_background">#F4F7F5</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#17211C</color>
-    <color name="status_pending">#B58100</color>
+    <color name="solar_line">#DDE5E0</color>
+    <color name="ink_secondary">#5B6B62</color>
+    <color name="danger">#B42318</color>
+    <color name="status_pending">#8A6200</color>
+    <color name="status_pending_fill">#FFF4D6</color>
     <color name="status_approved">#1E7D4F</color>
-    <color name="status_cancelled">#6C757D</color>
-    <color name="status_completed">#0D6EFD</color>
+    <color name="status_approved_fill">#E3F4EA</color>
+    <color name="status_cancelled">#55606A</color>
+    <color name="status_cancelled_fill">#EEF0F2</color>
+    <color name="status_completed">#0B5ED7</color>
+    <color name="status_completed_fill">#E7F0FF</color>
 </resources>

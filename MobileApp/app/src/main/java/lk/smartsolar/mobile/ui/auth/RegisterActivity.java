@@ -4,7 +4,7 @@ package lk.smartsolar.mobile.ui.auth;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import lk.smartsolar.mobile.R;
 import lk.smartsolar.mobile.data.local.UserProfile;
@@ -33,7 +33,7 @@ public class RegisterActivity extends BaseActivity {
         ApiClient.get(this).register(nic, username, password, fullName, email, phone, new ApiCallback<UserProfile>() {
             @Override public void onSuccess(UserProfile value) {
                 showLoading(false);
-                new AlertDialog.Builder(RegisterActivity.this)
+                new MaterialAlertDialogBuilder(RegisterActivity.this)
                         .setTitle("Registration received")
                         .setMessage("Your account is awaiting Backoffice activation. You can log in after it is activated.")
                         .setPositiveButton("Back to login", (dialog, which) -> finish()).setCancelable(false).show();
