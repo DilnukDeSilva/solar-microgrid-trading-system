@@ -6,6 +6,7 @@
  */
 
 using MongoDB.Driver;
+using SmartSolar.Api.Common;
 using SmartSolar.Api.Data;
 using SmartSolar.Api.Models;
 
@@ -43,5 +44,17 @@ public class StationRepository : IStationRepository
     public Task ReplaceAsync(Station station, CancellationToken cancellationToken = default)
     {
         return _context.Stations.ReplaceOneAsync(existing => existing.Id == station.Id, station, cancellationToken: cancellationToken);
+    }
+
+    // True when a future Pending or Approved reservation still points at this station.
+    public Task<bool> HasActiveFutureReservationsAsync(string stationId, DateTime nowUtc, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Reservation>.Filter.Eq(reservation => reservation.StationId, stationId)
+            & Builders<Reservation>.Filter.Gt(reservation => reservation.ScheduledAt, nowUtc)
+            & Builders<Reservation>.Filter.In(
+                reservation => reservation.Status,
+                new[] { ReservationStatuses.Pending, ReservationStatuses.Approved });
+
+        return _context.Reservations.Find(filter).AnyAsync(cancellationToken);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * File: StationsController.cs
- * Description: HTTP endpoints for listing, reading and creating stations. Rules stay in StationService.
+ * Description: HTTP endpoints for listing, reading, updating and activating stations. Rules stay in StationService.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -52,5 +52,32 @@ public class StationsController : ControllerBase
     {
         var created = await _stations.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+    }
+
+    // Updates a station. Backoffice only.
+    [HttpPut("{id}")]
+    [Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<ActionResult<Station>> Update(
+        string id,
+        [FromBody] SaveStationRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _stations.UpdateAsync(id, request, cancellationToken));
+    }
+
+    // Deactivates a station. Backoffice only.
+    [HttpPost("{id}/deactivate")]
+    [Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<ActionResult<Station>> Deactivate(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await _stations.DeactivateAsync(id, cancellationToken));
+    }
+
+    // Activates a station. Backoffice only.
+    [HttpPost("{id}/activate")]
+    [Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<ActionResult<Station>> Activate(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await _stations.ActivateAsync(id, cancellationToken));
     }
 }

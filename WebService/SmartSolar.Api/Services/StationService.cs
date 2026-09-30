@@ -1,6 +1,6 @@
 /*
  * File: StationService.cs
- * Description: Business rules for listing, reading and creating solar stations.
+ * Description: Business rules for listing, reading, updating and activating stations.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -59,6 +59,50 @@ public class StationService : IStationService
         };
 
         await _stations.InsertAsync(station, cancellationToken);
+        return station;
+    }
+
+    // Updates station fields. Id and status stay unchanged.
+    public async Task<Station> UpdateAsync(string id, SaveStationRequestDto request, CancellationToken cancellationToken = default)
+    {
+        var station = await GetAsync(id, cancellationToken);
+        var schedule = NormalizeSchedule(request.Schedule);
+        RequireValid(request.Name, request.Latitude, request.Longitude, request.CapacityKwh, request.BatterySlotsTotal, schedule);
+
+        station.Name = request.Name.Trim();
+        station.Latitude = request.Latitude;
+        station.Longitude = request.Longitude;
+        station.CapacityKwh = request.CapacityKwh;
+        station.BatterySlotsTotal = request.BatterySlotsTotal;
+        station.Schedule = schedule;
+
+        await _stations.ReplaceAsync(station, cancellationToken);
+        return station;
+    }
+
+    // Sets a station Inactive, or 409 when a future Pending or Approved reservation exists.
+    public async Task<Station> DeactivateAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var station = await GetAsync(id, cancellationToken);
+        if (await _stations.HasActiveFutureReservationsAsync(id, DateTime.UtcNow, cancellationToken))
+        {
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                ErrorCodes.StationHasReservations,
+                "This station has future reservations and cannot be deactivated.");
+        }
+
+        station.Status = StationStatuses.Inactive;
+        await _stations.ReplaceAsync(station, cancellationToken);
+        return station;
+    }
+
+    // Sets a station Active again.
+    public async Task<Station> ActivateAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var station = await GetAsync(id, cancellationToken);
+        station.Status = StationStatuses.Active;
+        await _stations.ReplaceAsync(station, cancellationToken);
         return station;
     }
 
