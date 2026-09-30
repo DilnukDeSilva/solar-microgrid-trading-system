@@ -106,20 +106,20 @@ public class StationsController : Controller
     // Deactivates a station. The API's 409 is shown as a banner.
     [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
     public Task<IActionResult> Deactivate(string id, CancellationToken cancellationToken) =>
-        RunStatusAction(() => _api.DeactivateStationAsync(id, cancellationToken), $"Deactivated {id}.");
+        RunStatusAction(() => _api.DeactivateStationAsync(id, cancellationToken), "Deactivated");
 
     // Activates a station again.
     [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
     public Task<IActionResult> Activate(string id, CancellationToken cancellationToken) =>
-        RunStatusAction(() => _api.ActivateStationAsync(id, cancellationToken), $"Activated {id}.");
+        RunStatusAction(() => _api.ActivateStationAsync(id, cancellationToken), "Activated");
 
     // Runs a status change and always returns to the list, with the API message on failure.
-    private async Task<IActionResult> RunStatusAction(Func<Task<StationDto>> command, string success)
+    private async Task<IActionResult> RunStatusAction(Func<Task<StationDto>> command, string verb)
     {
         try
         {
-            await command();
-            TempData["Success"] = success;
+            var station = await command();
+            TempData["Success"] = $"{verb} {station.Name}.";
         }
         catch (ApiClientException ex)
         {

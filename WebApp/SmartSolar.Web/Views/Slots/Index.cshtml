@@ -59,13 +59,16 @@
         <div class="col-md-5">
             <label asp-for="Form.Start" class="form-label"></label>
             <input asp-for="Form.Start" class="form-control" type="datetime-local" />
+            <span asp-validation-for="Form.Start" class="text-danger"></span>
         </div>
         <div class="col-md-5">
             <label asp-for="Form.End" class="form-label"></label>
             <input asp-for="Form.End" class="form-control" type="datetime-local" />
+            <span asp-validation-for="Form.End" class="text-danger"></span>
         </div>
         <div class="col-md-2 d-flex align-items-end">
             <button class="btn btn-primary w-100" type="submit">Add slot</button>
         </div>
     </div>
 </form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
