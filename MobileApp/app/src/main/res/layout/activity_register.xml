@@ -44,7 +44,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"
-                    android:hint="NIC">
+                    android:hint="NIC"
+                    app:helperText="12 digits, or 9 digits and V">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/registerNic"

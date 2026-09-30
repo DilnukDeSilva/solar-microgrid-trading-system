@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.SmartSolar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.SmartSolar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/solar_green</item>
         <item name="colorPrimaryVariant">@color/solar_green_dark</item>
         <item name="colorSecondary">@color/solar_gold</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorError">@color/danger</item>
+        <item name="android:colorBackground">@color/solar_background</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorSecondary">@color/ink_secondary</item>
         <item name="android:fontFamily">sans</item>
-        <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/solar_green_dark</item>
         <item name="android:navigationBarColor">@color/solar_green_dark</item>
         <item name="android:windowBackground">@color/solar_background</item>
         <item name="materialButtonStyle">@style/Widget.SmartSolar.Button</item>
-        <!-- Android 15 draws behind the system bars by default; keep the solid green bars instead. -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.SmartSolar.MaterialAlertDialog</item>
         <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 </resources>

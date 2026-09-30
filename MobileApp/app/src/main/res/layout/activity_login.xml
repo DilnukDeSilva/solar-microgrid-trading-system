@@ -13,22 +13,18 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="☀ Smart Solar"
-            android:textColor="@color/solar_green"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@null"
+            android:src="@drawable/sun_dot" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Welcome back"
-            android:textColor="@color/solar_green_dark"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.SmartSolar.Title" />
 
         <TextView
             android:layout_width="wrap_content"
