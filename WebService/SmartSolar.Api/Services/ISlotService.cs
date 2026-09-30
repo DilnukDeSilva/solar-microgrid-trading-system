@@ -1,6 +1,6 @@
 /*
  * File: ISlotService.cs
- * Description: Slot use-cases. Schedule, battery overlap and booking locks live here.
+ * Description: Slot use-cases. Schedule, battery overlap, booking locks and availability live here.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -23,4 +23,7 @@ public interface ISlotService
 
     // Deletes a free slot. A slot with an active reservation cannot be deleted.
     Task DeleteAsync(string slotId, CancellationToken cancellationToken = default);
+
+    // Sets the booking flag. A slot with an active reservation cannot be changed either way.
+    Task<Slot> SetAvailabilityAsync(string slotId, SlotAvailabilityRequestDto request, CancellationToken cancellationToken = default);
 }

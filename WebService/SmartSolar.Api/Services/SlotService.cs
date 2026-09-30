@@ -1,6 +1,6 @@
 /*
  * File: SlotService.cs
- * Description: Business rules for creating, moving and deleting battery slots.
+ * Description: Business rules for creating, moving, deleting and opening or closing battery slots.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -82,6 +82,16 @@ public class SlotService : ISlotService
         var slot = await LoadSlotAsync(slotId, cancellationToken);
         await RejectIfBookedAsync(slot.Id, cancellationToken);
         await _slots.DeleteAsync(slot.Id, cancellationToken);
+    }
+
+    // Sets the booking flag. A slot with an active reservation cannot be changed either way.
+    public async Task<Slot> SetAvailabilityAsync(string slotId, SlotAvailabilityRequestDto request, CancellationToken cancellationToken = default)
+    {
+        var slot = await LoadSlotAsync(slotId, cancellationToken);
+        await RejectIfBookedAsync(slot.Id, cancellationToken);
+        slot.IsAvailable = request.IsAvailable;
+        await _slots.ReplaceAsync(slot, cancellationToken);
+        return slot;
     }
 
     // Rejects a slot that is in the past, outside the station schedule, or over the battery count.

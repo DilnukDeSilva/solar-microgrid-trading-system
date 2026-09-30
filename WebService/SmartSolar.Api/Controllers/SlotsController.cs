@@ -1,6 +1,6 @@
 /*
  * File: SlotsController.cs
- * Description: HTTP endpoints for listing, creating, updating and deleting slots. Rules stay in SlotService.
+ * Description: HTTP endpoints for listing, creating, updating, deleting and opening or closing slots. Rules stay in SlotService.
  * Author: Mohamed Asath (IT22633422)
  * Created: 30/09/2026
  */
@@ -64,5 +64,16 @@ public class SlotsController : ControllerBase
     {
         await _slots.DeleteAsync(id, cancellationToken);
         return NoContent();
+    }
+
+    // Opens or closes a free slot. GridOperator only.
+    [HttpPut("api/slots/{id}/availability")]
+    [Authorize(Roles = RoleNames.GridOperator)]
+    public async Task<ActionResult<Slot>> SetAvailability(
+        string id,
+        [FromBody] SlotAvailabilityRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _slots.SetAvailabilityAsync(id, request, cancellationToken));
     }
 }
