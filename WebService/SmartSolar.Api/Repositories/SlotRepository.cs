@@ -6,6 +6,7 @@
  */
 
 using MongoDB.Driver;
+using SmartSolar.Api.Common;
 using SmartSolar.Api.Data;
 using SmartSolar.Api.Models;
 
@@ -61,5 +62,34 @@ public class SlotRepository : ISlotRepository
             slot => slot.Id == id,
             Builders<Slot>.Update.Set(slot => slot.IsAvailable, true),
             cancellationToken: cancellationToken);
+    }
+
+    // Inserts a new slot document.
+    public Task InsertAsync(Slot slot, CancellationToken cancellationToken = default)
+    {
+        return _context.Slots.InsertOneAsync(slot, cancellationToken: cancellationToken);
+    }
+
+    // Replaces an existing slot document by id.
+    public Task ReplaceAsync(Slot slot, CancellationToken cancellationToken = default)
+    {
+        return _context.Slots.ReplaceOneAsync(existing => existing.Id == slot.Id, slot, cancellationToken: cancellationToken);
+    }
+
+    // Deletes a slot document by id.
+    public Task DeleteAsync(string id, CancellationToken cancellationToken = default)
+    {
+        return _context.Slots.DeleteOneAsync(slot => slot.Id == id, cancellationToken);
+    }
+
+    // True when a Pending or Approved reservation still holds this slot.
+    public Task<bool> HasActiveReservationAsync(string slotId, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Reservation>.Filter.Eq(reservation => reservation.SlotId, slotId)
+            & Builders<Reservation>.Filter.In(
+                reservation => reservation.Status,
+                new[] { ReservationStatuses.Pending, ReservationStatuses.Approved });
+
+        return _context.Reservations.Find(filter).AnyAsync(cancellationToken);
     }
 }

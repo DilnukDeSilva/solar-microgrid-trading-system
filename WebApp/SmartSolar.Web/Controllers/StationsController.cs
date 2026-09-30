@@ -1,0 +1,131 @@
+/*
+ * File: StationsController.cs
+ * Description: Staff MVC pages for listing, creating and editing stations. Rules stay on the API.
+ * Author: Mohamed Asath (IT22633422)
+ * Created: 30/09/2026
+ */
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SmartSolar.Web.Api;
+using SmartSolar.Web.Common;
+using SmartSolar.Web.Models;
+
+namespace SmartSolar.Web.Controllers;
+
+[Authorize(Roles = RoleNames.Backoffice + "," + RoleNames.GridOperator)]
+public class StationsController : Controller
+{
+    private readonly ApiClient _api;
+
+    // Injects the API client that attaches the session JWT.
+    public StationsController(ApiClient api)
+    {
+        _api = api;
+    }
+
+    // Lists stations. Operators can view; they cannot change status.
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        try
+        {
+            return View(await _api.GetStationsAsync(cancellationToken));
+        }
+        catch (ApiClientException ex)
+        {
+            TempData["Error"] = ex.ApiMessage;
+            return View(Array.Empty<StationDto>());
+        }
+    }
+
+    // Shows an empty station form. Backoffice only.
+    [HttpGet, Authorize(Roles = RoleNames.Backoffice)]
+    public IActionResult Create() => View(new StationForm());
+
+    // Creates a station. The API's validation message is shown on the form.
+    [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<IActionResult> Create(StationForm form, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(form);
+        }
+
+        try
+        {
+            await _api.CreateStationAsync(form, cancellationToken);
+            TempData["Success"] = $"Created station {form.Name}.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (ApiClientException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.ApiMessage);
+            return View(form);
+        }
+    }
+
+    // Loads a station into the edit form. Backoffice only.
+    [HttpGet, Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<IActionResult> Edit(string id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var station = await _api.GetStationAsync(id, cancellationToken);
+            return View(StationForm.From(station));
+        }
+        catch (ApiClientException ex)
+        {
+            TempData["Error"] = ex.ApiMessage;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    // Saves station edits. The API's validation message is shown on the form.
+    [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
+    public async Task<IActionResult> Edit(string id, StationForm form, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(form);
+        }
+
+        try
+        {
+            await _api.UpdateStationAsync(id, form, cancellationToken);
+            TempData["Success"] = $"Updated {form.Name}.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (ApiClientException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.ApiMessage);
+            return View(form);
+        }
+    }
+
+    // Deactivates a station. The API's 409 is shown as a banner.
+    [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
+    public Task<IActionResult> Deactivate(string id, CancellationToken cancellationToken) =>
+        RunStatusAction(() => _api.DeactivateStationAsync(id, cancellationToken), "Deactivated");
+
+    // Activates a station again.
+    [HttpPost, ValidateAntiForgeryToken, Authorize(Roles = RoleNames.Backoffice)]
+    public Task<IActionResult> Activate(string id, CancellationToken cancellationToken) =>
+        RunStatusAction(() => _api.ActivateStationAsync(id, cancellationToken), "Activated");
+
+    // Runs a status change and always returns to the list, with the API message on failure.
+    private async Task<IActionResult> RunStatusAction(Func<Task<StationDto>> command, string verb)
+    {
+        try
+        {
+            var station = await command();
+            TempData["Success"] = $"{verb} {station.Name}.";
+        }
+        catch (ApiClientException ex)
+        {
+            TempData["Error"] = ex.ApiMessage;
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+}

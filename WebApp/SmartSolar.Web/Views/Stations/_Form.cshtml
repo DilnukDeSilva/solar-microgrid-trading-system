@@ -1,0 +1,46 @@
+@model StationForm
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="row g-3">
+    <div class="col-12">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Latitude" class="form-label"></label>
+        <input asp-for="Latitude" class="form-control" step="any" />
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Longitude" class="form-label"></label>
+        <input asp-for="Longitude" class="form-control" step="any" />
+    </div>
+    <div class="col-md-6">
+        <label asp-for="CapacityKwh" class="form-label"></label>
+        <input asp-for="CapacityKwh" class="form-control" step="any" />
+    </div>
+    <div class="col-md-6">
+        <label asp-for="BatterySlotsTotal" class="form-label"></label>
+        <input asp-for="BatterySlotsTotal" class="form-control" />
+    </div>
+</div>
+<h2 class="h6 mt-4">Weekly schedule</h2>
+<p class="text-muted small">Tick a day to include it. Closed days are not sent.</p>
+<div class="table-responsive">
+<table class="table table-sm align-middle">
+    <thead><tr><th>Day</th><th>Open</th><th>Opens</th><th>Closes</th></tr></thead>
+    <tbody>
+    @for (var i = 0; i < Model.Days.Count; i++)
+    {
+        <tr>
+            <td>
+                @Model.Days[i].DayOfWeek
+                <input type="hidden" asp-for="Days[i].DayOfWeek" />
+            </td>
+            <td><input asp-for="Days[i].Open" class="form-check-input" /></td>
+            <td><input asp-for="Days[i].OpenTime" class="form-control" type="time" /></td>
+            <td><input asp-for="Days[i].CloseTime" class="form-control" type="time" /></td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>
