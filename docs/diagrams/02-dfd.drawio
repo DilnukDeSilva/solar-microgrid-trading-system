@@ -1,0 +1,149 @@
+<mxfile host="app.diagrams.net" agent="SmartSolar" version="22.1.0">
+  <diagram id="dfd0" name="DFD Level 0 Context">
+    <mxGraphModel dx="1100" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title0" value="DFD Level 0 — Context Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="30" width="400" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext1" value="Backoffice&#xa;/ Grid Operator&#xa;(Web)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ext2" value="Prosumer&#xa;(Android / Web)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p0" value="0&#xa;Smart Solar&#xa;Trading System" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="420" y="280" width="200" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ds0" value="D1 MongoDB&#xa;(Users, Stations,&#xa;Slots, Reservations)" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="820" y="220" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ds1" value="D2 Android SQLite&#xa;(session, caches,&#xa;offline QR)" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="820" y="400" width="180" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f1" value="login, manage users/&#xa;stations, dashboards,&#xa;approve, verify QR" style="endArrow=classic;html=1;fontSize=10;strokeColor=#6c8ebf;" edge="1" parent="1" source="ext1" target="p0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" value="status, counts,&#xa;booking lists" style="endArrow=classic;html=1;fontSize=10;strokeColor=#6c8ebf;" edge="1" parent="1" source="p0" target="ext1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="360" y="240" />
+              <mxPoint x="200" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f3" value="register, book,&#xa;view dashboard/QR" style="endArrow=classic;html=1;fontSize=10;strokeColor=#82b366;" edge="1" parent="1" source="ext2" target="p0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" value="booking result,&#xa;QR token, counts" style="endArrow=classic;html=1;fontSize=10;strokeColor=#82b366;" edge="1" parent="1" source="p0" target="ext2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="500" />
+              <mxPoint x="200" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f5" value="read / write&#xa;documents" style="endArrow=classic;html=1;fontSize=10;" edge="1" parent="1" source="p0" target="ds0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f6" value="cache session,&#xa;bookings, dashboard" style="endArrow=classic;html=1;fontSize=10;strokeColor=#9673a6;" edge="1" parent="1" source="p0" target="ds1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="dfd1" name="DFD Level 1">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title1" value="DFD Level 1 — Major Processes" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="400" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- External -->
+        <mxCell id="u1" value="Staff User&#xa;(Web App)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="u2" value="Prosumer&#xa;(Mobile App)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="120" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Client processes -->
+        <mxCell id="c1" value="1.0&#xa;Web UI&#xa;(MVC / React)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="240" y="110" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="2.0&#xa;Android UI&#xa;+ SQLite cache" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="240" y="500" width="140" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- API processes -->
+        <mxCell id="p1" value="3.0&#xa;Auth &amp;&#xa;Accounts" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="80" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="4.0&#xa;Stations&#xa;&amp; Slots" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="220" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="5.0&#xa;Reservations&#xa;&amp; Approve" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="380" width="140" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="6.0&#xa;Dashboards,&#xa;Lists &amp; QR Verify" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="560" width="150" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Data stores -->
+        <mxCell id="d1" value="D1 Users" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="900" y="70" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" value="D2 SolarStationInfo" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="900" y="200" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" value="D3 EnergyBookingSlots" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="900" y="280" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" value="D4 EnergyReservation" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry x="900" y="430" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d5" value="D5 SQLite&#xa;session / profile /&#xa;booking_history_cache /&#xa;dashboard_snapshot /&#xa;my_reservations / stations_cache" style="shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="880" y="620" width="220" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Flows left -->
+        <mxCell id="g1" style="endArrow=classic;html=1;strokeColor=#6c8ebf;" edge="1" parent="1" source="u1" target="c1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g2" style="endArrow=classic;html=1;strokeColor=#82b366;" edge="1" parent="1" source="u2" target="c2"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="g3" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;" edge="1" parent="1" source="c1" target="p1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g4" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;" edge="1" parent="1" source="c1" target="p2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g5" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;" edge="1" parent="1" source="c1" target="p3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g6" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;" edge="1" parent="1" source="c1" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="g7" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;strokeColor=#82b366;" edge="1" parent="1" source="c2" target="p1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g8" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;strokeColor=#82b366;" edge="1" parent="1" source="c2" target="p2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g9" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;strokeColor=#82b366;" edge="1" parent="1" source="c2" target="p3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="g10" value="REST/JSON" style="endArrow=classic;html=1;fontSize=10;strokeColor=#82b366;" edge="1" parent="1" source="c2" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- To Mongo -->
+        <mxCell id="h1" style="endArrow=classic;html=1;" edge="1" parent="1" source="p1" target="d1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="h2" style="endArrow=classic;html=1;" edge="1" parent="1" source="p2" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="h3" style="endArrow=classic;html=1;" edge="1" parent="1" source="p2" target="d3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="h4" style="endArrow=classic;html=1;" edge="1" parent="1" source="p3" target="d4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="h5" style="endArrow=classic;html=1;" edge="1" parent="1" source="p3" target="d3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="h6" style="endArrow=classic;html=1;" edge="1" parent="1" source="p4" target="d4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="h7" style="endArrow=classic;html=1;" edge="1" parent="1" source="p4" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="h8" value="offline cache" style="endArrow=classic;html=1;strokeColor=#9673a6;fontSize=10;" edge="1" parent="1" source="c2" target="d5"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="note" value="Rule: Web/Mobile hold no business rules. All validation lives in API services.&#xa;SQLite is local persistence only (session + last-known lists for offline display)." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="980" width="700" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

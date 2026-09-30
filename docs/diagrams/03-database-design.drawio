@@ -1,0 +1,182 @@
+<mxfile host="app.diagrams.net" agent="SmartSolar" version="22.1.0">
+  <diagram id="mongo" name="MongoDB Collections">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="MongoDB Database Design — SmartSolar" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="20" width="420" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Users -->
+        <mxCell id="users" value="Users" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="280" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="u1" value="_id : string  (NIC for Prosumer)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="users">
+          <mxGeometry y="30" width="280" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="u2" value="nic : string?  (required for Prosumer)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="users">
+          <mxGeometry y="58" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="u3" value="username, passwordHash" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="users">
+          <mxGeometry y="84" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="u4" value="role : Backoffice | GridOperator | Prosumer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="users">
+          <mxGeometry y="110" width="280" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="u5" value="fullName, email, phone" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="users">
+          <mxGeometry y="138" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="u6" value="status : Pending | Active | Deactivated" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="users">
+          <mxGeometry y="164" width="280" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="u7" value="createdAt : DateTime (UTC)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="users">
+          <mxGeometry y="192" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="u8" value="Indexes: username unique, nic unique sparse" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="users">
+          <mxGeometry y="218" width="280" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- SolarStationInfo -->
+        <mxCell id="stn" value="SolarStationInfo" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="460" y="80" width="300" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="_id : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stn">
+          <mxGeometry y="30" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="name, latitude, longitude" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stn">
+          <mxGeometry y="56" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="capacityKwh : double" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stn">
+          <mxGeometry y="82" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="batterySlotsTotal : int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stn">
+          <mxGeometry y="108" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="schedule[] : { dayOfWeek, openTime, closeTime }" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stn">
+          <mxGeometry y="134" width="300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" value="status : Active | Inactive" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="stn">
+          <mxGeometry y="162" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" value="Used by nearby map + booking pickers" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="stn">
+          <mxGeometry y="188" width="300" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- EnergyBookingSlots -->
+        <mxCell id="slots" value="EnergyBookingSlots" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="860" y="80" width="300" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="sl1" value="_id : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="slots">
+          <mxGeometry y="30" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sl2" value="stationId → SolarStationInfo._id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontStyle=1;" vertex="1" parent="slots">
+          <mxGeometry y="56" width="300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="sl3" value="startTime, endTime : DateTime (UTC)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="slots">
+          <mxGeometry y="84" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sl4" value="isAvailable : bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="slots">
+          <mxGeometry y="110" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sl5" value="Must fit station schedule; overlap ≤ batteries" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="slots">
+          <mxGeometry y="136" width="300" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- EnergyReservation -->
+        <mxCell id="res" value="EnergyReservation" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="400" y="460" width="420" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" value="_id : string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="res">
+          <mxGeometry y="30" width="420" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="prosumerNic → Users._id / nic" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontStyle=1;" vertex="1" parent="res">
+          <mxGeometry y="54" width="420" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" value="stationId → SolarStationInfo._id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontStyle=1;" vertex="1" parent="res">
+          <mxGeometry y="80" width="420" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" value="stationName (denormalised for lists)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="res">
+          <mxGeometry y="106" width="420" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="r5" value="slotId → EnergyBookingSlots._id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontStyle=1;" vertex="1" parent="res">
+          <mxGeometry y="130" width="420" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="r6" value="scheduledAt : DateTime (UTC)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="res">
+          <mxGeometry y="156" width="420" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="r7" value="status : Pending | Approved | Cancelled | Completed" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="res">
+          <mxGeometry y="180" width="420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="r8" value="qrToken : string?  (opaque, single-use)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="res">
+          <mxGeometry y="208" width="420" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="r9" value="createdAt, updatedAt, approvedAt/By, cancelledAt/By, cancelReason" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="res">
+          <mxGeometry y="234" width="420" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="r10" value="completedAt, completedBy  (operator finalise)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="res">
+          <mxGeometry y="270" width="420" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="r11" value="Indexes: {prosumerNic,scheduledAt}, {status,scheduledAt},&#xa;unique sparse {qrToken}" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=10;fontStyle=2;" vertex="1" parent="res">
+          <mxGeometry y="296" width="420" height="48" as="geometry" />
+        </mxCell>
+
+        <!-- Relationship arrows -->
+        <mxCell id="e1" value="1..*" style="endArrow=block;endFill=0;html=1;strokeColor=#82b366;fontSize=11;" edge="1" parent="1" source="stn" target="slots">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="references" style="endArrow=block;endFill=0;html=1;strokeColor=#9673a6;fontSize=11;" edge="1" parent="1" source="res" target="users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="references" style="endArrow=block;endFill=0;html=1;strokeColor=#9673a6;fontSize=11;" edge="1" parent="1" source="res" target="stn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="references" style="endArrow=block;endFill=0;html=1;strokeColor=#9673a6;fontSize=11;" edge="1" parent="1" source="res" target="slots">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1010" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="note" value="MongoDB stores references as string IDs (no SQL foreign keys).&#xa;Business rules in API services keep collections consistent (e.g. slot claimed on book, QR on approve)." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="80" y="960" width="700" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="sqlite" name="Android SQLite (optional)">
+    <mxGraphModel dx="1100" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" value="Android SQLite — local offline tables (not source of truth)" style="text;html=1;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="250" y="30" width="520" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tb1" value="session&#xa;token, expires_at, role, user_id, nic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="tb2" value="user_profile&#xa;nic, username, full_name, email, phone, status, synced_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="400" y="100" width="360" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="tb3" value="booking_history_cache (M4)&#xa;id, prosumer_nic, station_name, scheduled_at, status, synced_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="220" width="400" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="tb4" value="dashboard_snapshot (M4)&#xa;pending_count, approved_future_count, active_count, next_*, synced_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="220" width="420" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="tb5" value="my_reservations (M3)&#xa;id, station_name, slot_start, status, qr_token, synced_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="400" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="tb6" value="stations_cache (M2)&#xa;nearby / station reference for offline map list" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="520" y="340" width="420" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
