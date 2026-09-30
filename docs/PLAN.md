@@ -6,7 +6,7 @@ This replaces the work split in PLAN v1. The architecture, the collections and `
 ## 1. Architecture (unchanged)
 
 ```
- Web App (React + Tailwind CSS)                  Android App (Java, pure native)
+ Web App (ASP.NET Core MVC + Bootstrap 5)        Android App (Java, pure native)
    UI only: no DB, no business rules              UI + SQLite (session, profile, cached reference data)
               \                                   /
                \______ REST / JSON over LAN _____/
@@ -21,7 +21,7 @@ This replaces the work split in PLAN v1. The architecture, the collections and `
 
 ## 2. The four modules
 
-| # | Module | API (service + controller) | Web (React + Tailwind CSS) | Android | SQLite use |
+| # | Module | API (service + controller) | Web (MVC + Bootstrap 5) | Android | SQLite use |
 |---|---|---|---|---|---|
 | **M1** | **Identity & Accounts** | login ✅, staff users ✅, prosumer register, `/me`, prosumer admin, pending/activate/reactivate | login + role redirect ✅, staff users ✅, **prosumer management**, **pending activation view** | **app shell** (API client, session, DB helper, role routing), login → role home, register (NIC), edit profile, request deactivation | `session`, `user_profile` |
 | **M2** | **Microgrid Nodes, Slots & Maps** (+ **IIS hosting**) | stations CRUD + deactivate rule, schedules, slots CRUD / availability, `stations/nearby` | node list/create/edit/deactivate (GPS, capacity, battery slots, schedule), slot management | **nearby stations map** (Google Maps SDK), station details sheet, station list | `stations_cache` (reference data) |
@@ -38,7 +38,7 @@ This replaces the work split in PLAN v1. The architecture, the collections and `
 | Prosumer create/update/deactivate by NIC; reactivation only by Backoffice | M1 |
 | Microgrid nodes: GPS, capacity (kW/h), battery slots, schedules, deactivation blocked by active reservations | M2 |
 | Reservations: within 7 days; update/cancel need 12 h notice | M3 |
-| Web UI in React + Tailwind CSS, responsive | all (M4 owns the Home page and shared style guide in `WebApp/smartsolar-ui`) |
+| Web UI in Bootstrap 5, responsive | all (M4 owns the Home page and shared style guide) |
 | Pure native Android + SQLite, no cross-platform framework | all (M1 builds the shell) |
 | Prosumer register (NIC), edit profile, request deactivation | M1 |
 | Reserve / modify / cancel slots; QR once approved | M3 |
