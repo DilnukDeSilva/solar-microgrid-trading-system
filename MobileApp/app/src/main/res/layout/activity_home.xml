@@ -4,5 +4,5 @@
     <TextView android:id="@+id/homeMessage" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:textSize="17sp" />
     <Button android:id="@+id/bookButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="Book a slot" android:visibility="gone" />
     <Button android:id="@+id/profileButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="My profile" />
-    <Button android:id="@+id/logoutButton" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Log out" />
+    <Button android:id="@+id/logoutButton" style="@style/Widget.SmartSolar.Button.Outlined" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Log out" />
 </LinearLayout>

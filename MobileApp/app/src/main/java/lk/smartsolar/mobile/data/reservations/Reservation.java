@@ -18,6 +18,7 @@ public class Reservation {
     public String scheduledAt;
     public String status;
     public String qrToken;
+    public long syncedAt;
 
     // Reads the fields the app uses from the API's JSON.
     public static Reservation fromJson(JSONObject json) {

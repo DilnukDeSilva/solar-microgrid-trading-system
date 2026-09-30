@@ -63,10 +63,15 @@ public class BookingSummaryActivity extends BaseActivity {
         addRow(details, "Station", reservation.stationName);
         addRow(details, "Slot time", TimeFormat.full(reservation.scheduledAt));
         TextView status = addRow(details, "Status", reservation.status);
-        status.setTextColor(ContextCompat.getColor(this, StatusStyle.colour(reservation.status)));
+        status.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        StatusStyle.chip(status, reservation.status);
         addRow(details, "Reference", reservation.id);
 
         findViewById(R.id.home_button).setOnClickListener(v -> goHome());
+        findViewById(R.id.view_button).setOnClickListener(v -> {
+            BookingDetailActivity.open(this, reservation.id);
+            finish();
+        });
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

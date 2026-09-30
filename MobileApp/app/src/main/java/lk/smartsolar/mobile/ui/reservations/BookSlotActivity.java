@@ -1,6 +1,7 @@
 /*
  * File: BookSlotActivity.java
  * Description: Prosumer booking screen: pick a station, an optional date and a free slot, then confirm.
+ *              Also used to move an existing booking to another slot.
  *              The API checks every booking rule; this screen only shows what it returns.
  * Author: Janukshan S (IT22635266)
  */
@@ -8,6 +9,8 @@
 package lk.smartsolar.mobile.ui.reservations;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,6 +33,7 @@ import lk.smartsolar.mobile.data.remote.ApiCallback;
 import lk.smartsolar.mobile.data.remote.ApiError;
 import lk.smartsolar.mobile.data.reservations.AvailableSlot;
 import lk.smartsolar.mobile.data.reservations.BookingStation;
+import lk.smartsolar.mobile.data.reservations.Reservation;
 import lk.smartsolar.mobile.data.reservations.ReservationApi;
 import lk.smartsolar.mobile.ui.BaseActivity;
 import lk.smartsolar.mobile.util.TimeFormat;
@@ -38,6 +42,10 @@ public class BookSlotActivity extends BaseActivity {
 
     // Lets other screens (e.g. the map's "Book here") open this with a station already chosen.
     public static final String EXTRA_STATION_ID = "stationId";
+    private static final String EXTRA_RESERVATION_ID = "reservationId";
+
+    // Set when an existing booking is being moved to another slot.
+    private String reservationId;
 
     private ReservationApi api;
     private Spinner stationSpinner;
@@ -53,11 +61,25 @@ public class BookSlotActivity extends BaseActivity {
     private String selectedDate;
     private int slotRequest;
 
+    // Opens the same picker to move an existing booking, starting at its current station.
+    public static void openForChange(Context context, Reservation reservation) {
+        Intent intent = new Intent(context, BookSlotActivity.class);
+        intent.putExtra(EXTRA_RESERVATION_ID, reservation.id);
+        intent.putExtra(EXTRA_STATION_ID, reservation.stationId);
+        context.startActivity(intent);
+    }
+
     // Sets up the pickers and loads the stations.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_slot);
+
+        reservationId = getIntent().getStringExtra(EXTRA_RESERVATION_ID);
+        if (reservationId != null) {
+            ((TextView) findViewById(R.id.screen_title)).setText("Change slot");
+            ((Button) findViewById(R.id.confirm_button)).setText("Save change");
+        }
 
         api = new ReservationApi(this);
         stationSpinner = findViewById(R.id.station_spinner);
@@ -67,7 +89,7 @@ public class BookSlotActivity extends BaseActivity {
         progress = findViewById(R.id.progress);
         confirmButton = findViewById(R.id.confirm_button);
 
-        slotAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, slots);
+        slotAdapter = new ArrayAdapter<>(this, R.layout.item_slot, slots);
         slotList.setAdapter(slotAdapter);
         slotList.setOnItemClickListener((parent, view, position, id) -> confirmButton.setEnabled(true));
 
@@ -190,24 +212,28 @@ public class BookSlotActivity extends BaseActivity {
         }
 
         AvailableSlot slot = slots.get(position);
+        boolean changing = reservationId != null;
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Confirm booking")
-                .setMessage(station.name + "\n" + TimeFormat.full(slot.startTime) + " - " + TimeFormat.time(slot.endTime))
-                .setPositiveButton("Book", (dialog, which) -> book(station, slot))
+                .setTitle(changing ? "Move booking to this slot?" : "Confirm booking")
+                .setMessage(station.name + "\n" + TimeFormat.full(slot.startTime) + " - " + TimeFormat.time(slot.endTime)
+                        + (changing ? "\n\nAn approved booking needs to be approved again after a change." : ""))
+                .setPositiveButton(changing ? "Move" : "Book", (dialog, which) -> book(station, slot))
                 .setNegativeButton("Back", null)
                 .show();
     }
 
-    // Sends the booking. On success the summary screen is shown.
+    // Sends the new booking, or the change for an existing one. On success the summary screen is shown.
     private void book(BookingStation station, AvailableSlot slot) {
         confirmButton.setEnabled(false);
         showLoading(true);
 
-        api.create(station.id, slot.id, new ApiCallback<String>() {
+        boolean changing = reservationId != null;
+        ApiCallback<String> callback = new ApiCallback<String>() {
             @Override
             public void onSuccess(String reservationJson) {
                 showLoading(false);
-                BookingSummaryActivity.open(BookSlotActivity.this, reservationJson, BookingSummaryActivity.ACTION_CREATED);
+                BookingSummaryActivity.open(BookSlotActivity.this, reservationJson,
+                        changing ? BookingSummaryActivity.ACTION_UPDATED : BookingSummaryActivity.ACTION_CREATED);
                 finish();
             }
 
@@ -218,6 +244,12 @@ public class BookSlotActivity extends BaseActivity {
                 // The slot may have been taken meanwhile, so refresh the list.
                 loadSlots();
             }
-        });
+        };
+
+        if (changing) {
+            api.update(reservationId, station.id, slot.id, callback);
+        } else {
+            api.create(station.id, slot.id, callback);
+        }
     }
 }

@@ -21,9 +21,9 @@ public class AvailableSlot {
         this.endTime = endTime;
     }
 
-    // Text shown in the slot list, e.g. "Mon 28 Sep  08:00 - 10:00".
+    // Text shown on a slot tile, e.g. "08:00 - 10:00   ·   Mon 28 Sep".
     @Override
     public String toString() {
-        return TimeFormat.day(startTime) + "   " + TimeFormat.time(startTime) + " - " + TimeFormat.time(endTime);
+        return TimeFormat.time(startTime) + " - " + TimeFormat.time(endTime) + "   ·   " + TimeFormat.day(startTime);
     }
 }

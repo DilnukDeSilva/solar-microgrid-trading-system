@@ -1,6 +1,7 @@
 /*
  * File: ReservationApi.java
- * Description: Reservation calls to the Web API. Turns the JSON answers into objects for the screens.
+ * Description: Reservation calls to the Web API. Turns the JSON answers into objects for the screens
+ *              and keeps a copy of each returned booking in SQLite.
  * Author: Janukshan S (IT22635266)
  */
 
@@ -21,10 +22,12 @@ import lk.smartsolar.mobile.data.remote.ApiClient;
 public class ReservationApi {
 
     private final ApiClient client;
+    private final MyReservationStore store;
 
-    // Uses the shared API client, which adds the login token.
+    // Uses the shared API client, which adds the login token, and the local copy in SQLite.
     public ReservationApi(Context context) {
         client = ApiClient.get(context);
+        store = new MyReservationStore(context);
     }
 
     // GET /reservations/bookable-stations
@@ -66,6 +69,33 @@ public class ReservationApi {
             body.put("slotId", slotId);
         } catch (Exception ignored) {
         }
-        client.send("POST", "reservations", body, response -> response, callback);
+        client.send("POST", "reservations", body, this::keepCopy, callback);
+    }
+
+    // GET /reservations/{id}
+    public void get(String id, ApiCallback<String> callback) {
+        client.send("GET", "reservations/" + Uri.encode(id), null, this::keepCopy, callback);
+    }
+
+    // PUT /reservations/{id}. Moves the booking to another slot; the API checks the 12-hour and 7-day rules.
+    public void update(String id, String stationId, String slotId, ApiCallback<String> callback) {
+        JSONObject body = new JSONObject();
+        try {
+            body.put("stationId", stationId);
+            body.put("slotId", slotId);
+        } catch (Exception ignored) {
+        }
+        client.send("PUT", "reservations/" + Uri.encode(id), body, this::keepCopy, callback);
+    }
+
+    // POST /reservations/{id}/cancel. The API checks the 12-hour rule.
+    public void cancel(String id, ApiCallback<String> callback) {
+        client.send("POST", "reservations/" + Uri.encode(id) + "/cancel", new JSONObject(), this::keepCopy, callback);
+    }
+
+    // Saves every reservation the API returns into SQLite, then passes the JSON on to the screen.
+    private String keepCopy(String body) throws Exception {
+        store.save(Reservation.fromJson(new JSONObject(body)));
+        return body;
     }
 }
