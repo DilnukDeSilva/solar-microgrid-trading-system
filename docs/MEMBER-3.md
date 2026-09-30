@@ -19,7 +19,7 @@ The detailed implementation guide is in `docs/M3-RESERVATIONS-GUIDE.md`.
 | `GET /api/reservations/{id}` | owner / staff | a prosumer sees only their own (else 403) |
 | `POST /api/reservations/{id}/approve` | GridOperator, Backoffice | only `Pending`, and only while still in the future; generates a random single-use `qrToken` |
 
-### Web (React + Tailwind CSS, in `WebApp/smartsolar-ui`)
+### Web (MVC + Bootstrap 5, in `WebApp/SmartSolar.Web`)
 Reservations page: upcoming bookings (uses M4's list endpoint), **create on behalf of a prosumer** (NIC → station → slot), edit, cancel (the "cancel with the assistance of a grid operator" scenario), approve. Show the API's rule messages in alert banners.
 
 ### Android

@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import lk.smartsolar.mobile.data.local.Session;
+import lk.smartsolar.mobile.data.local.SessionManager;
 import lk.smartsolar.mobile.ui.auth.LoginActivity;
 import lk.smartsolar.mobile.ui.home.OperatorHomeActivity;
 import lk.smartsolar.mobile.ui.home.ProsumerHomeActivity;
@@ -17,7 +18,12 @@ import lk.smartsolar.mobile.ui.home.ProsumerHomeActivity;
 public final class RoleRouter {
     private RoleRouter() { }
 
+    // Sends each role to its home. Backoffice belongs on the web desk, so that session is cleared.
     public static void route(Activity source, Session session) {
+        if (session != null && "Backoffice".equals(session.role)) {
+            SessionManager.get(source).clear();
+            session = null;
+        }
         Class<?> target;
         if (session == null) target = LoginActivity.class;
         else if ("Prosumer".equals(session.role)) target = ProsumerHomeActivity.class;

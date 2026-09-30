@@ -18,7 +18,7 @@ Branch: `feature/m4-dashboards-operator` · Module owner for everything that **r
 | `POST /api/reservations/verify-qr` `{qrToken}` | GridOperator | token exists, status `Approved`, not used, for today or near its time → returns booking details; otherwise `QR_INVALID` / `QR_ALREADY_USED` |
 | `POST /api/reservations/{id}/complete` | GridOperator | only after a successful verify; sets `Completed`, `completedAt`, `completedBy`; invalidates the token |
 
-### Web (React + Tailwind CSS, in `WebApp/smartsolar-ui`)
+### Web (MVC + Bootstrap 5, in `WebApp/SmartSolar.Web`)
 - **Home (index) dashboard:** the landing page after login shows live count cards per role, today's bookings and quick links. This is the shared style reference for the team (colours, cards, tables, alerts).
 - **Booking monitor:** table with filters (status, date range, station, NIC/keyword), history tab, pagination.
 
