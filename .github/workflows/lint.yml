@@ -1,0 +1,40 @@
+name: Coding standards
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  dotnet-format:
+    name: C# formatting (dotnet format)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      # Fails if any file differs from the .NET formatting rules; fix locally with `dotnet format WebService/SmartSolar.slnx`.
+      - run: dotnet format WebService/SmartSolar.slnx --verify-no-changes -v diag
+
+  android-lint:
+    name: Android lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: MobileApp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      # Fails on lint errors (warnings are reported, not fatal).
+      - run: ./gradlew lintDebug
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-lint-report
+          path: MobileApp/app/build/reports/lint-results-debug.html
