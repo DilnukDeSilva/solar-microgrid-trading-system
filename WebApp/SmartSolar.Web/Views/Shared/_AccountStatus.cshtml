@@ -1,13 +1,11 @@
 @model string
 @{
-    var kind = (Model ?? "").ToLowerInvariant() switch
+    var css = (Model ?? "").ToLowerInvariant() switch
     {
-        "active" => "status-active",
-        "pending" => "status-pending",
-        "deactivated" => "status-deactivated",
-        "backoffice" => "status-backoffice",
-        "gridoperator" => "status-gridoperator",
-        _ => "status-inactive"
+        "active" or "approved" or "available" => "badge-status-approved",
+        "pending" => "badge-status-pending",
+        "completed" => "badge-status-completed",
+        _ => "badge-status-muted"
     };
 }
-<span class="status @kind">@(string.IsNullOrWhiteSpace(Model) ? "Unknown" : Model)</span>
+<span class="badge badge-status @css">@(string.IsNullOrWhiteSpace(Model) ? "Unknown" : Model)</span>

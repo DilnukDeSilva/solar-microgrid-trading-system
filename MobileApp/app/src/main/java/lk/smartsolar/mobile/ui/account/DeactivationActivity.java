@@ -3,7 +3,7 @@ package lk.smartsolar.mobile.ui.account;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import lk.smartsolar.mobile.R;
 import lk.smartsolar.mobile.data.local.SessionManager;
@@ -22,7 +22,7 @@ public class DeactivationActivity extends BaseActivity {
     }
 
     private void confirm() {
-        new AlertDialog.Builder(this).setTitle("Final confirmation")
+        new MaterialAlertDialogBuilder(this).setTitle("Final confirmation")
                 .setMessage("Deactivate this account and log out now?")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Deactivate", (dialog, which) -> deactivate()).show();

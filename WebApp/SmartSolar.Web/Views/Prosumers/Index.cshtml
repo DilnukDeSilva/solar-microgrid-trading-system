@@ -1,7 +1,10 @@
 @model IReadOnlyList<UserDto>
 @{ ViewData["Title"] = "Prosumers"; var isBackoffice = User.IsInRole(RoleNames.Backoffice); }
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Prosumers</h1>
+    <div>
+        <h1 class="h4 mb-1">Prosumers</h1>
+        <p class="text-muted mb-0">@(isBackoffice ? "Reactivate is available only to Backoffice." : "You can look up accounts. Only Backoffice can reactivate one.")</p>
+    </div>
     @if (isBackoffice) { <a asp-action="Create" class="btn btn-primary">Create prosumer</a> }
 </div>
 <form method="get" class="row g-2 mb-3">
@@ -14,15 +17,15 @@
     </div>
     <div class="col-md-3"><button class="btn btn-outline-primary" type="submit">Search</button> <a asp-action="Index" class="btn btn-link">Clear</a></div>
 </form>
-<div class="table-responsive card shadow-sm">
-<table class="table table-hover align-middle mb-0">
+<div class="card">
+<table class="table table-hover align-middle mb-0 table-stack">
     <thead><tr><th>NIC</th><th>Name</th><th>Username</th><th>Phone</th><th>Status</th>@if (isBackoffice) { <th class="text-end">Actions</th> }</tr></thead>
     <tbody>
     @if (Model.Count == 0) { <tr><td colspan="@(isBackoffice ? 6 : 5)" class="text-center text-muted py-4">No prosumers found.</td></tr> }
     @foreach (var user in Model) {
         <tr>
-            <td>@user.Nic</td><td>@user.FullName</td><td>@user.Username</td><td>@user.Phone</td>
-            <td><span class="badge @(user.Status == "Active" ? "bg-success" : user.Status == "Pending" ? "bg-warning text-dark" : "bg-secondary")">@user.Status</span></td>
+            <td data-label="NIC">@user.Nic</td><td data-label="Name">@user.FullName</td><td data-label="Username">@user.Username</td><td data-label="Phone">@user.Phone</td>
+            <td data-label="Status"><partial name="_AccountStatus" model="user.Status" /></td>
             @if (isBackoffice) {
                 <td class="text-end text-nowrap">
                     <a asp-action="Edit" asp-route-id="@user.Nic" class="btn btn-sm btn-outline-primary">Edit</a>

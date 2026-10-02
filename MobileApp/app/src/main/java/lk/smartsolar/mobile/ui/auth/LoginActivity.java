@@ -7,6 +7,7 @@ import android.widget.EditText;
 
 import lk.smartsolar.mobile.R;
 import lk.smartsolar.mobile.data.local.Session;
+import lk.smartsolar.mobile.data.local.SessionManager;
 import lk.smartsolar.mobile.data.remote.ApiCallback;
 import lk.smartsolar.mobile.data.remote.ApiClient;
 import lk.smartsolar.mobile.data.remote.ApiError;
@@ -32,7 +33,16 @@ public class LoginActivity extends BaseActivity {
         }
         showLoading(true);
         ApiClient.get(this).login(identifier, password, new ApiCallback<Session>() {
-            @Override public void onSuccess(Session session) { showLoading(false); RoleRouter.route(LoginActivity.this, session); }
+            @Override public void onSuccess(Session session) {
+                showLoading(false);
+                // Backoffice is a web-desk role. Saving it would bounce the user back to this screen.
+                if ("Backoffice".equals(session.role)) {
+                    SessionManager.get(LoginActivity.this).clear();
+                    showError(new ApiError(403, "WRONG_CLIENT", "Backoffice accounts use the web application. Log in here as a prosumer or a grid operator."));
+                    return;
+                }
+                RoleRouter.route(LoginActivity.this, session);
+            }
             @Override public void onError(ApiError error) { showLoading(false); showError(error); }
         });
     }

@@ -12,50 +12,25 @@
 
 <partial name="_OperationsDashboard" model="Model.Operations" />
 
-<div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted small">Staff accounts</div>
-                <div class="fs-3">@Model.StaffCount</div>
-                <a class="stretched-link" asp-controller="Users" asp-action="Index"></a>
+@if (Model.PendingCount > 0)
+{
+    <a class="card tile-attention text-decoration-none text-body mb-4" asp-controller="PendingActivations" asp-action="Index">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="small text-muted">Awaiting activation</div>
+                <div class="tile-number">@Model.PendingCount</div>
             </div>
+            <span>Open queue</span>
         </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted small">Prosumers</div>
-                <div class="fs-3">@Model.ProsumerCount</div>
-                <a class="stretched-link" asp-controller="Prosumers" asp-action="Index"></a>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted small">Active prosumers</div>
-                <div class="fs-3">@Model.ActiveProsumerCount</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted small">Awaiting activation</div>
-                <div class="fs-3">@Model.PendingCount</div>
-                <a class="stretched-link" asp-controller="PendingActivations" asp-action="Index"></a>
-            </div>
-        </div>
-    </div>
-</div>
+    </a>
+}
 
-<div class="row g-3">
+<div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h2 class="h5">Staff users</h2>
-                <p class="text-muted">Create, update and deactivate Backoffice and Grid Operator accounts.</p>
+                <h2 class="h6">Staff users</h2>
+                <p class="text-muted">Create, update and deactivate staff accounts.</p>
                 <a class="btn btn-primary" asp-controller="Users" asp-action="Index">Manage users</a>
             </div>
         </div>
@@ -63,7 +38,7 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h2 class="h5">Bookings</h2>
+                <h2 class="h6">Bookings</h2>
                 <p class="text-muted">Filter today's work, the approval queue and booking history.</p>
                 <a class="btn btn-outline-primary" asp-controller="Bookings" asp-action="Index">Open monitor</a>
             </div>
@@ -72,8 +47,8 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h2 class="h5">Reservations</h2>
-                <p class="text-muted">List, edit, cancel or approve bookings through the API rules.</p>
+                <h2 class="h6">Reservations</h2>
+                <p class="text-muted">List, edit, cancel or approve bookings.</p>
                 <a class="btn btn-outline-primary" asp-controller="Reservations" asp-action="Index">Open list</a>
             </div>
         </div>
