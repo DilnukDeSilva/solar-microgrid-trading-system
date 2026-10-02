@@ -1,0 +1,166 @@
+<mxfile host="app.diagrams.net" agent="SmartSolar" version="22.1.0">
+  <diagram id="arch" name="System Architecture">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Smart Solar Microgrid Trading System — Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="20" width="620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Clients talk only through REST/JSON. Business rules live in the API (FAT service). MongoDB is the source of truth." style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="280" y="55" width="820" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ========== CLIENTS ========== -->
+        <mxCell id="clients" value="Presentation / Client Layer" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;startSize=28;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="1280" height="260" as="geometry" />
+        </mxCell>
+
+        <mxCell id="webBox" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" vertex="1" parent="clients">
+          <mxGeometry x="50" y="50" width="520" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="webTitle" value="Web Clients (Browser)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=14;fontColor=#1a3a6b;" vertex="1" parent="clients">
+          <mxGeometry x="50" y="55" width="520" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="web1" value="ASP.NET Core MVC&#xa;Bootstrap 5&#xa;Bookings · Dashboards · Stations&#xa;Reservations · Users" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;align=center;" vertex="1" parent="clients">
+          <mxGeometry x="70" y="90" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="web2" value="React + Tailwind&#xa;(smartsolar-ui)&#xa;Desk UI · API client only&#xa;No business rules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;align=center;" vertex="1" parent="clients">
+          <mxGeometry x="320" y="90" width="220" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mobBox" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="clients">
+          <mxGeometry x="620" y="50" width="420" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="mobTitle" value="Android Client (Java, native)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=14;fontColor=#2e5a1f;" vertex="1" parent="clients">
+          <mxGeometry x="620" y="55" width="420" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="mob1" value="Activities / UI&#xa;Prosumer · Operator&#xa;Book · Map · Scan QR&#xa;Dashboard · History" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="clients">
+          <mxGeometry x="640" y="90" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="mob2" value="ApiClient&#xa;JWT session&#xa;ZXing QR&#xa;Google Maps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="clients">
+          <mxGeometry x="840" y="90" width="170" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sqliteBox" value="SQLite&#xa;(offline only)&#xa;session · profile&#xa;booking cache&#xa;dashboard snapshot&#xa;my_reservations&#xa;stations_cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;" vertex="1" parent="clients">
+          <mxGeometry x="1080" y="50" width="170" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Network bar -->
+        <mxCell id="net" value="LAN  ·  HTTPS/HTTP  ·  REST / JSON  ·  Authorization: Bearer JWT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="80" y="390" width="1280" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- arrows clients to net -->
+        <mxCell id="a1" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="webBox" target="net">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="mobBox" target="net">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2b" value="read/write&#xa;cache" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#9673a6;fontSize=10;dashed=1;" edge="1" parent="1" source="mob2" target="sqliteBox">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========== API ========== -->
+        <mxCell id="api" value="Application Layer — C# ASP.NET Core Web API (FAT service, Windows / IIS)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;startSize=28;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="460" width="1280" height="320" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ctrl" value="Controllers (thin)&#xa;&#xa;Auth · Users · Prosumers&#xa;Stations · Slots&#xa;Reservations&#xa;Dashboard · Operator&#xa;&#xa;HTTP in → DTO out&#xa;No business rules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=center;verticalAlign=top;spacingTop=8;" vertex="1" parent="api">
+          <mxGeometry x="40" y="50" width="220" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc" value="Services (ALL rules)&#xa;&#xa;Auth / JWT&#xa;Account &amp; Prosumer rules&#xa;Station &amp; Slot rules&#xa;Reservation create/approve&#xa;Query / Dashboard&#xa;QR verify &amp; complete&#xa;&#xa;SriLankaClock · Error codes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=center;verticalAlign=top;spacingTop=8;strokeWidth=2;" vertex="1" parent="api">
+          <mxGeometry x="320" y="50" width="260" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="repo" value="Repositories&#xa;&#xa;UserRepository&#xa;StationRepository&#xa;SlotRepository&#xa;ReservationRepository&#xa;ReservationQueryRepository&#xa;&#xa;Mongo filters only&#xa;No business rules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=center;verticalAlign=top;spacingTop=8;" vertex="1" parent="api">
+          <mxGeometry x="640" y="50" width="240" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cross" value="Cross-cutting&#xa;&#xa;JWT Bearer auth&#xa;Role authorization&#xa;CORS&#xa;Swagger&#xa;Active-account guard&#xa;ApiException → error DTO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=center;verticalAlign=top;spacingTop=8;" vertex="1" parent="api">
+          <mxGeometry x="940" y="50" width="200" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="flowApi" value="Controllers → Services → Repositories" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#666666;align=center;" vertex="1" parent="api">
+          <mxGeometry x="320" y="285" width="280" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- arrows inside API -->
+        <mxCell id="b1" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#d79b00;" edge="1" parent="1" source="ctrl" target="svc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#d79b00;" edge="1" parent="1" source="svc" target="repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- net to api -->
+        <mxCell id="a3" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#d6b656;" edge="1" parent="1" source="net" target="api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========== DATA ========== -->
+        <mxCell id="data" value="Data Layer — MongoDB (SmartSolar)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;startSize=28;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="820" width="1280" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cUsers" value="Users&#xa;identity · roles · status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" vertex="1" parent="data">
+          <mxGeometry x="60" y="50" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cStn" value="SolarStationInfo&#xa;GPS · capacity · schedule" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="data">
+          <mxGeometry x="340" y="50" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cSlot" value="EnergyBookingSlots&#xa;station · time window · free?" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;" vertex="1" parent="data">
+          <mxGeometry x="640" y="50" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cRes" value="EnergyReservation&#xa;booking · status · qrToken" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" vertex="1" parent="data">
+          <mxGeometry x="960" y="50" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a4" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="repo" target="data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="footer" value="Hosting: API on Windows IIS (or local Kestrel for lab). Clients on LAN. Android uses 10.0.2.2 (emulator) or machine IP (phone)." style="text;html=1;fontSize=11;fontColor=#666666;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1010" width="1000" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="modules" name="Module Ownership">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t" value="Logical Modules (end-to-end ownership)" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="30" width="480" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m1" value="M1 — Identity &amp; Accounts&#xa;&#xa;API: login, users, prosumers, /me&#xa;Web: login, users, pending activate&#xa;Android: shell, login, profile&#xa;SQLite: session, user_profile" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=12;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="M2 — Nodes, Slots &amp; Maps (+ IIS)&#xa;&#xa;API: stations, slots, nearby&#xa;Web: station &amp; slot CRUD&#xa;Android: map + station list&#xa;SQLite: stations_cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=12;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="100" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="M3 — Reservations &amp; QR Dispatch&#xa;&#xa;API: create/update/cancel/approve&#xa;Web: book on behalf, edit, cancel&#xa;Android: book flow + show QR&#xa;SQLite: my_reservations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=12;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="100" width="300" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="M4 — Views, Dashboards &amp; Operator QR&#xa;&#xa;API: list/filter, pending, dashboards,&#xa;      verify-qr, complete&#xa;Web: Home dashboard, booking monitor&#xa;Android: dashboard, history, scan→finalise&#xa;SQLite: booking_history_cache, dashboard_snapshot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=12;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="100" width="300" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="shared" value="Shared architecture rules&#xa;• Clients = UI only (no Mongo access, no rule enforcement)&#xa;• API Controllers thin → Services hold ALL rules → Repositories talk to Mongo&#xa;• JWT carries sub, role, nic — prosumer scope from token, not query string&#xa;• QR holds opaque token only — verify/complete on server (single-use)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=14;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="340" width="1280" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="stack" value="Tech stack: C# / ASP.NET Core · MongoDB · ASP.NET MVC + Bootstrap · React/Tailwind (desk) · Android Java · SQLite · JWT · ZXing · Google Maps" style="text;html=1;align=center;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="150" y="500" width="1100" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
