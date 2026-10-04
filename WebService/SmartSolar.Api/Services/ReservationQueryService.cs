@@ -1,8 +1,7 @@
 /*
  * File: ReservationQueryService.cs
  * Description: Booking lists and dashboards. Counts are computed from Mongo, never hard-coded.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using SmartSolar.Api.Common;

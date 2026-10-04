@@ -1,8 +1,7 @@
 /*
  * File: SriLankaClock.cs
  * Description: Sri Lanka (UTC+05:30) day boundaries for dashboard "today" and QR scan windows.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 namespace SmartSolar.Api.Common;

@@ -1,9 +1,9 @@
 /*
  * File: DashboardSnapshot.java
  * Description: Prosumer dashboard counts, including the copy saved for offline display.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
+
 package lk.smartsolar.mobile.data.local;
 
 import org.json.JSONObject;

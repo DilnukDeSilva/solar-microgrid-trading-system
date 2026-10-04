@@ -1,9 +1,9 @@
 /*
  * File: QrDetailsActivity.java
  * Description: Shows a verified booking and sends Finalise to the API.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
+
 package lk.smartsolar.mobile.ui.operator;
 
 import android.os.Bundle;

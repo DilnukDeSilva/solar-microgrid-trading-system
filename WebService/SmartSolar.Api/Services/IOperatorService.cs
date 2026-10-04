@@ -1,8 +1,7 @@
 /*
  * File: IOperatorService.cs
  * Description: Grid-operator QR verification and job completion.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using SmartSolar.Api.DTOs;

@@ -1,9 +1,9 @@
 /*
  * File: TimeText.java
  * Description: Shows API UTC timestamps in Sri Lanka time. Display only.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
+
 package lk.smartsolar.mobile.util;
 
 import java.time.OffsetDateTime;

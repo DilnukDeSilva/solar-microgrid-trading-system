@@ -1,8 +1,7 @@
 /*
  * File: ReservationQueryController.cs
  * Description: Reservation list, history filters and the operator approval queue.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using Microsoft.AspNetCore.Authorization;

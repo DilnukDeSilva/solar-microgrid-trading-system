@@ -1,8 +1,7 @@
 /*
  * File: ApiClient.Dashboards.cs
  * Description: Booking list, dashboard, approval and QR calls. Kept separate to avoid merge conflicts.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using SmartSolar.Web.Models;

@@ -1,8 +1,7 @@
 /*
  * File: OperationsDashboardDto.cs
  * Description: Staff Home figures from GET /dashboard/operations.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 namespace SmartSolar.Web.Models;
