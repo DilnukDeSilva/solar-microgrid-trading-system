@@ -1,4 +1,9 @@
-/* File: OperatorHomeActivity.java | Author: samudith | Created: 29/09/2026 */
+/*
+ * File: OperatorHomeActivity.java
+ * Description: Grid Operator home with the approval queue, QR scanning and server-side verification.
+ * Author: Herath D M S T (IT22639776)
+ */
+
 package lk.smartsolar.mobile.ui.home;
 
 import android.Manifest;

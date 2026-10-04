@@ -1,9 +1,9 @@
 /*
  * File: Booking.java
  * Description: One reservation row used by the bookings list and the offline cache.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
+
 package lk.smartsolar.mobile.data.local;
 
 import org.json.JSONObject;

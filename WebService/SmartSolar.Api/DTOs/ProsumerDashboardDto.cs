@@ -1,8 +1,7 @@
 /*
  * File: ProsumerDashboardDto.cs
  * Description: Live counts and the next booking for GET /api/dashboard/me.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 namespace SmartSolar.Api.DTOs;

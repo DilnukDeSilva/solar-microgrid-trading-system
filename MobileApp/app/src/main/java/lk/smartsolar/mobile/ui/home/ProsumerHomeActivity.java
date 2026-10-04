@@ -1,4 +1,9 @@
-/* File: ProsumerHomeActivity.java | Author: samudith | Created: 29/09/2026 */
+/*
+ * File: ProsumerHomeActivity.java
+ * Description: Prosumer home with live dashboard counts, an offline SQLite snapshot and links to bookings and stations.
+ * Author: Herath D M S T (IT22639776)
+ */
+
 package lk.smartsolar.mobile.ui.home;
 
 import android.content.Intent;

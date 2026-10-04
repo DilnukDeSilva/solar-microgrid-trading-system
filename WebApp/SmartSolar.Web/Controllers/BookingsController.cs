@@ -1,8 +1,7 @@
 /*
  * File: BookingsController.cs
  * Description: Booking monitor, approval and QR verification pages. Rules stay in the API.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using Microsoft.AspNetCore.Authorization;

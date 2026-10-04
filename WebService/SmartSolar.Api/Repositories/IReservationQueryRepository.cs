@@ -1,8 +1,7 @@
 /*
  * File: IReservationQueryRepository.cs
  * Description: Read-only reservation queries for lists, dashboards and QR lookup.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using SmartSolar.Api.Models;

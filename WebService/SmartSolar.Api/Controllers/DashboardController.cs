@@ -1,8 +1,7 @@
 /*
  * File: DashboardController.cs
  * Description: Prosumer and operations dashboards. Every count is read from the database.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using Microsoft.AspNetCore.Authorization;

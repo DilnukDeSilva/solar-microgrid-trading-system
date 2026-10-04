@@ -1,8 +1,7 @@
 /*
  * File: OperatorController.cs
  * Description: Grid Operator QR verification and job completion. The client only displays the API result.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using Microsoft.AspNetCore.Authorization;
