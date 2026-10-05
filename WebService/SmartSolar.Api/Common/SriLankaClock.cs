@@ -1,8 +1,7 @@
 /*
  * File: SriLankaClock.cs
  * Description: Sri Lanka (UTC+05:30) day boundaries for dashboard "today" and QR scan windows.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 namespace SmartSolar.Api.Common;
@@ -16,6 +15,23 @@ public static class SriLankaClock
     public static DateTime UtcNow()
     {
         return DateTime.UtcNow;
+    }
+
+    // Converts a UTC time to Sri Lanka local time.
+    public static DateTime ToLocal(DateTime utc)
+    {
+        return DateTime.SpecifyKind(utc, DateTimeKind.Utc).Add(Offset);
+    }
+
+    // Converts a request time to UTC. Unspecified is already UTC and must not be shifted by this machine's zone.
+    public static DateTime ToUtc(DateTime value)
+    {
+        return value.Kind switch
+        {
+            DateTimeKind.Utc => value,
+            DateTimeKind.Local => value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+        };
     }
 
     // Returns the UTC start (inclusive) and end (exclusive) of the Sri Lanka calendar day containing utc.

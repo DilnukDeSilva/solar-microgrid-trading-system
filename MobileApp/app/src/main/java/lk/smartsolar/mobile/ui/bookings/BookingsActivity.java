@@ -1,9 +1,9 @@
 /*
  * File: BookingsActivity.java
  * Description: Current, pending and history tabs for the signed-in prosumer, with a keyword filter.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
+
 package lk.smartsolar.mobile.ui.bookings;
 
 import android.os.Bundle;

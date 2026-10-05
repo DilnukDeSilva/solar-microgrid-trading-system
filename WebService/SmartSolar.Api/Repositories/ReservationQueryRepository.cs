@@ -1,8 +1,7 @@
 /*
  * File: ReservationQueryRepository.cs
  * Description: MongoDB queries for reservation lists, dashboard counts and QR lookup.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using System.Text.RegularExpressions;

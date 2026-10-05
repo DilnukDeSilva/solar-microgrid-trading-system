@@ -1,8 +1,7 @@
 /*
  * File: BookingMonitorViewModel.cs
  * Description: Filter form and the current page of the booking monitor.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 namespace SmartSolar.Web.Models;
@@ -18,4 +17,6 @@ public class BookingMonitorViewModel
     public DateOnly? To { get; set; }
     public int Page { get; set; } = 1;
     public ReservationPageDto Result { get; set; } = new();
+
+    public IReadOnlyList<StationDto> Stations { get; set; } = [];
 }

@@ -1,8 +1,7 @@
 /*
  * File: IReservationQueryService.cs
  * Description: List, history and dashboard reads. Prosumer scope is applied here from the JWT.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using SmartSolar.Api.DTOs;

@@ -10,10 +10,20 @@
     <link rel="stylesheet" href="~/SmartSolar.Web.styles.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    string Active(string controller, string? action = null)
+    {
+        if (!string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)) return "";
+        if (action != null && !string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase)) return "";
+        return "active";
+    }
+}
     <header>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">Smart Solar</a>
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-brand-bg">
+            <div class="container-fluid px-3">
+                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index"><span class="sun-mark me-2"></span>Smart Solar</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                         aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -23,47 +33,72 @@
                         @if (User.IsInRole(RoleNames.Backoffice))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Users" asp-action="Index">Users</a>
-                            </li>
-                            <li class="nav-item">
-                                @await Component.InvokeAsync("PendingActivationBadge")
+                                <a class="nav-link @Active("Admin")" asp-controller="Admin" asp-action="Index">Dashboard</a>
                             </li>
                         }
                         @if (User.IsInRole(RoleNames.GridOperator))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Operations" asp-action="Index">Operations</a>
+                                <a class="nav-link @Active("Operations")" asp-controller="Operations" asp-action="Index">Dashboard</a>
                             </li>
                         }
                         @if (User.IsInRole(RoleNames.Backoffice) || User.IsInRole(RoleNames.GridOperator))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Prosumers" asp-action="Index">Prosumers</a>
+                            var peopleActive = Active("Users") != "" || Active("Prosumers") != "" || Active("PendingActivations") != "" ? "active" : "";
+                            var bookingsActive = Active("Bookings") != "" || Active("Reservations") != "" ? "active" : "";
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle @peopleActive" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    People
+                                    @if (User.IsInRole(RoleNames.Backoffice))
+                                    {
+                                        @await Component.InvokeAsync("PendingActivationBadge")
+                                    }
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @if (User.IsInRole(RoleNames.Backoffice))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Users" asp-action="Index">Staff users</a></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-controller="Prosumers" asp-action="Index">Prosumers</a></li>
+                                    @if (User.IsInRole(RoleNames.Backoffice))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="PendingActivations" asp-action="Index">
+                                                Pending activations
+                                                @await Component.InvokeAsync("PendingActivationBadge")
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
                             </li>
+                            var stationsActive = Active("Stations") != "" || Active("Slots") != "" ? "active" : "";
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Bookings" asp-action="Index">Bookings</a>
+                                <a class="nav-link @stationsActive" asp-controller="Stations" asp-action="Index">Stations</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Reservations" asp-action="Index">Reservations</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Reservations" asp-action="Create">Book a slot</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle @bookingsActive" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Bookings</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Bookings" asp-action="Index">Booking monitor</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Reservations" asp-action="Index">Manage reservations</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Reservations" asp-action="Create">Book for a prosumer</a></li>
+                                </ul>
                             </li>
                         }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item">
-                                <span class="navbar-text me-3">@User.Identity.Name</span>
-                            </li>
-                            <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-light btn-sm">Log out</button>
-                                </form>
+                            var roleLabel = User.IsInRole(RoleNames.Backoffice) ? "Backoffice" : "Grid operator";
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">@User.Identity.Name · @roleLabel</a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><span class="dropdown-item-text small text-muted">Signed in as @User.Identity.Name</span></li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                            <button type="submit" class="btn btn-link p-0">Log out</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </li>
                         }
                         else
@@ -98,7 +133,7 @@
 
     <footer class="border-top py-3 mt-auto bg-light">
         <div class="container small text-muted">
-            Smart Solar Microgrid Trading System · web client talks to the API only
+            Smart Solar Microgrid Trading System · SE4040
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,0 +1,12 @@
+@model StationForm
+@{ ViewData["Title"] = "Create station"; }
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Create station</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+</div>
+<p class="text-muted">New stations are active immediately. The API checks the coordinates, capacity and hours.</p>
+<form method="post" class="card card-body shadow-sm">
+    <partial name="_Form" model="Model" />
+    <div class="mt-4"><button class="btn btn-primary" type="submit">Create station</button></div>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

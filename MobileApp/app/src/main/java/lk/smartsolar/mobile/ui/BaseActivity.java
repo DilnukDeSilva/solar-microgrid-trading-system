@@ -12,8 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import lk.smartsolar.mobile.data.remote.ApiError;
 
@@ -44,7 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             message = error.getMessage();
         }
-        new AlertDialog.Builder(this).setTitle("Smart Solar").setMessage(message).setPositiveButton("OK", null).show();
+        new MaterialAlertDialogBuilder(this).setTitle("Smart Solar").setMessage(message).setPositiveButton("OK", null).show();
     }
 
     @Override

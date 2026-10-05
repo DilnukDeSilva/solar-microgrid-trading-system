@@ -1,8 +1,7 @@
 /*
  * File: OperatorService.cs
  * Description: Server-side QR checks. The token is opaque, single-use, and only valid near the booking time.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 using SmartSolar.Api.Common;

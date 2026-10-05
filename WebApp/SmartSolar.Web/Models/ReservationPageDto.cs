@@ -1,8 +1,7 @@
 /*
  * File: ReservationPageDto.cs
  * Description: Paged reservation list returned by GET /reservations.
- * Author: samudith
- * Created: 29/09/2026
+ * Author: Herath D M S T (IT22639776)
  */
 
 namespace SmartSolar.Web.Models;

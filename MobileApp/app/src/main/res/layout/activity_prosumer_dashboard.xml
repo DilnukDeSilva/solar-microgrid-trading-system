@@ -19,10 +19,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your dashboard"
-                android:textColor="@color/solar_green_dark"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+            android:text="Your dashboard"
+            android:textAppearance="@style/TextAppearance.SmartSolar.Title" />
 
             <TextView
                 android:id="@+id/updatedLabel"
@@ -31,46 +29,53 @@
                 android:layout_marginTop="4dp"
                 android:textSize="13sp" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
-                <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.SmartSolar.Card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/status_pending_fill">
+
+                <TextView
+                    android:id="@+id/pendingCount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:id="@+id/pendingCount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/status_pending"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/approvedCount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:textColor="@color/status_approved"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/activeCount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:textColor="@color/status_completed"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                    android:padding="16dp"
+                    android:textAppearance="@style/TextAppearance.SmartSolar.Section"
+                    android:textColor="@color/status_pending" />
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.SmartSolar.Card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/status_approved_fill">
+
+                <TextView
+                    android:id="@+id/approvedCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textAppearance="@style/TextAppearance.SmartSolar.Section"
+                    android:textColor="@color/status_approved" />
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/activeCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.SmartSolar.Caption" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -95,6 +100,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Book a slot" />
+
+            <Button
+                android:id="@+id/nearbyStationsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Nearby stations" />
+
+            <Button
+                android:id="@+id/stationListButton"
+                style="@style/Widget.SmartSolar.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Station list" />
 
             <Button
                 android:id="@+id/bookingsButton"
