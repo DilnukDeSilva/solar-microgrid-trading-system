@@ -7,9 +7,9 @@ Client-server system: C# Web API on IIS + MongoDB, an ASP.NET Core web app, and 
 | `WebService/` | C# Web API + MongoDB | all (each member owns their own controllers) |
 | `WebApp/` | Web application (Bootstrap 5) | M1 (skeleton, users), M2 (operations), M3 (pending activation) |
 | `MobileApp/` | Native Android + SQLite | M3 (foundation, account, booking), M4 (dashboard, maps, QR, operator) |
-| `docs/` | Plan, API contract, member task files | all |
+| `docs/` | Plan, deployment notes, mock payloads | all |
 
-Start with `docs/PLAN.md`, `docs/API-CONTRACT.md` and your `docs/MEMBER-<n>.md`.
+Start with `docs/PLAN.md` and `docs/DEPLOYMENT.md`. Mock API samples live under `docs/mock/`.
 
 ## Run locally (Member 1)
 
