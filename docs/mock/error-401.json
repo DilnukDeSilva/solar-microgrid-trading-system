@@ -1,0 +1,4 @@
+{
+  "code": "UNAUTHORIZED",
+  "message": "Authentication is required or the token is invalid."
+}

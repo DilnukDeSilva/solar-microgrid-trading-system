@@ -10,6 +10,9 @@ Client-server system: C# Web API on IIS + MongoDB, an ASP.NET Core MVC web app (
 | `WebService/` | C# Web API (FAT service: every business rule lives here) + MongoDB |
 | `WebApp/` | ASP.NET Core MVC web app for Backoffice and Grid Operators (UI only, calls the API) |
 | `MobileApp/` | Native Android app (Java) for prosumers and grid operators, with SQLite |
+| `docs/` | Plan, deployment notes, and mock API payloads |
+
+Start with `docs/PLAN.md` and `docs/DEPLOYMENT.md`. Mock API samples live under `docs/mock/`.
 
 ## Individual contributions
 
